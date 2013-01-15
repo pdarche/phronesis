@@ -5,10 +5,21 @@ import tornado.options
 import os.path
 from tornado.options import define, options
 
+#handlers
 import handlers as h
-# import models
+
+#mongo and models
+from mongoengine import *
+import models
+
+#python mongo hooks
+from pymongo import MongoClient
+import bson
 
 define("port", default=8000, help="run on the given port", type=int)
+
+#mongo connection
+connect('local_db')
 
 class Application(tornado.web.Application):
 	def __init__(self):
@@ -27,24 +38,24 @@ class Application(tornado.web.Application):
 		settings = dict(
 			template_path=os.path.join(os.path.dirname(__file__), "templates"),
 			static_path=os.path.join(os.path.dirname(__file__), "static"),
-			twitter_consumer_key='OaqpkBvltogUUjmeCqVhVw',
-			twitter_consumer_secret= 'UPV2gSGAh6IfgYo123jJ4k4Sawjhd9JRp3l0QCOs',
-			facebook_api_key='426446497428837',
-			facebook_secret='7a811496573b875c107d3bafc1828cc2',
-			fitbit_consumer_key='8f5e05187b294f0989eb8cb9b20de54c',
-			fitbit_consumer_secret='0f88f60eae0142b586340594249e5f67',
-			zeo_consumer_key='peter.darche',
-			zeo_consumer_secret='Aiy0EeXeRae9AebilaiK1t',
-			foursquare_api_key='MSJXJGSMPMWVEEZKGCF1YEHUIAZG5YW3U4U0CNRZJYJ5TPPC',
-			foursquare_client_id='MSJXJGSMPMWVEEZKGCF1YEHUIAZG5YW3U4U0CNRZJYJ5TPPC',
-			foursquare_client_secret='2CU20YV4WTEYKVQNKCXM51IMFDALG2RSLAHI5LGGMW0FSGBL',
-			google_consumer_key='anonymous',
-			google_consumer_secret='anonymous',
-			flickr_consumer_key='89e19ea49458a66cf9aa8c980e898655',
-			flickr_consumer_secret='03656cf0a41a75e1',
-			khanacademy_consumer_key='ypzzb7hyX2Q9mVHR',
-			khanacademy_consumer_secret='pfGvSc5adwCRCyE3',
-			cookie_secret='NTliOTY5NzJkYTVlMTU0OTAwMTdlNjgzMTA5M2U3OGQ5NDIxZmU3Mg==',
+			twitter_consumer_key=models.AppSettings.objects[0].twitter_consumer_key,
+			twitter_consumer_secret=models.AppSettings.objects[0].twitter_consumer_secret,
+			facebook_api_key=models.AppSettings.objects[0].facebook_api_key,
+			facebook_secret=models.AppSettings.objects[0].facebook_secret,
+			fitbit_consumer_key=models.AppSettings.objects[0].fitbit_consumer_key,
+			fitbit_consumer_secret=models.AppSettings.objects[0].fitbit_consumer_secret,
+			zeo_consumer_key=models.AppSettings.objects[0].zeo_consumer_key,
+			zeo_consumer_secret=models.AppSettings.objects[0].zeo_consumer_secret,
+			foursquare_api_key=models.AppSettings.objects[0].foursquare_api_key,
+			foursquare_client_id=models.AppSettings.objects[0].foursquare_client_id,
+			foursquare_client_secret=models.AppSettings.objects[0].foursquare_client_secret,
+			google_consumer_key=models.AppSettings.objects[0].google_consumer_key,
+			google_consumer_secret=models.AppSettings.objects[0].google_consumer_secret,
+			flickr_consumer_key=models.AppSettings.objects[0].flickr_consumer_key,
+			flickr_consumer_secret=models.AppSettings.objects[0].flickr_consumer_secret,
+			khanacademy_consumer_key=models.AppSettings.objects[0].khanacademy_consumer_key,
+			khanacademy_consumer_secret=models.AppSettings.objects[0].khanacademy_consumer_secret,
+			cookie_secret=models.AppSettings.objects[0].cookie_secret,
 			debug=True,
 		)
 		tornado.web.Application.__init__(self, handlers, **settings)
