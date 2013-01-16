@@ -55,6 +55,11 @@ class PhysicalActivity(Document):
 	active_score = IntField()
 
 
+class FoodUnit(EmbeddedDocument):
+	fitbit_unit_id = IntField()
+	fitbit_unit_name = StringField()
+	fitbit_unit_plural = StringField()
+
 class Food(Document):
 	createdat = DateTimeField() #needed?
 	user_id = StringField()
@@ -62,7 +67,7 @@ class Food(Document):
 	brand = StringField()
 	fitbit_food_id = IntField()
 	fitbit_mealy_type_id = IntField()
-	unit = IntField() #Unit Object?
+	unit = EmbeddedDocumentField(FoodUnit)
 	calories = IntField()
 	carbs = FloatField()
 	fat = FloatField()
@@ -73,11 +78,52 @@ class Food(Document):
 	water = BooleanField()
 	# image = ImageField()
 	location = GeoPointField()
-	
 
-class Sleep(EmbeddedDocument):
+
+class ZeoDate(EmbeddedDocument):
+	year = IntField()
+	month = IntField()
+	day = IntField()
+	hour = IntField()
+
+
+class Sleep(Document):
 	date = DateTimeField()
 	user_id = StringField()
+	type = StringField() #zeo, fitbit, other
+	awakenings = IntField()
+	awakenings_zq_points = IntField()
+	bed_time = DateTimeField()
+	grouping = ListField() #find out what type this is?  docs say 'enum', so list?
+	morning_feel = IntField()
+	rise_time = DateTimeField()
+	start_time = DateTimeField()
+	time_in_deep = IntField()
+	time_in_deep_percentage = IntField()
+	time_in_deep_zq_points = IntField()
+	time_in_light = IntField()
+	time_in_light_perentage = IntField()
+	time_in_light_zq_points = IntField()
+	time_in_rem = IntField()
+	time_in_rem_percentage = IntField()
+	time_in_rem_zq_points = IntField()
+	time_in_wake = IntField()
+	time_in_wake_percentage = IntField()
+	time_in_wake_zq_points = IntField()
+	time_to_z = IntField()
+	total_z = IntField()
+	total_z_zq_points = IntField()
+	zq = IntField()
+	alarm_reason = StringField()
+	alarm_ring_index = IntField()
+	dayFeel = IntField()
+	sleep_graph = ListField(StringField())
+	sleep_graph_start_time = DateTimeField()
+	sleep_stealer_score = IntField()
+	wake_window_end_index = IntField() #? is this an int?
+	wake_window_start_index = IntField() #? is this an int?
+
+
 
 
 class VenueContact(EmbeddedDocument):
