@@ -33,11 +33,54 @@ class AppSettings(Document):
 class Body(Document):
 	date = DateTimeField()
 	user_id = StringField()
+	weight = FloatField()
+	bmi = FloatField()
+	fat_mass = FloatField()
+	lean_mass = FloatField()
+	height = FloatField()
+	bloodpressure = FloatField()
+	heart_rate = FloatField()
+	blood_glucose = FloatField()
 	# sleep
 	# nutrition
 	# physicalActivity
 	# location
 
+############# PHYSICAL ACTIVITY ############# 
+class ActivitiesDescription(EmbeddedDocument): # this needs to be looked into. 
+	fitbit_activity_id = IntField()			   # what is the purpose of this?
+	fitbit_activity_parent_id = IntField()	   # is it generic model of an activity type?
+	calories = IntField()
+	description = StringField()
+	distance = FloatField()
+	duration = IntField()
+	has_start_time = BooleanField()
+	is_favorite = BooleanField()
+	log_id = IntField()
+	name = StringField()
+	start_time = DateTimeField()
+	steps = IntField()
+
+class ActivitiesSummary(EmbeddedDocument):
+	fitbit_activity_score = IntField()
+	fitbit_activity_calories = IntField()
+	calories_out = IntField()
+	distances = ListField(FloatField())
+	elevation = FloatField()
+	floors = IntField()
+	mins_sedentary = IntField()
+	mins_lightly_active = IntField()
+	mins_fairly_active = IntField()
+	mins_highly_active = IntField()
+	marginal_calories = IntField()
+	steps = IntField()
+
+class Activity(EmbeddedDocument):
+	date = DateTimeField()
+	user_id = StringField()
+	type = StringField() # fitbit or other activity source (say, nike or )
+	activity_description = EmbeddedDocumentField(ActivitiesDescription)
+	activity_summary = EmbeddedDocumentField(ActivitiesSummary)
 
 class PhysicalActivity(Document):
 	date = DateTimeField()
@@ -53,15 +96,18 @@ class PhysicalActivity(Document):
 	mins_moderately_active = IntField()
 	mins_highly_active = IntField()
 	active_score = IntField()
+	activities = ListField(EmbeddedDocumentField(Activity))
 
 
+
+############# NUTRITION ############# 
 class FoodUnit(EmbeddedDocument):
 	fitbit_unit_id = IntField()
 	fitbit_unit_name = StringField()
 	fitbit_unit_plural = StringField()
 
 class Food(Document):
-	createdat = DateTimeField() #needed?
+	date = DateTimeField() #needed?
 	user_id = StringField()
 	amount = FloatField()
 	brand = StringField()
@@ -78,14 +124,17 @@ class Food(Document):
 	water = BooleanField()
 	# image = ImageField()
 	location = GeoPointField()
+	fitbit_name = StringField()
+	user_given_name = StringField()
 
 
+
+############# SLEEP ############# 
 class ZeoDate(EmbeddedDocument):
 	year = IntField()
 	month = IntField()
 	day = IntField()
 	hour = IntField()
-
 
 class Sleep(Document):
 	date = DateTimeField()
@@ -124,8 +173,7 @@ class Sleep(Document):
 	wake_window_start_index = IntField() #? is this an int?
 
 
-
-
+############# LOCATION ############# 
 class VenueContact(EmbeddedDocument):
 	phone = StringField()
 	formattedPhone = StringField()
@@ -164,11 +212,82 @@ class Venue(EmbeddedDocument):
 	categories = ListField(EmbeddedDocumentField(VenueCategory))
 	stats = EmbeddedDocumentField(VenueStats)
 
-
 class Location(Document):
 	datetime = DateTimeField
 	user_id = StringField()
 	type = StringField() #foursquare or openpaths
 	location = GeoPointField()
 	venue = EmbeddedDocumentField(Venue)
+
+
+############# EDUCATION ############# 
+class KhanAcademyVideo(EmbeddedDocument):
+	date_added = DateTimeField()
+	description = StringField()
+	duration = IntField()
+	ka_url = StringField()
+	keywords = StringField()
+	kind = StringField()
+	playlists = ListField()
+	readable_id = StringField()
+	title = StringField()
+	url = StringField()
+	views = IntField()
+	youtube_id = StringField()
+
+class KhanAcademyVideoLog(EmbeddedDocument):
+	kind = StringField()
+	playlist_titles = ListField()
+	points_earned = IntField()
+	seconds_watched = IntField()
+	time_watched = DateTimeField()
+	user = StringField()
+	video_title = StringField()
+
+class KhanAcademyUserExercise(EmbeddedDocument):
+	exercise = StringField()
+	first_done = DateTimeField()
+	kind = StringField()
+	last_done = DateTimeField()
+	last_review = DateTimeField()
+	longest_streak = IntField()
+	proficient_date = DateTimeField()
+	seconds_per_fast_problem = FloatField()
+	streak = IntField()
+	summative = BooleanField()
+	total_done = IntField()
+	user = StringField() 
+
+class KhanAcademyUserVideos(EmbeddedDocument):
+	completed = BooleanField()
+	duration = IntField()
+	kind = StringField()
+	last_second_watched = IntField()
+	last_watched = DateTimeField()
+	points = IntField()
+	seconds_watched = IntField()
+	user = StringField()
+	videos = ListField(EmbeddedDocumentField(KhanAcademyVideo))
+	video_logs = ListField(EmbeddedDocumentField(KhanAcademyVideoLog))
+	exercises = ListField(EmbeddedDocumentField(KhanAcademyUserExercise))
+
+class KhanAcademyStats(Document):
+	date = DateTimeField()
+	user_id = StringField()
+	all_proficient_exercises = ListField()
+	badge_counts = ListField()
+	coaches = ListField()
+	joined = DateTimeField()
+	last_activity = DateTimeField()
+	nickname = StringField()
+	points = IntField()
+	proficient_exercises = ListField()
+	suggested_exercises = ListField()
+	total_seconds_watched = IntField()
+	khan_academy_user_id = StringField()
+	prettified_user_email = StringField()
+
+
+
+
 
