@@ -30,7 +30,160 @@ class AppSettings(Document):
 	cookie_secret = StringField()
 
 
-class Body(Document):
+
+class FitbitAccessToken(EmbeddedDocument):
+	key = StringField()
+	encoded_user_id = StringField()
+	secret = StringField()
+
+class FitbitUserInfo(EmbeddedDocument):
+	date = DateTimeField()
+	username = StringField()
+	fitbit_user_name = StringField()
+	fitbit_access_token = EmbeddedDocumentField(FitbitAccessToken)
+	fitbit_weight_unit = StringField()
+	fitbit_stride_length_walking = FloatField()
+	fitbit_display_name = StringField()
+	fitbit_foods_locale = StringField()
+	fitbit_height_unit = StringField()
+	fitbit_locale = StringField()
+	fitbit_gender = StringField()
+	fitbit_member_since = DateTimeField()
+	fitbit_offset_from_utc_millis = IntField()
+	fitbit_encoded_id = StringField()
+	fitbit_avatar = StringField()
+	fitbit_water_unit = StringField()
+	fitbit_distance_unit = StringField()
+	fitbit_glucos_unit = StringField()
+	fitbit_full_name = StringField()
+	fitbit_nickname = StringField()
+	fitbit_stride_length_running = FloatField()
+
+
+class FoursquareUserInfo(EmbeddedDocument):
+	date = DateTimeField()
+	username = StringField()
+	foursquare_last_name = StringField()
+	foursquare_first_name = StringField()
+	foursquare_access_token = StringField()
+	foursquare_user_photo = StringField()
+	foursquare_pings = BooleanField()
+	foursquare_home_city = StringField()
+	foursquare_id = StringField()
+	foursquare_bio = StringField()
+	foursquare_relationship = StringField()
+	foursquare_checkin_pings = StringField()
+
+
+class FlickrAccessToken(EmbeddedDocument):
+	flickr_username = StringField()
+	flickr_secret = StringField()
+	flickr_full_name = StringField()
+	flickr_key = StringField()
+	flickr_nsid = StringField()
+
+class FlickrUserInfo(EmbeddedDocument):
+	date = DateTimeField()
+	username = StringField()
+	flickr_access_token = EmbeddedDocumentField(FlickrAccessToken)
+	flickr_stat = StringField()
+	flickr_user_url = StringField()
+	flickr_nsid = StringField()
+
+
+class FacebookUserInfo(EmbeddedDocument):
+	date = DateTimeField()
+	facebook_picture = StringField()
+	facebook_first_name = StringField()
+	facebook_last_name = StringField()
+	facebook_name = StringField()
+	facebook_locale = StringField()
+	facebook_access_token = StringField()
+	facebook_link = StringField()
+	facebook_id = StringField()
+
+
+class KhanAcademyAccessToken(EmbeddedDocument):
+	khanacademy_secret = StringField()
+	khanacademy_key = StringField()
+
+class KhanAcademyUserInfo(EmbeddedDocument):
+	date = DateTimeField()
+	khanacademy_has_notification = BooleanField()
+	khanacademy_can_record_tutorial = BooleanField()
+	khanacademy_is_demo = BooleanField()
+	khanacademy_key_email = StringField()
+	khanacademy_is_pre_phantom = BooleanField()
+	khanacademy_developer = BooleanField()
+	kahnacademy_user_id = StringField()
+	khanacademy_is_google_user = BooleanField()
+	khanacademy_profile_root = StringField()
+	khanacademy_has_email_subscription = BooleanField()
+	khanacademy_discussion_banned = BooleanField()
+	khanacademy_is_phantom = BooleanField()
+	khanacademy_email = StringField()
+	khanacademy_is_facebook_user = BooleanField()
+	khanacademy_is_midsignup_phantom = BooleanField()
+	khanacademy_auth_emails = ListField(StringField)
+	khanacademy_last_modified_as_mapreduce_epoch = IntField()
+	khanacademy_uservideocss_version = IntField()
+	khanacademy_nickname = StringField()
+	khanacademy_user_input_auth_emails = ListField(StringField)
+	khanacademy_kind = StringField()
+	khanacademy_is_moderator_or_developer = StringField()
+	khanacademy_joined = DateTimeField()
+	khanacademy_userprogresscache_version = IntField()
+	khanacademy_gae_bingo_identity = StringField()
+
+
+class TwitterUserInfo(EmbeddedDocument):
+	twitter_default_profile_image = BooleanField()
+	twitter_id = IntField()
+	twitter_verified = BooleanField()
+	twitter_profile_image_url_https = StringField()
+	twitter_id_str = StringField()
+	twitter_profile_background_image_url_https = StringField()
+	twitter_utc_offset = IntField()
+	twitter_location = StringField()
+	twitter_profile_image_url = StringField()
+	twitter_geo_enabled = BooleanField()
+	twitter_name = StringField()
+	twitter_lang = StringField()
+	twitter_screen_name = StringField()
+	twitter_url = StringField()
+	twitter_contributors_enabled = BooleanField()
+	twitter_time_zone = StringField()
+	twitter_protected = BooleanField()
+	twitter_default_profile = BooleanField()
+	twitter_is_translator = BooleanField()
+
+
+class GoogleUserInfo(EmbeddedDocument):
+	google_first_name = StringField()
+	google_claimed_id = StringField()
+	google_name = StringField()
+	google_locale = StringField()
+	google_last_name = StringField()
+	google_email = StringField()
+
+
+class User(Document):
+	date = DateTimeField()
+	username = StringField()
+	offset_from_utc_millis = IntField()
+	time_zone = StringField()
+	date_of_birth = DateTimeField()
+	fitbit_user_info = EmbeddedDocumentField(FitbitUserInfo)
+	foursquare_user_info = EmbeddedDocumentField(FoursquareUserInfo)
+	flickr_user_info = EmbeddedDocumentField(FlickrUserInfo)
+	faceboo_user_info = EmbeddedDocumentField(FacebookUserInfo)
+	khanacademy_user_info = EmbeddedDocumentField(KhanAcademyUserInfo)
+	twitter_user_info = EmbeddedDocumentField(TwitterUserInfo)
+	google_user_info = EmbeddedDocumentField(GoogleUserInfo)
+
+
+
+class BodyMeasurements(EmbeddedDocument):
 	date = DateTimeField()
 	user_id = StringField()
 	weight = FloatField()
@@ -216,6 +369,7 @@ class Location(Document):
 	datetime = DateTimeField
 	user_id = StringField()
 	type = StringField() #foursquare or openpaths
+	altitude = FloatField()
 	location = GeoPointField()
 	venue = EmbeddedDocumentField(Venue)
 

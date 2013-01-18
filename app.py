@@ -32,7 +32,6 @@ class Application(tornado.web.Application):
 			(r"/google", h.GoogleHandler),
 			(r"/flickr", h.FlickrHandler),
 			(r"/khanacademy", h.KhanAcademyHandler),
-			
 			(r"/logout", h.LogoutHandler),
 		]
 		settings = dict(

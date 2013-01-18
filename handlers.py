@@ -1,6 +1,7 @@
 import tornado.web
 import tornado.auth
 import mixins
+import json
 
 class MainHandler(tornado.web.RequestHandler): 
 	def get(self):
@@ -53,7 +54,7 @@ class TwitterHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-		self.render('index.html', user=user)
+		self.render('index.html', user=json.dumps(user))
 
 
 
@@ -90,7 +91,7 @@ class FacebookHandler(tornado.web.RequestHandler, tornado.auth.FacebookGraphMixi
 		self.set_secure_cookie('fb_user_id', str(user['id']))
 		self.set_secure_cookie('fb_user_name', str(user['name']))
 		self.set_secure_cookie('fb_access_token', str(user['access_token']))
-		self.render('index.html', user=user)
+		self.render('index.html', user=json.dumps(user))
 
 
 
@@ -129,7 +130,8 @@ class FitbitHandler(tornado.web.RequestHandler, mixins.FitbitMixin):
 		self.set_secure_cookie('fitbit_oauth_token', user['access_token']['key'])
 		self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
 
-		self.render('index.html', user=user)
+		self.render('index.html', user=json.dumps(user) )
+		# self.write( json.dumps(user) )
 
 	def _fitbit_on_user(self, user):
 		if not user:
@@ -175,14 +177,14 @@ class ZeoHandler(tornado.web.RequestHandler, mixins.ZeoMixin):
 		self.set_secure_cookie('zeo_oauth_token', user['access_token']['key'])
 		self.set_secure_cookie('zeo_oauth_secret', user['access_token']['secret'])
 
-		self.render('index.html', user=user)
+		self.render('index.html', user=json.dumps(user))
 
 	def _zeo_on_user(self, user):
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-		self.render('index.html', user=user)
+		self.render('index.html', user=json.dumps(user))
 
 
 
@@ -206,7 +208,7 @@ class FoursquareHandler(tornado.web.RequestHandler, mixins.FoursquareMixin):
 
     def _on_login(self, user):
         # Do something interesting with user here. See: user["access_token"]
-        self.render('index.html', user=user)
+        self.render('index.html', user=json.dumps(user))
         
 
 
@@ -221,7 +223,7 @@ class GoogleHandler(tornado.web.RequestHandler, tornado.auth.GoogleMixin):
 	def _on_auth(self, user):
 		if not user:
 		    raise tornado.web.HTTPError(500, "Google auth failed")
-		self.render('index.html', user=user)
+		self.render('index.html', user=json.dumps(user))
         # Save the user with, e.g., set_secure_cookie()
 
 
@@ -260,7 +262,7 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 		# self.set_secure_cookie('fitbit_oauth_token', user['access_token']['key'])
 		# self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
 
-		self.render('index.html', user=user)
+		self.render('index.html', user=json.dumps(user))
 
 	def _flickr_on_user(self, user):
 		if not user:
@@ -305,7 +307,7 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 		# self.set_secure_cookie('fitbit_oauth_token', user['access_token']['key'])
 		# self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
 
-		self.render('index.html', user=user)
+		self.render('index.html', user=json.dumps(user))
 
 	def _khanacademy_on_user(self, user):
 		if not user:
