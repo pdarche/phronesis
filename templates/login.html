@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+	{{ response }}
 	<p>log in</p>
 	<form action="/login" method="POST">
 		<input type="text" name="username" placeholder="username"/>

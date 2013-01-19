@@ -13,19 +13,20 @@ import models
 from pymongo import MongoClient
 import bson
 
-class MainHandler(tornado.web.RequestHandler): 
+class BaseHandler(tornado.web.RequestHandler):
+	def get_current_user(self):
+		return self.get_secure_cookie("username")
+
+class MainHandler(BaseHandler): 
 	def get(self):
-		self.render( 
-			"signup.html",
-			page_title = "This is just a test",
-			header_text = "This is just a test!", 
-		)
+		self.render( "index.html" )
 
 class SignUpHandler(tornado.web.RequestHandler):
 	def post(self):
 		username = self.get_argument('username')
 		password = self.get_argument('password')
 		
+		#if the username isn't already taken, create new user object 
 		if len( models.User.objects(username=username) ) == 0:
 			newuser = models.User(
 				date = datetime.datetime.fromtimestamp(time.time()),
@@ -43,13 +44,13 @@ class SignUpHandler(tornado.web.RequestHandler):
 			)
 
 			if newuser.save():
-				response = "all signed up!"
+				response = "all signed up!\n"
 			else:
-				response = "snap, somethin got f'd up"
+				response = "snap, somethin got f'd up\n"		
 		else:
-			response = "you've already signed up!"
+			response = "that username is not available!\n"
 
-		self.render('index.html', user=response)
+		self.write( response )
 
 
 class LoginHandler(tornado.web.RequestHandler):
@@ -59,21 +60,50 @@ class LoginHandler(tornado.web.RequestHandler):
 
 		user = models.User.objects(username=username)
 
-		if len( user ) == 0:
-			response = "Der, we don't have a user with that username"
+		if len( user ) == 0 or username == None:
+			response = "Der, we don't have a user with that username\n"
 		elif password != user[0].password:
-			response = "Sorry brah, wrong password"
+			response = "Sorry brah, password mismatch\n"
 		else:
-			response = "welcome %s" % username 
-			self.set_secure_cookie("user", username)
+			self.set_secure_cookie("username", username)
+			response = "logged in\n"
 
-		self.render('index.html', user=response)
+		self.write( response )
 
-	@tornado.web.authenticated	
 	def get(self):
-		username = self.get_secure_cookie("user")
-		self.render('login.html')
+		# username = self.get_secure_cookie("user")
+		# self.render('login.html', response=username)
+		self.write( "redirect to login")
 
+
+class UserInfoHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self, input):
+		print "input is %s" % input
+		if input == self.current_user:
+			
+			user = models.User.objects(username=input)
+			# self.render('test.html', user=response)
+			response = { 				
+				# "date" : user[0].date
+				"username" : user[0].username,
+				"offset_from_utc_millis" : user[0].offset_from_utc_millis,
+				"time_zone" : user[0].time_zone,
+				# "date_of_birth" : user[0].date_of_birth,
+				"fitibt" : user[0].fitbit_user_info,
+				"foursquare_user_info" : user[0].foursquare_user_info,
+				"flickr_user_info" : user[0].flickr_user_info,
+				"facebook_user_info" : user[0].facebook_user_info,
+				"khanacademy_user_info" : user[0].khanacademy_user_info,
+				"twitter_user_info" : user[0].twitter_user_info 
+			}
+
+			print "signup date is %r" % user[0].date
+
+			self.write( json.dumps(response) )
+		else:
+			response
+			self.render('test.html', user=input)
 
 
 class TwitterHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixin): 
@@ -118,7 +148,7 @@ class TwitterHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-		self.render('index.html', user=json.dumps(user))
+		self.render('test.html', user=json.dumps(user))
 
 
 
@@ -155,7 +185,7 @@ class FacebookHandler(tornado.web.RequestHandler, tornado.auth.FacebookGraphMixi
 		self.set_secure_cookie('fb_user_id', str(user['id']))
 		self.set_secure_cookie('fb_user_name', str(user['name']))
 		self.set_secure_cookie('fb_access_token', str(user['access_token']))
-		self.render('index.html', user=json.dumps(user))
+		self.render('test.html', user=json.dumps(user))
 
 
 
@@ -194,7 +224,7 @@ class FitbitHandler(tornado.web.RequestHandler, mixins.FitbitMixin):
 		self.set_secure_cookie('fitbit_oauth_token', user['access_token']['key'])
 		self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
 
-		self.render('index.html', user=json.dumps(user) )
+		self.render('test.html', user=json.dumps(user) )
 		# self.write( json.dumps(user) )
 
 	def _fitbit_on_user(self, user):
@@ -202,7 +232,7 @@ class FitbitHandler(tornado.web.RequestHandler, mixins.FitbitMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-		self.render('index.html', user=user)
+		self.render('test.html', user=user)
 
 
 
@@ -241,14 +271,14 @@ class ZeoHandler(tornado.web.RequestHandler, mixins.ZeoMixin):
 		self.set_secure_cookie('zeo_oauth_token', user['access_token']['key'])
 		self.set_secure_cookie('zeo_oauth_secret', user['access_token']['secret'])
 
-		self.render('index.html', user=json.dumps(user))
+		self.render('test.html', user=json.dumps(user))
 
 	def _zeo_on_user(self, user):
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-		self.render('index.html', user=json.dumps(user))
+		self.render('test.html', user=json.dumps(user))
 
 
 
@@ -272,7 +302,7 @@ class FoursquareHandler(tornado.web.RequestHandler, mixins.FoursquareMixin):
 
     def _on_login(self, user):
         # Do something interesting with user here. See: user["access_token"]
-        self.render('index.html', user=json.dumps(user))
+        self.render('test.html', user=json.dumps(user))
         
 
 
@@ -287,7 +317,7 @@ class GoogleHandler(tornado.web.RequestHandler, tornado.auth.GoogleMixin):
 	def _on_auth(self, user):
 		if not user:
 		    raise tornado.web.HTTPError(500, "Google auth failed")
-		self.render('index.html', user=json.dumps(user))
+		self.render('test.html', user=json.dumps(user))
         # Save the user with, e.g., set_secure_cookie()
 
 
@@ -326,14 +356,14 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 		# self.set_secure_cookie('fitbit_oauth_token', user['access_token']['key'])
 		# self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
 
-		self.render('index.html', user=json.dumps(user))
+		self.render('test.html', user=json.dumps(user))
 
 	def _flickr_on_user(self, user):
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-		self.render('index.html', user=user)
+		self.render('test.html', user=user)
 
 
 class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
@@ -371,16 +401,28 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 		# self.set_secure_cookie('fitbit_oauth_token', user['access_token']['key'])
 		# self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
 
-		self.render('index.html', user=json.dumps(user))
+		self.render('test.html', user=json.dumps(user))
 
 	def _khanacademy_on_user(self, user):
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-		self.render('index.html', user=user)
+		self.render('test.html', user=user)
 
 class LogoutHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.clear_all_cookies()
-		self.write('loggged out, yo')
+		self.write('loggged out, yo\n')
+
+class RemoveUserHandler(tornado.web.RequestHandler):
+	def post(self):
+		username = self.get_argument('username')
+		password = self.get_argument('password')
+		
+		user = models.User.objects(username=username, password=password)
+
+		user[0].delete(safe=True)
+		self.write("user deleted\n")
+
+

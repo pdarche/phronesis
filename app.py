@@ -27,6 +27,8 @@ class Application(tornado.web.Application):
 			(r"/", h.MainHandler),
 			(r"/signup", h.SignUpHandler),
 			(r"/login", h.LoginHandler),
+			(r"/users/(\w+)", h.UserInfoHandler),
+			(r"/remove", h.RemoveUserHandler),
 			(r"/twitter", h.TwitterHandler),
 			(r"/facebook", h.FacebookHandler),
 			(r"/fitbit", h.FitbitHandler),
@@ -40,6 +42,7 @@ class Application(tornado.web.Application):
 		settings = dict(
 			template_path=os.path.join(os.path.dirname(__file__), "templates"),
 			static_path=os.path.join(os.path.dirname(__file__), "static"),
+			login_url="/login",
 			twitter_consumer_key=models.AppSettings.objects[0].twitter_consumer_key,
 			twitter_consumer_secret=models.AppSettings.objects[0].twitter_consumer_secret,
 			facebook_api_key=models.AppSettings.objects[0].facebook_api_key,
