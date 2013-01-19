@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+	<p>add user</p>
+	<form action="/signup" method="POST">
+		<input type="text" name="username" placeholder="username"/>
+		<input type="password" name="password" placeholder="password"/>
+		<input type="submit" value="Submit"/>
+	</form>
+{% end %}

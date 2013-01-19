@@ -2,14 +2,78 @@ import tornado.web
 import tornado.auth
 import mixins
 import json
+import datetime
+import time
+
+#mongo and models
+from mongoengine import *
+import models
+
+#python mongo hooks
+from pymongo import MongoClient
+import bson
 
 class MainHandler(tornado.web.RequestHandler): 
 	def get(self):
 		self.render( 
-			"index.html",
+			"signup.html",
 			page_title = "This is just a test",
 			header_text = "This is just a test!", 
 		)
+
+class SignUpHandler(tornado.web.RequestHandler):
+	def post(self):
+		username = self.get_argument('username')
+		password = self.get_argument('password')
+		
+		if len( models.User.objects(username=username) ) == 0:
+			newuser = models.User(
+				date = datetime.datetime.fromtimestamp(time.time()),
+				username = username,
+				password = password,
+				offset_from_utc_millis = None,
+				date_of_birth = None,
+				fitbit_user_info = None,
+				foursquare_user_info = None,
+				flickr_user_info = None,
+				facebook_user_info = None,
+				khanacademy_user_info = None,
+				twitter_user_info = None,
+				google_user_info = None
+			)
+
+			if newuser.save():
+				response = "all signed up!"
+			else:
+				response = "snap, somethin got f'd up"
+		else:
+			response = "you've already signed up!"
+
+		self.render('index.html', user=response)
+
+
+class LoginHandler(tornado.web.RequestHandler):
+	def post(self):
+		username = self.get_argument('username')
+		password = self.get_argument('password')
+
+		user = models.User.objects(username=username)
+
+		if len( user ) == 0:
+			response = "Der, we don't have a user with that username"
+		elif password != user[0].password:
+			response = "Sorry brah, wrong password"
+		else:
+			response = "welcome %s" % username 
+			self.set_secure_cookie("user", username)
+
+		self.render('index.html', user=response)
+
+	@tornado.web.authenticated	
+	def get(self):
+		username = self.get_secure_cookie("user")
+		self.render('login.html')
+
 
 
 class TwitterHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixin): 
