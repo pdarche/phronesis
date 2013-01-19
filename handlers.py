@@ -15,7 +15,7 @@ class MainHandler(tornado.web.RequestHandler):
 class TwitterHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixin): 
 	@tornado.web.asynchronous
 	def get(self):
-		oAuthToken = self.get_secure_cookie('tw_oauth_token')
+		oAuthToken = self.get_secure_cookie('tw_oauth_token') 
 		oAuthSecret = self.get_secure_cookie('tw_oauth_secret')
 		userID = self.get_secure_cookie('tw_user_id')
 
