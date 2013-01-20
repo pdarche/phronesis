@@ -258,7 +258,7 @@ class FitbitHandler(tornado.web.RequestHandler, mixins.FitbitMixin):
 				self.fitbit_request('/users/show',
 					access_token =  accessToken,
 					user_id =		userID,
-					callback = 		self.async_callback(self._fitbit_on_user)
+					callback = 		self.async_callback(self._fitbit_on_auth)
 				)
 				return
 
@@ -273,19 +273,52 @@ class FitbitHandler(tornado.web.RequestHandler, mixins.FitbitMixin):
 		self.set_secure_cookie('fitbit_oauth_token', user['access_token']['key'])
 		self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
 
-		self.render('test.html', user=json.dumps(user) )
-		# self.write( json.dumps(user) )
+		ftbt_access = models.FitbitAccessToken(
+			key = user["access_token"]["key"],
+			encoded_user_id = user["access_token"]["encoded_user_id"],
+			secret = user["access_token"]["secret"]
+		)
+
+		ftbt = models.FitbitUserInfo(
+			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+			fitbit_user_name = user["username"],
+			fitbit_access_token = ftbt_access,
+			fitbit_weight_unit = user["user"]["weightUnit"],
+			fitbit_stride_length_walking = user["user"]["strideLengthWalking"],
+			fitbit_display_name = user["user"]["displayName"],
+			fitbit_foodsl_locale = user["user"]["foodsLocale"],
+			fitbit_height_unit = user["user"]["heightUnit"],
+			fitbit_locale = user["user"]["locale"],
+			fitbit_gender = user["user"]["gender"],
+			fitbit_member_since = user["user"]["memberSince"],
+			fitbit_offset_from_utc_millis = user["user"]["offsetFromUTCMillis"],
+			fitbit_encoded_id = user["user"]["encodedId"],
+			fitbit_avatar = user["user"]["avatar"],
+			fitbit_water_unit = user["user"]["waterUnit"],
+			fitbit_distance_unit = user["user"]["distanceUnit"],
+			fitbit_glucose_unit = user["user"]["glucoseUnit"],
+			fitbit_full_name = user["user"]["fullName"],
+			fitbit_nickname = user["user"]["nickname"],
+			fitbit_stride_length_running = user["user"]["strideLengthRunning"]
+		)
+
+		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj[0].update(set__fitbit_user_info=ftbt)
+
+		if user_obj[0].save():
+			response = "saved"
+			print "saved"
+		else:
+			response = "something was f'd up"
+			print "not saved"
+
+		self.write(response)
+		self.finish()
 
 	def _fitbit_on_user(self, user):
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
-
-		# ftbt = models.FitbitUserInfo(
-
-		# )
-
-		self.render('test.html', user=user)
 
 
 
@@ -355,8 +388,33 @@ class FoursquareHandler(tornado.web.RequestHandler, mixins.FoursquareMixin):
 
     def _on_login(self, user):
         # Do something interesting with user here. See: user["access_token"]
-        self.render('test.html', user=json.dumps(user))
         
+		fs = models.FoursquareUserInfo(
+			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+			foursquare_last_name = user["last_name"],
+			foursquare_first_name = user["first_name"],
+			foursquare_access_token = user["access_token"],
+			foursquare_user_photo = user["response"]["user"]["photo"],
+			foursquare_pings = user["response"]["user"]["pings"],
+			foursquare_home_city = user["response"]["user"]["homeCity"],
+			foursquare_id = user["response"]["user"]["id"],
+			foursquare_bio = user["response"]["user"]["bio"],
+			foursquare_relationship = user["response"]["user"]["relationship"],
+			foursquare_checkin_pings = user["response"]["user"]["checkinPings"]
+		)
+
+		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj[0].update(set__foursquare_user_info=fs)
+
+		if user_obj[0].save():
+			response = "saved"
+			print "saved"
+		else:
+			response = "something was f'd up"
+			print "not saved"
+
+		self.write(response)
+		self.finish()
 
 
 class GoogleHandler(tornado.web.RequestHandler, tornado.auth.GoogleMixin):
@@ -370,7 +428,31 @@ class GoogleHandler(tornado.web.RequestHandler, tornado.auth.GoogleMixin):
 	def _on_auth(self, user):
 		if not user:
 		    raise tornado.web.HTTPError(500, "Google auth failed")
-		self.render('test.html', user=json.dumps(user))
+
+		g = models.GoogleUserInfo(
+			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+			google_first_name = user["first_name"],
+			google_claimed_id = user["claimed_id"],
+			google_name = user["name"],
+			google_locale = user["locale"],
+			google_last_name = user["last_name"],
+			google_email = user["email"]
+		)
+		
+		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj[0].update(set__google_user_info=g)
+
+		if user_obj[0].save():
+			response = "saved"
+			print "saved"
+		else:
+			response = "something was f'd up"
+			print "not saved"
+
+		self.write(response)
+		self.finish()
+
+		# self.render('test.html', user=json.dumps(user))
         # Save the user with, e.g., set_secure_cookie()
 
 
@@ -409,14 +491,42 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 		# self.set_secure_cookie('fitbit_oauth_token', user['access_token']['key'])
 		# self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
 
-		self.render('test.html', user=json.dumps(user))
+		flkr_access = models.FlickrAccessToken(
+			flickr_usernam = user["access_token"]["username"],
+			flickr_secret = user["access_token"]["secret"],
+			flickr_full_name = user["access_token"]["fullname"],
+			flickr_key = user["access_token"]["key"],
+			flickr_nsid = user["access_token"]["user_nsid"]
+		)
+
+		flkr = models.FlickrUserInfo(
+			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+			flickr_access_token = flkr_access,
+			flickr_stat = user["stat"],
+			flickr_user_url = user["user"]["url"],
+			flickr_nsid = user["user"]["nsid"]
+		)
+
+		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj[0].update(set__flickr_user_info=flkr)
+
+		if user_obj[0].save():
+			response = "saved"
+			print "saved"
+		else:
+			response = "something was f'd up"
+			print "not saved"
+
+		self.write(response)
+		self.finish()
+		# self.render('test.html', user=json.dumps(user))
 
 	def _flickr_on_user(self, user):
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-		self.render('test.html', user=user)
+		# self.render('test.html', user=user)
 
 
 class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
@@ -450,18 +560,63 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, 'Khan Academy authentication failed')
 
-		# self.set_secure_cookie('fitbit_user_id', str(user['user']['encodedId']))
-		# self.set_secure_cookie('fitbit_oauth_token', user['access_token']['key'])
-		# self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
+		ka_access = models.KhanAcademyAccessToken(
+			khanacademy_secret = user["access_token"]["secret"],
+			khanacademy_key = user["access_token"]["key"],
+		)
 
-		self.render('test.html', user=json.dumps(user))
+		ka = models.KhanAcademyUserInfo(
+			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+			khanacademy_has_notification = user["has_notification"],
+			khanacademy_can_record_tutorial = user["can_record_tutorial"],
+			khanacademy_is_demo = user["is_demo"],
+			khanacademy_key_email = user["key_email"].encode('utf-8'),
+			khanacademy_is_pre_phantom = user["is_pre_phantom"],
+			khanacademy_developer = user["developer"],
+			khanacademy_user_id = user["user_id"].encode('utf-8'),
+			khanacademy_is_google_user = user["is_google_user"],
+			khanacademy_profile_root = user["profile_root"].encode('utf-8'),
+			khanacademy_has_email_subscription = user["has_email_subscription"],
+			khanacademy_discussion_banned = user["discussion_banned"],
+			khanacademy_is_phantom = user["is_phantom"],
+			khanacademy_email = user["email"].encode('utf-8'),
+			khanacademy_is_facebook_user = user["is_facebook_user"],
+			khanacademy_is_midsignup_phantom = user["is_midsignup_phantom"],
+			# khanacademy_auth_emails = auth_emails,
+			khanacademy_last_modified_as_mapreduce_epoch = user["last_modified_as_mapreduce_epoch"],
+			khanacademy_uservideocss_version = user["uservideocss_version"],
+			khanacademy_nickname = user["nickname"].encode('utf-8'),
+			# khanacademy_user_input_auth_emails = user["user_input_auth_emails"],
+			khanacademy_kind = user["kind"].encode('utf-8'),
+			khanacademy_is_moderator_or_developer = user["is_moderator_or_developer"],
+			khanacademy_joined = user["joined"].encode('utf-8'),
+			khanacademy_userprogresscache_version = user["userprogresscache_version"],
+			khanacademy_gae_bingo_identity = user["gae_bingo_identity"].encode('utf-8')
+		)
+
+		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj[0].update(set__khanacademy_user_info=ka)
+
+		if user_obj[0].save():
+			response = "saved"
+			print "saved"
+		else:
+			response = "something was f'd up"
+			print "not saved"
+
+		self.write(response)
+
+		self.finish()
+
+		# self.render('test.html', user=json.dumps(user))
+
 
 	def _khanacademy_on_user(self, user):
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-		self.render('test.html', user=user)
+		# self.render('test.html', user=user)
 
 class LogoutHandler(tornado.web.RequestHandler):
 	def get(self):

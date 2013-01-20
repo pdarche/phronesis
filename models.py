@@ -37,8 +37,7 @@ class FitbitAccessToken(EmbeddedDocument):
 	secret = StringField()
 
 class FitbitUserInfo(EmbeddedDocument):
-	date = StringField()
-	username = StringField()
+	created_at = StringField()
 	fitbit_user_name = StringField()
 	fitbit_access_token = EmbeddedDocumentField(FitbitAccessToken)
 	fitbit_weight_unit = StringField()
@@ -48,21 +47,20 @@ class FitbitUserInfo(EmbeddedDocument):
 	fitbit_height_unit = StringField()
 	fitbit_locale = StringField()
 	fitbit_gender = StringField()
-	fitbit_member_since = DateTimeField()
+	fitbit_member_since = StringField()
 	fitbit_offset_from_utc_millis = IntField()
 	fitbit_encoded_id = StringField()
 	fitbit_avatar = StringField()
 	fitbit_water_unit = StringField()
 	fitbit_distance_unit = StringField()
-	fitbit_glucos_unit = StringField()
+	fitbit_glucose_unit = StringField()
 	fitbit_full_name = StringField()
 	fitbit_nickname = StringField()
 	fitbit_stride_length_running = FloatField()
 
 
 class FoursquareUserInfo(EmbeddedDocument):
-	date = StringField()
-	username = StringField()
+	created_at = StringField()
 	foursquare_last_name = StringField()
 	foursquare_first_name = StringField()
 	foursquare_access_token = StringField()
@@ -83,8 +81,7 @@ class FlickrAccessToken(EmbeddedDocument):
 	flickr_nsid = StringField()
 
 class FlickrUserInfo(EmbeddedDocument):
-	date = StringField()
-	username = StringField()
+	created_at = StringField() 			#add updates?
 	flickr_access_token = EmbeddedDocumentField(FlickrAccessToken)
 	flickr_stat = StringField()
 	flickr_user_url = StringField()
@@ -108,7 +105,7 @@ class KhanAcademyAccessToken(EmbeddedDocument):
 	khanacademy_key = StringField()
 
 class KhanAcademyUserInfo(EmbeddedDocument):
-	date = StringField()
+	created_at = StringField()
 	khanacademy_has_notification = BooleanField()
 	khanacademy_can_record_tutorial = BooleanField()
 	khanacademy_is_demo = BooleanField()
@@ -124,14 +121,14 @@ class KhanAcademyUserInfo(EmbeddedDocument):
 	khanacademy_email = StringField()
 	khanacademy_is_facebook_user = BooleanField()
 	khanacademy_is_midsignup_phantom = BooleanField()
-	khanacademy_auth_emails = ListField(StringField)
+	# khanacademy_auth_emails = ListField(StringField)
 	khanacademy_last_modified_as_mapreduce_epoch = IntField()
 	khanacademy_uservideocss_version = IntField()
 	khanacademy_nickname = StringField()
-	khanacademy_user_input_auth_emails = ListField(StringField)
+	# khanacademy_user_input_auth_emails = ListField(StringField)
 	khanacademy_kind = StringField()
-	khanacademy_is_moderator_or_developer = StringField()
-	khanacademy_joined = DateTimeField()
+	khanacademy_is_moderator_or_developer = BooleanField()
+	khanacademy_joined = StringField()
 	khanacademy_userprogresscache_version = IntField()
 	khanacademy_gae_bingo_identity = StringField()
 
@@ -159,6 +156,7 @@ class TwitterUserInfo(EmbeddedDocument):
 
 
 class GoogleUserInfo(EmbeddedDocument):
+	created_at = StringField()
 	google_first_name = StringField()
 	google_claimed_id = StringField()
 	google_name = StringField()
