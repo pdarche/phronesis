@@ -2,8 +2,10 @@ import tornado.web
 import tornado.auth
 import mixins
 import json
+import simplejson
 import datetime
 import time
+from utilities import *
 
 #mongo and models
 from mongoengine import *
@@ -12,6 +14,8 @@ import models
 #python mongo hooks
 from pymongo import MongoClient
 import bson
+
+from bson import json_util
 
 class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
@@ -29,7 +33,7 @@ class SignUpHandler(tornado.web.RequestHandler):
 		#if the username isn't already taken, create new user object 
 		if len( models.User.objects(username=username) ) == 0:
 			newuser = models.User(
-				date = datetime.datetime.fromtimestamp(time.time()),
+				date = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 				username = username,
 				password = password,
 				offset_from_utc_millis = None,
@@ -83,30 +87,19 @@ class UserInfoHandler(BaseHandler):
 		if input == self.current_user:
 			
 			user = models.User.objects(username=input)
-			# self.render('test.html', user=response)
-			response = { 				
-				# "date" : user[0].date
-				"username" : user[0].username,
-				"offset_from_utc_millis" : user[0].offset_from_utc_millis,
-				"time_zone" : user[0].time_zone,
-				# "date_of_birth" : user[0].date_of_birth,
-				"fitibt" : user[0].fitbit_user_info,
-				"foursquare_user_info" : user[0].foursquare_user_info,
-				"flickr_user_info" : user[0].flickr_user_info,
-				"facebook_user_info" : user[0].facebook_user_info,
-				"khanacademy_user_info" : user[0].khanacademy_user_info,
-				"twitter_user_info" : user[0].twitter_user_info 
-			}
+			
+			response = json.dumps(user[0], default=encode_model)			
 
-			print "signup date is %r" % user[0].date
+			print "fb user info %r" % user[0].facebook_user_info
+			print "fb user info %r" % user[0].id
 
-			self.write( json.dumps(response) )
+			self.write( response )
 		else:
 			response
 			self.render('test.html', user=input)
 
 
-class TwitterHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixin): 
+class TwitterConnectHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixin): 
 	@tornado.web.asynchronous
 	def get(self):
 		oAuthToken = self.get_secure_cookie('tw_oauth_token')
@@ -137,10 +130,6 @@ class TwitterHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, 'Twitter authentication failed')
 
-		self.set_secure_cookie('tw_user_id', str(user['id']))
-		self.set_secure_cookie('tw_oauth_token', user['access_token']['key'])
-		self.set_secure_cookie('tw_oauth_secret', user['access_token']['secret'])
-
 		self.redirect('/twitter')
 
 	def _twitter_on_user(self, user):
@@ -148,11 +137,47 @@ class TwitterHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
+
+		tw = models.TwitterUserInfo(
+			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+			twitter_default_profile_image = user["default_profile_image"],
+			twitter_id = user["id"],
+			twitter_verified = user["verified"],
+			twitter_profile_image_url_https = user["profile_image_url_https"],
+			twitter_id_str = user["id_str"],
+			twitter_utc_offset = user["utc_offset"],
+			twitter_location = user["location"],
+			twitter_profile_image_url = user["profile_image_url"],
+			twitter_geo_enabled = user["geo_enabled"],
+			twitter_name = user["name"],
+			twitter_lang = user["lang"],
+			twitter_screen_name = user["screen_name"],
+			twitter_url = user["url"],
+			twitter_contributors_enabled = user["contributors_enabled"],
+			twitter_time_zone = user["time_zone"],
+			twitter_protected = user["protected"],
+			twitter_default_profile = user["default_profile"],
+			twitter_is_translator = user["is_translator"]
+		)
+
+		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj[0].update(set__twitter_user_info=tw)
+
+		if user_obj[0].save():
+			response = "saved"
+			print "saved"
+		else:
+			response = "something was f'd up"
+			print "not saved"
+
+		self.write(response)
+		self.finish()
+
 		self.render('test.html', user=json.dumps(user))
 
 
 
-class FacebookHandler(tornado.web.RequestHandler, tornado.auth.FacebookGraphMixin):
+class FacebookConnectHandler(tornado.web.RequestHandler, tornado.auth.FacebookGraphMixin):
 	@tornado.web.asynchronous
 	def get(self):
 		userId = self.get_secure_cookie('fb_user_id')
@@ -185,7 +210,31 @@ class FacebookHandler(tornado.web.RequestHandler, tornado.auth.FacebookGraphMixi
 		self.set_secure_cookie('fb_user_id', str(user['id']))
 		self.set_secure_cookie('fb_user_name', str(user['name']))
 		self.set_secure_cookie('fb_access_token', str(user['access_token']))
-		self.render('test.html', user=json.dumps(user))
+		
+		fb = models.FacebookUserInfo(
+			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+			facebook_picture = user["picture"]["data"]["url"],
+			facebook_first_name = user["first_name"],
+			facebook_last_name = user["last_name"],
+			facebook_name = user["name"],
+			facebook_locale = user["locale"],
+			facebook_access_token = user["access_token"],
+			facebook_link = user["link"],
+			facebook_id = user["id"]
+		)
+
+		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj[0].update(set__facebook_user_info=fb)
+
+		if user_obj[0].save():
+			response = "saved"
+			print "saved"
+		else:
+			response = "something was f'd up"
+			print "not saved"
+
+		self.write(response)
+		self.finish()
 
 
 
@@ -231,6 +280,10 @@ class FitbitHandler(tornado.web.RequestHandler, mixins.FitbitMixin):
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
+
+		# ftbt = models.FitbitUserInfo(
+
+		# )
 
 		self.render('test.html', user=user)
 

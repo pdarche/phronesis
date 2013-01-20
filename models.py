@@ -37,7 +37,7 @@ class FitbitAccessToken(EmbeddedDocument):
 	secret = StringField()
 
 class FitbitUserInfo(EmbeddedDocument):
-	date = DateTimeField()
+	date = StringField()
 	username = StringField()
 	fitbit_user_name = StringField()
 	fitbit_access_token = EmbeddedDocumentField(FitbitAccessToken)
@@ -61,7 +61,7 @@ class FitbitUserInfo(EmbeddedDocument):
 
 
 class FoursquareUserInfo(EmbeddedDocument):
-	date = DateTimeField()
+	date = StringField()
 	username = StringField()
 	foursquare_last_name = StringField()
 	foursquare_first_name = StringField()
@@ -83,7 +83,7 @@ class FlickrAccessToken(EmbeddedDocument):
 	flickr_nsid = StringField()
 
 class FlickrUserInfo(EmbeddedDocument):
-	date = DateTimeField()
+	date = StringField()
 	username = StringField()
 	flickr_access_token = EmbeddedDocumentField(FlickrAccessToken)
 	flickr_stat = StringField()
@@ -92,7 +92,7 @@ class FlickrUserInfo(EmbeddedDocument):
 
 
 class FacebookUserInfo(EmbeddedDocument):
-	date = DateTimeField()
+	created_at = StringField()
 	facebook_picture = StringField()
 	facebook_first_name = StringField()
 	facebook_last_name = StringField()
@@ -108,7 +108,7 @@ class KhanAcademyAccessToken(EmbeddedDocument):
 	khanacademy_key = StringField()
 
 class KhanAcademyUserInfo(EmbeddedDocument):
-	date = DateTimeField()
+	date = StringField()
 	khanacademy_has_notification = BooleanField()
 	khanacademy_can_record_tutorial = BooleanField()
 	khanacademy_is_demo = BooleanField()
@@ -137,12 +137,12 @@ class KhanAcademyUserInfo(EmbeddedDocument):
 
 
 class TwitterUserInfo(EmbeddedDocument):
+	created_at = StringField()
 	twitter_default_profile_image = BooleanField()
 	twitter_id = IntField()
 	twitter_verified = BooleanField()
 	twitter_profile_image_url_https = StringField()
 	twitter_id_str = StringField()
-	twitter_profile_background_image_url_https = StringField()
 	twitter_utc_offset = IntField()
 	twitter_location = StringField()
 	twitter_profile_image_url = StringField()
@@ -151,11 +151,11 @@ class TwitterUserInfo(EmbeddedDocument):
 	twitter_lang = StringField()
 	twitter_screen_name = StringField()
 	twitter_url = StringField()
-	twitter_contributors_enabled = BooleanField()
+	twitter_contributors_enabled = BooleanField() #remove?
 	twitter_time_zone = StringField()
 	twitter_protected = BooleanField()
-	twitter_default_profile = BooleanField()
-	twitter_is_translator = BooleanField()
+	twitter_default_profile = BooleanField()	#remove?
+	twitter_is_translator = BooleanField()		#remove?
 
 
 class GoogleUserInfo(EmbeddedDocument):
@@ -168,7 +168,7 @@ class GoogleUserInfo(EmbeddedDocument):
 
 
 class User(Document):
-	date = DateTimeField()
+	user_since = StringField()
 	username = StringField()
 	password = StringField()
 	offset_from_utc_millis = IntField()
@@ -185,7 +185,7 @@ class User(Document):
 
 
 class BodyMeasurements(EmbeddedDocument):
-	date = DateTimeField()
+	date = StringField()
 	user_id = StringField()
 	weight = FloatField()
 	bmi = FloatField()
@@ -230,14 +230,14 @@ class ActivitiesSummary(EmbeddedDocument):
 	steps = IntField()
 
 class Activity(EmbeddedDocument):
-	date = DateTimeField()
+	date = StringField()
 	user_id = StringField()
 	type = StringField() # fitbit or other activity source (say, nike or )
 	activity_description = EmbeddedDocumentField(ActivitiesDescription)
 	activity_summary = EmbeddedDocumentField(ActivitiesSummary)
 
 class PhysicalActivity(Document):
-	date = DateTimeField()
+	date = StringField()
 	user_id = StringField()
 	steps = IntField()
 	distance = FloatField()
@@ -261,7 +261,7 @@ class FoodUnit(EmbeddedDocument):
 	fitbit_unit_plural = StringField()
 
 class Food(Document):
-	date = DateTimeField() #needed?
+	date = StringField() #needed?
 	user_id = StringField()
 	amount = FloatField()
 	brand = StringField()
@@ -291,7 +291,7 @@ class ZeoDate(EmbeddedDocument):
 	hour = IntField()
 
 class Sleep(Document):
-	date = DateTimeField()
+	date = StringField()
 	user_id = StringField()
 	type = StringField() #zeo, fitbit, other
 	awakenings = IntField()
@@ -406,7 +406,7 @@ class KhanAcademyUserExercise(EmbeddedDocument):
 	last_done = DateTimeField()
 	last_review = DateTimeField()
 	longest_streak = IntField()
-	proficient_date = DateTimeField()
+	proficient_date = StringField()
 	seconds_per_fast_problem = FloatField()
 	streak = IntField()
 	summative = BooleanField()
@@ -427,7 +427,7 @@ class KhanAcademyUserVideos(EmbeddedDocument):
 	exercises = ListField(EmbeddedDocumentField(KhanAcademyUserExercise))
 
 class KhanAcademyStats(Document):
-	date = DateTimeField()
+	date = StringField()
 	user_id = StringField()
 	all_proficient_exercises = ListField()
 	badge_counts = ListField()

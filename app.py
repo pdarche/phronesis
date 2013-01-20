@@ -24,13 +24,11 @@ connect('local_db')
 class Application(tornado.web.Application):
 	def __init__(self):
 		handlers = [
-			(r"/", h.MainHandler),
-			(r"/signup", h.SignUpHandler),
-			(r"/login", h.LoginHandler),
-			(r"/users/(\w+)", h.UserInfoHandler),
+			(r"/", h.MainHandler),(r"/signup", h.SignUpHandler),
+			(r"/login", h.LoginHandler),(r"/users/(\w+)", h.UserInfoHandler),
 			(r"/remove", h.RemoveUserHandler),
-			(r"/twitter", h.TwitterHandler),
-			(r"/facebook", h.FacebookHandler),
+			(r"/twitter", h.TwitterConnectHandler),
+			(r"/facebook", h.FacebookConnectHandler),
 			(r"/fitbit", h.FitbitHandler),
 			(r"/zeo", h.ZeoHandler),
 			(r"/foursquare", h.FoursquareHandler),
