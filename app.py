@@ -29,12 +29,13 @@ class Application(tornado.web.Application):
 			(r"/remove", h.RemoveUserHandler),
 			(r"/twitter", h.TwitterConnectHandler),
 			(r"/facebook", h.FacebookConnectHandler),
-			(r"/fitbit", h.FitbitHandler),
+			(r"/fitbit", h.FitbitConnectHandler),
 			(r"/zeo", h.ZeoHandler),
 			(r"/foursquare", h.FoursquareHandler),
 			(r"/google", h.GoogleHandler),
 			(r"/flickr", h.FlickrHandler),
 			(r"/khanacademy", h.KhanAcademyHandler),
+			(r"/import/fitbit", h.FitbitImportHandler),
 			(r"/logout", h.LogoutHandler),
 		]
 		settings = dict(

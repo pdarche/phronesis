@@ -17,6 +17,25 @@ import bson
 
 from bson import json_util
 
+def oauthd(fn):
+	curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+	if hasattr(curr_user["fitbit_user_info"], "fitbit_access_token"):
+		def wrapped():
+			oAuthToken = curr_user["fitbit_user_info"]["fitbit_access_token"]["key"]
+			oAuthSecret = curr_user["fitbit_user_info"]["fitbit_access_token"]["secret"]
+			userID = curr_user["fitbit_user_info"]["fitbit_access_token"]["encoded_user_id"]
+
+			accessToken = {
+				'key': 		oAuthToken,
+				'secret':	oAuthSecret
+			}
+
+			fn()
+		return wrapped
+
+	else:
+		self.redirect('/fitbit')
+
 class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
 		return self.get_secure_cookie("username")
@@ -238,27 +257,31 @@ class FacebookConnectHandler(tornado.web.RequestHandler, tornado.auth.FacebookGr
 
 
 
-class FitbitHandler(tornado.web.RequestHandler, mixins.FitbitMixin): 
+class FitbitConnectHandler(BaseHandler, mixins.FitbitMixin): 
+	@tornado.web.authenticated
 	@tornado.web.asynchronous
 	def get(self):
-		oAuthToken = self.get_secure_cookie('fitbit_oauth_token')
-		oAuthSecret = self.get_secure_cookie('fitbit_oauth_secret')
-		userID = self.get_secure_cookie('fitbit_user_id')
+
+		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
 
 		if self.get_argument('oauth_token', None):			
 			self.get_authenticated_user(self.async_callback(self._fitbit_on_auth))
 			return
 
-		elif oAuthToken and oAuthSecret:
+		elif hasattr(curr_user["fitbit_user_info"], "fitbit_access_token"):
+				oAuthToken = curr_user["fitbit_user_info"]["fitbit_access_token"]["key"]
+				oAuthSecret = curr_user["fitbit_user_info"]["fitbit_access_token"]["secret"]
+				userID = curr_user["fitbit_user_info"]["fitbit_access_token"]["encoded_user_id"]
+
 				accessToken = {
 					'key': 		oAuthToken,
 					'secret':	oAuthSecret
 				}
 
-				self.fitbit_request('/users/show',
+				self.fitbit_request('/user/-/activities/log/steps/date/today/7d',
 					access_token =  accessToken,
 					user_id =		userID,
-					callback = 		self.async_callback(self._fitbit_on_auth)
+					callback = 		self.async_callback(self._fitbit_on_user)
 				)
 				return
 
@@ -268,10 +291,6 @@ class FitbitHandler(tornado.web.RequestHandler, mixins.FitbitMixin):
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, 'Fitbit authentication failed')
-
-		self.set_secure_cookie('fitbit_user_id', str(user['user']['encodedId']))
-		self.set_secure_cookie('fitbit_oauth_token', user['access_token']['key'])
-		self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
 
 		ftbt_access = models.FitbitAccessToken(
 			key = user["access_token"]["key"],
@@ -320,7 +339,8 @@ class FitbitHandler(tornado.web.RequestHandler, mixins.FitbitMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-
+		self.write( json.dumps(user) )
+		self.finish()
 
 class ZeoHandler(tornado.web.RequestHandler, mixins.ZeoMixin): 
 	@tornado.web.asynchronous
@@ -618,6 +638,82 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 
 		# self.render('test.html', user=user)
 
+####### REFACTOR.  THIS IS TERRIBLE
+class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):	
+	@tornado.web.authenticated
+	@tornado.web.asynchronous
+	# @oauthd
+	def get(self):
+
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/activities/steps/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_steps)
+		)
+		return
+
+	def _on_steps(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/activities/calories/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_cals)
+		)
+
+		print data
+
+	def _on_cals(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/activities/distance/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_imported)
+		)
+
+		print data
+
+	def _on_imported(self, data):
+
+		self.write( "success" )
+		self.finish()
+
+	def get_access_token(self):
+		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+
+		if hasattr(curr_user["fitbit_user_info"], "fitbit_access_token"):
+			oAuthToken = curr_user["fitbit_user_info"]["fitbit_access_token"]["key"]
+			oAuthSecret = curr_user["fitbit_user_info"]["fitbit_access_token"]["secret"]
+			userID = curr_user["fitbit_user_info"]["fitbit_access_token"]["encoded_user_id"]			
+
+			accessToken = {
+				'key': 		oAuthToken,
+				'secret':	oAuthSecret
+			}
+
+			return accessToken
+
+		else:
+			self.redirect('/fitbit')
+
+	def get_member_since(self):
+		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+		return curr_user["fitbit_user_info"]["fitbit_member_since"]
+
+	def get_user_id(self):
+		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+		return curr_user["fitbit_user_info"]["fitbit_access_token"]["encoded_user_id"]
+
+
 class LogoutHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.clear_all_cookies()
@@ -632,5 +728,7 @@ class RemoveUserHandler(tornado.web.RequestHandler):
 
 		user[0].delete(safe=True)
 		self.write("user deleted\n")
+
+
 
 
