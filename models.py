@@ -216,16 +216,16 @@ class ActivitiesDescription(EmbeddedDocument): # this needs to be looked into.
 class ActivitiesSummary(EmbeddedDocument):
 	fitbit_activity_score = IntField()
 	fitbit_activity_calories = IntField()
-	calories_out = IntField()
-	distances = ListField(FloatField())
-	elevation = FloatField()
-	floors = IntField()
-	mins_sedentary = IntField()
-	mins_lightly_active = IntField()
-	mins_fairly_active = IntField()
-	mins_highly_active = IntField()
-	marginal_calories = IntField()
-	steps = IntField()
+	fitbit_calories_out = IntField()
+	fitbit_distance = ListField(FloatField())
+	fitbit_elevation = FloatField()
+	fitbit_floors = IntField()
+	fitbit_mins_sedentary = IntField()
+	fitbit_mins_lightly_active = IntField()
+	fitbit_mins_fairly_active = IntField()
+	fitbit_mins_very_active = IntField()
+	fitbit_marginal_calories = IntField()
+	fitbit_steps = IntField()
 
 class Activity(EmbeddedDocument):
 	date = StringField()
@@ -235,7 +235,7 @@ class Activity(EmbeddedDocument):
 	activity_summary = EmbeddedDocumentField(ActivitiesSummary)
 
 class PhysicalActivity(Document):
-	date = StringField()
+	created_at = StringField()
 	user_id = StringField()
 	steps = IntField()
 	distance = FloatField()
@@ -245,8 +245,8 @@ class PhysicalActivity(Document):
 	elevation = FloatField()
 	mins_sedentary = IntField()
 	mins_lightly_active = IntField()
-	mins_moderately_active = IntField()
-	mins_highly_active = IntField()
+	mins_fairly_active = IntField()
+	mins_very_active = IntField()
 	active_score = IntField()
 	activities = ListField(EmbeddedDocumentField(Activity))
 

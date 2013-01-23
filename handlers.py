@@ -640,11 +640,11 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 
 ####### REFACTOR.  THIS IS TERRIBLE
 class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):	
+	returned = []
 	@tornado.web.authenticated
 	@tornado.web.asynchronous
 	# @oauthd
 	def get(self):
-
 		accessToken = self.get_access_token()
 		memberSince = self.get_member_since()
 		userID = self.get_user_id()
@@ -664,12 +664,11 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		self.fitbit_request('/user/-/activities/calories/date/%s/today' % memberSince,
 			access_token =  accessToken,
 			user_id =		userID,
-			callback = 		self.async_callback(self._on_cals)
+			callback = 		self.async_callback(self._on_calories)
 		)
+		self.returned.append(data)
 
-		print data
-
-	def _on_cals(self, data):
+	def _on_calories(self, data):
 		accessToken = self.get_access_token()
 		memberSince = self.get_member_since()
 		userID = self.get_user_id()
@@ -677,12 +676,155 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		self.fitbit_request('/user/-/activities/distance/date/%s/today' % memberSince,
 			access_token =  accessToken,
 			user_id =		userID,
+			callback = 		self.async_callback(self._on_distance)
+		)
+		self.returned.append(data)
+
+
+	def _on_distance(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/activities/floors/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_floors)
+		)
+		self.returned.append(data)
+
+	def _on_floors(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/activities/elevation/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_elevation)
+		)
+		self.returned.append(data)
+
+	def _on_elevation(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/activities/minutesSedentary/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_mins_sedentary)
+		)
+		self.returned.append(data)
+
+	def _on_mins_sedentary(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/activities/minutesLightlyActive/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_mins_lightly_active)
+		)
+		self.returned.append(data)
+
+	def _on_mins_lightly_active(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/activities/minutesFairlyActive/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_mins_moderately_active)
+		)
+		self.returned.append(data)
+
+	def _on_mins_moderately_active(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/activities/minutesVeryActive/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
 			callback = 		self.async_callback(self._on_imported)
 		)
+		self.returned.append(data)
 
-		print data
+	def _on_mins_highly_active(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/activities/activeScore/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_imported)
+		)
+		self.returned.append(data)
+
+	def _on_active_score(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/activities/activityCalories/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_imported)
+		)
+		self.returned.append(data)
 
 	def _on_imported(self, data):
+
+		self.returned.append(data)
+
+		# response = { "data" : self.returned }
+		dates = self.returned[0]["activities-steps"]
+		steps = self.returned[0]["activities-steps"]
+		calories = self.returned[1]["activities-calories"]
+		distance = self.returned[2]["activities-distance"]
+		floors = self.returned[3]["activities-floors"]
+		elevation = self.returned[4]["activities-elevation"]
+		mins_sedentary = self.returned[5]["activities-minutesSedentary"]
+		mins_light = self.returned[6]["activities-minutesLightlyActive"]
+		mins_fair = self.returned[7]["activities-minutesFairlyActive"]
+		mins_very = self.returned[8]["activities-minutesVeryActive"]
+
+		zipped = zip(
+			dates, steps, calories, distance, floors,
+			elevation, mins_sedentary, mins_light,
+			mins_fair, mins_very
+		)
+
+		print zipped[0]
+
+		for day in zipped:
+			activity_record = models.PhysicalActivity(
+					created_at = day[0]["dateTime"],
+					user_id = self.get_secure_cookie("usernmane"),
+					steps = int(day[1]["value"]),
+					distance = float(day[3]["value"]),
+					calories_out = int(day[2]["value"]),
+					activity_calories = None,
+					floors = int(day[4]["value"]),
+					elevation = float(day[5]["value"]),
+					mins_sedentary = int(day[6]["value"]),
+					mins_lightly_active = int(day[7]["value"]),
+					mins_farily_active = int(day[8]["value"]),
+					mins_very_active = int(day[9]["value"]),
+					active_score = None,
+					activities = None
+				)
+
+			if activity_record.save():
+				print "saved"
+			else:
+				print "didn't save"
+
+			# print str(day[0]["dateTime"] + ' ' + day[1]["value"] + ' ' + day[2]["value"] + ' ' + day[3]["value"] + ' ' + day[4]["value"] + ' ' + day[5]["value"] + ' ' + day[6]["value"] + ' ' + day[7]["value"] + ' ' + day[8]["value"])
 
 		self.write( "success" )
 		self.finish()
@@ -712,6 +854,15 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 	def get_user_id(self):
 		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
 		return curr_user["fitbit_user_info"]["fitbit_access_token"]["encoded_user_id"]
+
+class FitbitDumpsHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		db_activity_records = models.PhysicalActivity.objects()
+
+		response = json.dumps(db_activity_records, default=encode_model)
+
+		self.write( response )
 
 
 class LogoutHandler(tornado.web.RequestHandler):
