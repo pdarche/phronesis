@@ -37,6 +37,7 @@ class Application(tornado.web.Application):
 			(r"/khanacademy", h.KhanAcademyHandler),
 			(r"/import/fitbit", h.FitbitImportHandler),
 			(r"/dumps/fitbit", h.FitbitDumpsHandler),
+			(r"/remove/fitbit", h.RemoveUserFitbitHandler),
 			(r"/logout", h.LogoutHandler),
 		]
 		settings = dict(
