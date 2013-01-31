@@ -36,6 +36,7 @@ class Application(tornado.web.Application):
 			(r"/flickr", h.FlickrHandler),
 			(r"/khanacademy", h.KhanAcademyHandler),
 			(r"/import/fitbit", h.FitbitImportHandler),
+			(r"/import/foursquare", h.FoursquareImportHandler),
 			(r"/dumps/fitbit", h.FitbitDumpsHandler),
 			(r"/remove/fitbit", h.RemoveUserFitbitHandler),
 			(r"/logout", h.LogoutHandler),

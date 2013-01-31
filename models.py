@@ -250,6 +250,13 @@ class FitbitPhysicalActivity(Document):
 	ftbt_active_score = IntField()
 	ftbt_activities = ListField(EmbeddedDocumentField(FitbitActivity))
 
+class FitbitBodyData(Document):
+	created_at = StringField()
+	user_id = StringField()
+	ftbt_weight = FloatField()
+	ftbt_bmi = FloatField()
+	ftbt_fat = FloatField()
+
 class FitbitFoodUnit(EmbeddedDocument):
 	ftbt_unit_id = IntField()
 	ftbt_unit_name = StringField()
@@ -333,7 +340,7 @@ class ZeoSleep(Document):
 	wake_window_start_index = IntField() #? is this an int?
 
 
-############# LOCATION ############# 
+############# FOURSQUARE ############# 
 class VenueContact(EmbeddedDocument):
 	phone = StringField()
 	formattedPhone = StringField()
@@ -344,7 +351,8 @@ class VenueContact(EmbeddedDocument):
 class VenueLocation(EmbeddedDocument):
 	address = StringField()
 	cross_street = StringField()
-	location = GeoPointField()
+	lat = FloatField()
+	lng = FloatField()
 	postal_code = StringField()
 	city = StringField()
 	state = StringField()
@@ -353,9 +361,11 @@ class VenueLocation(EmbeddedDocument):
 
 
 class VenueCategory(EmbeddedDocument):
+	category_id = StringField()
 	name = StringField()
 	plural = StringField()
 	short_name = StringField()
+	primary = BooleanField()
 
 
 class VenueStats(EmbeddedDocument):
@@ -363,22 +373,38 @@ class VenueStats(EmbeddedDocument):
 	users_count = IntField()
 	tip_count = IntField()
 
+class VenueLikesGroup(EmbeddedDocument):
+	type = StringField()
+	count = IntField()
+	# itmes = ListField() fs user-object 
+
+class VenueLikes(EmbeddedDocument):
+	count = IntField()
+	groups = ListField(EmbeddedDocumentField(VenueLikesGroup))
+
 
 class Venue(EmbeddedDocument):
-	foursqure_venue_id = StringField()
+	venue_id = StringField()
 	name = StringField()
 	contact = EmbeddedDocumentField(VenueContact)
 	location = EmbeddedDocumentField(VenueLocation)
+	cannonical_url = StringField()
 	categories = ListField(EmbeddedDocumentField(VenueCategory))
+	verified = BooleanField()
 	stats = EmbeddedDocumentField(VenueStats)
+	url = StringField()
+	likes = EmbeddedDocumentField(VenueLikes)
+	like = BooleanField()
 
-class Location(Document):
-	datetime = DateTimeField
+
+class CheckIn(Document):
+	record_created_at = DateTimeField
 	user_id = StringField()
-	type = StringField() #foursquare or openpaths
-	altitude = FloatField()
-	location = GeoPointField()
-	venue = EmbeddedDocumentField(Venue)
+	fs_id = StringField()
+	fs_created_at = IntField()
+	fs_type = StringField()
+	fs_timezone_offset = IntField()
+	fs_venue = EmbeddedDocumentField(Venue)
 
 
 ############# EDUCATION ############# 

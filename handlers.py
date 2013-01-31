@@ -645,6 +645,7 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 	activities = []
 	foods = []
 	sleep = []
+	body = []
 	@tornado.web.authenticated
 	@tornado.web.asynchronous
 	# @oauthd
@@ -861,13 +862,61 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		self.fitbit_request('/user/-/sleep/efficiency/date/%s/today' % memberSince,
 			access_token =  accessToken,
 			user_id =		userID,
-			callback = 		self.async_callback(self._on_imported)
+			callback = 		self.async_callback(self._on_efficiency)
 		)
 		self.sleep.append(data)
 
+	def _on_efficiency(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/body/weight/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_weight)
+		)
+		self.sleep.append(data)
+
+	def _on_weight(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/body/bmi/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_bmi)
+		)
+		self.body.append(data)
+
+	def _on_bmi(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/body/fat/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_fat)
+		)
+		self.body.append(data)
+
+	def _on_fat(self, data):
+		accessToken = self.get_access_token()
+		memberSince = self.get_member_since()
+		userID = self.get_user_id()
+
+		self.fitbit_request('/user/-/body/fat/date/%s/today' % memberSince,
+			access_token =  accessToken,
+			user_id =		userID,
+			callback = 		self.async_callback(self._on_imported)
+		)
+		self.body.append(data)
+
 	def _on_imported(self, data):
 
-		self.sleep.append(data)
+		self.body.append(data)
 
 		dates = self.activities[0]["activities-steps"]
 		steps = self.activities[0]["activities-steps"]
@@ -946,6 +995,31 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 			else:
 				print "didn't save sleep record"
 
+
+		created_at = self.body[0]["body-weight"]
+		weight = self.body[0]["body-weight"]
+		bmi = self.body[1]["body-bmi"]
+		fat = self.body[2]["body-fat"]
+
+		zipped_body = zip(
+			created_at, weight,
+			bmi, fat 
+		)
+
+		for body_day in zipped_body:
+			body_record = models.FitbitBodyData(
+					created_at = body_day[0]["dateTime"],
+					user_id = self.get_secure_cookie("usernmane"),
+					ftbt_weight =  float(body_day[1]["value"]),
+					ftbt_bmi = float(body_day[2]["value"]),
+					ftbt_fat = float(body_day[3]["value"])
+				)
+
+			if body_record.save():
+				print "saved body record"
+			else:
+				print "didn't save body record"			
+
 		self.write( "success" )
 		self.finish()
 
@@ -975,18 +1049,58 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
 		return curr_user["ftbt_user_info"]["ftbt_access_token"]["encoded_user_id"]
 
+
+class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
+	@tornado.web.authenticated
+	@tornado.web.asynchronous
+	def get(self):
+		user_info = self.get_fs_user_info()
+		user_id = user_info["user_id"]
+		access_token = user_info["access_token"]
+
+		self.foursquare_request(
+		    path="/users/self",
+		    callback=self.async_callback(self._on_imported),
+		    access_token=access_token
+		)
+
+		# self.write("pizza")
+		# self.finish()
+
+	def _on_imported(self, user):
+		self.write( user )
+		self.finish()
+
+
+	def get_fs_user_info(self):
+		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+
+		if hasattr(curr_user["foursquare_user_info"], "foursquare_access_token"):
+			access_token = curr_user["foursquare_user_info"]["foursquare_access_token"]
+			user_id = curr_user["foursquare_user_info"]["foursquare_id"]
+
+			user_info = { "access_token" : access_token, "user_id" : user_id }
+
+			return user_info
+
+		# else:
+			# self.redirect('/foursquare')
+
+
 class FitbitDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
 		db_activity_records = models.FitbitPhysicalActivity.objects()
 		db_sleep_records = models.FitbitSleep.objects
+		db_body_records = models.FitbitBodyData.objects()
 
 		activities = json.dumps(db_activity_records, default=encode_model)
 		sleep = json.dumps(db_sleep_records, default=encode_model)
+		body = json.dumps(db_body_records, default=encode_model)
 
-		data = [ activities, sleep ]
+		data = { "phys" : activities, "sleeps" : sleep, "body" : body }
 
-		self.write( sleep )
+		self.write( json.dumps(data) )
 
 
 class LogoutHandler(tornado.web.RequestHandler):
@@ -1009,10 +1123,13 @@ class RemoveUserHandler(tornado.web.RequestHandler):
 class RemoveUserFitbitHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		records = models.FitbitPhysicalActivity.objects()
-		records.delete()
+		phys = models.FitbitPhysicalActivity.objects()
+		sleep = models.FitbitSleep.objects()
 
-		self.write(str(len(records)) + " records")
+		phys.delete()
+		sleep.delete()
+
+		self.write(str(len(phys)) + " records")
 
 
 
