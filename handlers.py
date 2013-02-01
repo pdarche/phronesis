@@ -1059,7 +1059,7 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 		access_token = user_info["access_token"]
 
 		self.foursquare_request(
-		    path="/users/self",
+		    path="/users/self/checkins",
 		    callback=self.async_callback(self._on_imported),
 		    access_token=access_token
 		)
@@ -1067,8 +1067,61 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 		# self.write("pizza")
 		# self.finish()
 
-	def _on_imported(self, user):
-		self.write( user )
+	def _on_imported(self, checkins):
+		user_info = self.get_fs_user_info()
+		user_id = user_info["user_id"]
+		
+		checkins = checkins["response"]["checkins"]["items"]
+
+		for checkin in checkins:
+			contact  = models.VenueContact(
+				phone = checkin["venue"]["contact"]["phone"],
+				formatted_phone = checkin["venue"]["contact"]["formattedPhone"],
+				twitter = checkin["venue"]["contact"]["twitter"],
+				facebook = checkin["venue"]["contact"]["facebook"]
+				
+			)
+
+			location = models.VenueLocation(
+				address = checkin["venue"]["location"]["address"],
+				cross_street = checkin["venue"]["location"]["crossStreet"],
+				lat = checkin["venue"]["location"]["lat"],
+				lng = checkin["venue"]["location"]["lng"],
+				postal_code = checkin["venue"]["location"]["postalCode"],
+				city = checkin["venue"]["location"]["city"],
+				state = checkin["venue"]["location"]["state"],
+				country = checkin["venue"]["location"]["country"],
+				cc = checkin["venue"]["location"]["cc"]
+			)
+
+			venue = models.Venue(
+				venue_id = venue["id"],
+				name = venue["venue"]["name"],
+				contact = contact,
+				location = location,
+				cannonical_url = checkin["venue"]["cannonicalUrl"],
+				categories = None,
+				verified = checkin["venue"]["verified"],
+				stats = stats,
+				url = checkin["venue"]["url"],
+				likes = likes,
+				like = checkin["venue"]["like"],				
+				menu = menu,
+			)
+
+			checkin = models.CheckIn(
+				record_created_at = checkin["createdAt"],
+				user_id = self.get_secure_cookie("username"),
+				fs_id = checkin["id"],
+				fs_create_at = checkin["createdAt"],
+				fs_type = checkin["type"]
+				fs_timezone_offset = checkin["timeZoneOffset"],
+				fs_timezone = checkin["timeZone"],
+				fs_venue = venue
+
+			)
+
+		self.write( checkins )
 		self.finish()
 
 

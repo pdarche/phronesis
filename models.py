@@ -343,7 +343,7 @@ class ZeoSleep(Document):
 ############# FOURSQUARE ############# 
 class VenueContact(EmbeddedDocument):
 	phone = StringField()
-	formattedPhone = StringField()
+	formatted_phone = StringField()
 	twitter = StringField()
 	facebook = StringField()
 
@@ -373,14 +373,22 @@ class VenueStats(EmbeddedDocument):
 	users_count = IntField()
 	tip_count = IntField()
 
+
 class VenueLikesGroup(EmbeddedDocument):
 	type = StringField()
 	count = IntField()
 	# itmes = ListField() fs user-object 
 
+
 class VenueLikes(EmbeddedDocument):
 	count = IntField()
 	groups = ListField(EmbeddedDocumentField(VenueLikesGroup))
+
+
+class VenueMenu(EmbeddedDocument):
+	url = StringField()
+	mobileUrl = StringField()
+	type = StringField()
 
 
 class Venue(EmbeddedDocument):
@@ -395,6 +403,7 @@ class Venue(EmbeddedDocument):
 	url = StringField()
 	likes = EmbeddedDocumentField(VenueLikes)
 	like = BooleanField()
+	menu = EmbeddedDocumentField(VenueMenu)
 
 
 class CheckIn(Document):
@@ -404,6 +413,7 @@ class CheckIn(Document):
 	fs_created_at = IntField()
 	fs_type = StringField()
 	fs_timezone_offset = IntField()
+	fs_timezone = StringField()
 	fs_venue = EmbeddedDocumentField(Venue)
 
 
