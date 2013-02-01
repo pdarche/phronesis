@@ -1074,12 +1074,13 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 		checkins = checkins["response"]["checkins"]["items"]
 
 		for checkin in checkins:
+			
+			
 			contact  = models.VenueContact(
 				phone = checkin["venue"]["contact"]["phone"],
 				formatted_phone = checkin["venue"]["contact"]["formattedPhone"],
 				twitter = checkin["venue"]["contact"]["twitter"],
 				facebook = checkin["venue"]["contact"]["facebook"]
-				
 			)
 
 			location = models.VenueLocation(
