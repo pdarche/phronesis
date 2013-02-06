@@ -30,39 +30,37 @@ class AppSettings(Document):
 	cookie_secret = StringField()
 
 
-
+################ SERVICE USER INFO ################
 class FitbitAccessToken(EmbeddedDocument):
 	key = StringField()
 	encoded_user_id = StringField()
 	secret = StringField()
 
 class FitbitUserInfo(EmbeddedDocument):
-	date = DateTimeField()
-	username = StringField()
-	fitbit_user_name = StringField()
-	fitbit_access_token = EmbeddedDocumentField(FitbitAccessToken)
-	fitbit_weight_unit = StringField()
-	fitbit_stride_length_walking = FloatField()
-	fitbit_display_name = StringField()
-	fitbit_foods_locale = StringField()
-	fitbit_height_unit = StringField()
-	fitbit_locale = StringField()
-	fitbit_gender = StringField()
-	fitbit_member_since = DateTimeField()
-	fitbit_offset_from_utc_millis = IntField()
-	fitbit_encoded_id = StringField()
-	fitbit_avatar = StringField()
-	fitbit_water_unit = StringField()
-	fitbit_distance_unit = StringField()
-	fitbit_glucos_unit = StringField()
-	fitbit_full_name = StringField()
-	fitbit_nickname = StringField()
-	fitbit_stride_length_running = FloatField()
+	created_at = StringField()
+	ftbt_user_name = StringField()
+	ftbt_access_token = EmbeddedDocumentField(FitbitAccessToken)
+	ftbt_weight_unit = StringField()
+	ftbt_stride_length_walking = FloatField()
+	ftbt_display_name = StringField()
+	ftbt_foods_locale = StringField()
+	ftbt_height_unit = StringField()
+	ftbt_locale = StringField()
+	ftbt_gender = StringField()
+	ftbt_member_since = StringField()
+	ftbt_offset_from_utc_millis = IntField()
+	ftbt_encoded_id = StringField()
+	ftbt_avatar = StringField()
+	ftbt_water_unit = StringField()
+	ftbt_distance_unit = StringField()
+	ftbt_glucose_unit = StringField()
+	ftbt_full_name = StringField()
+	ftbt_nickname = StringField()
+	ftbt_stride_length_running = FloatField()
 
 
 class FoursquareUserInfo(EmbeddedDocument):
-	date = DateTimeField()
-	username = StringField()
+	created_at = StringField()
 	foursquare_last_name = StringField()
 	foursquare_first_name = StringField()
 	foursquare_access_token = StringField()
@@ -83,8 +81,7 @@ class FlickrAccessToken(EmbeddedDocument):
 	flickr_nsid = StringField()
 
 class FlickrUserInfo(EmbeddedDocument):
-	date = DateTimeField()
-	username = StringField()
+	created_at = StringField() 			#add updates?
 	flickr_access_token = EmbeddedDocumentField(FlickrAccessToken)
 	flickr_stat = StringField()
 	flickr_user_url = StringField()
@@ -92,7 +89,7 @@ class FlickrUserInfo(EmbeddedDocument):
 
 
 class FacebookUserInfo(EmbeddedDocument):
-	date = DateTimeField()
+	created_at = StringField()
 	facebook_picture = StringField()
 	facebook_first_name = StringField()
 	facebook_last_name = StringField()
@@ -108,7 +105,7 @@ class KhanAcademyAccessToken(EmbeddedDocument):
 	khanacademy_key = StringField()
 
 class KhanAcademyUserInfo(EmbeddedDocument):
-	date = DateTimeField()
+	created_at = StringField()
 	khanacademy_has_notification = BooleanField()
 	khanacademy_can_record_tutorial = BooleanField()
 	khanacademy_is_demo = BooleanField()
@@ -124,25 +121,25 @@ class KhanAcademyUserInfo(EmbeddedDocument):
 	khanacademy_email = StringField()
 	khanacademy_is_facebook_user = BooleanField()
 	khanacademy_is_midsignup_phantom = BooleanField()
-	khanacademy_auth_emails = ListField(StringField)
+	# khanacademy_auth_emails = ListField(StringField)
 	khanacademy_last_modified_as_mapreduce_epoch = IntField()
 	khanacademy_uservideocss_version = IntField()
 	khanacademy_nickname = StringField()
-	khanacademy_user_input_auth_emails = ListField(StringField)
+	# khanacademy_user_input_auth_emails = ListField(StringField)
 	khanacademy_kind = StringField()
-	khanacademy_is_moderator_or_developer = StringField()
-	khanacademy_joined = DateTimeField()
+	khanacademy_is_moderator_or_developer = BooleanField()
+	khanacademy_joined = StringField()
 	khanacademy_userprogresscache_version = IntField()
 	khanacademy_gae_bingo_identity = StringField()
 
 
 class TwitterUserInfo(EmbeddedDocument):
+	created_at = StringField()
 	twitter_default_profile_image = BooleanField()
 	twitter_id = IntField()
 	twitter_verified = BooleanField()
 	twitter_profile_image_url_https = StringField()
 	twitter_id_str = StringField()
-	twitter_profile_background_image_url_https = StringField()
 	twitter_utc_offset = IntField()
 	twitter_location = StringField()
 	twitter_profile_image_url = StringField()
@@ -151,14 +148,15 @@ class TwitterUserInfo(EmbeddedDocument):
 	twitter_lang = StringField()
 	twitter_screen_name = StringField()
 	twitter_url = StringField()
-	twitter_contributors_enabled = BooleanField()
+	twitter_contributors_enabled = BooleanField() #remove?
 	twitter_time_zone = StringField()
 	twitter_protected = BooleanField()
-	twitter_default_profile = BooleanField()
-	twitter_is_translator = BooleanField()
+	twitter_default_profile = BooleanField()	#remove?
+	twitter_is_translator = BooleanField()		#remove?
 
 
 class GoogleUserInfo(EmbeddedDocument):
+	created_at = StringField()
 	google_first_name = StringField()
 	google_claimed_id = StringField()
 	google_name = StringField()
@@ -168,15 +166,16 @@ class GoogleUserInfo(EmbeddedDocument):
 
 
 class User(Document):
-	date = DateTimeField()
+	user_since = StringField()
 	username = StringField()
+	password = StringField()
 	offset_from_utc_millis = IntField()
 	time_zone = StringField()
 	date_of_birth = DateTimeField()
-	fitbit_user_info = EmbeddedDocumentField(FitbitUserInfo)
+	ftbt_user_info = EmbeddedDocumentField(FitbitUserInfo)
 	foursquare_user_info = EmbeddedDocumentField(FoursquareUserInfo)
 	flickr_user_info = EmbeddedDocumentField(FlickrUserInfo)
-	faceboo_user_info = EmbeddedDocumentField(FacebookUserInfo)
+	facebook_user_info = EmbeddedDocumentField(FacebookUserInfo)
 	khanacademy_user_info = EmbeddedDocumentField(KhanAcademyUserInfo)
 	twitter_user_info = EmbeddedDocumentField(TwitterUserInfo)
 	google_user_info = EmbeddedDocumentField(GoogleUserInfo)
@@ -184,7 +183,7 @@ class User(Document):
 
 
 class BodyMeasurements(EmbeddedDocument):
-	date = DateTimeField()
+	date = StringField()
 	user_id = StringField()
 	weight = FloatField()
 	bmi = FloatField()
@@ -199,87 +198,102 @@ class BodyMeasurements(EmbeddedDocument):
 	# physicalActivity
 	# location
 
-############# PHYSICAL ACTIVITY ############# 
+################ FITIBIT ################
 class ActivitiesDescription(EmbeddedDocument): # this needs to be looked into. 
-	fitbit_activity_id = IntField()			   # what is the purpose of this?
-	fitbit_activity_parent_id = IntField()	   # is it generic model of an activity type?
-	calories = IntField()
-	description = StringField()
-	distance = FloatField()
-	duration = IntField()
-	has_start_time = BooleanField()
-	is_favorite = BooleanField()
-	log_id = IntField()
-	name = StringField()
-	start_time = DateTimeField()
-	steps = IntField()
+	ftbt_activity_id = IntField()			   # what is the purpose of this?
+	ftbt_activity_parent_id = IntField()	   # is it generic model of an activity type?
+	ftbt_calories = IntField()
+	ftbt_description = StringField()
+	ftbt_distance = FloatField()
+	ftbt_duration = IntField()
+	ftbt_has_start_time = BooleanField()
+	ftbt_is_favorite = BooleanField()
+	ftbt_log_id = IntField()
+	ftbt_name = StringField()
+	ftbt_start_time = DateTimeField()
+	ftbt_steps = IntField()
 
-class ActivitiesSummary(EmbeddedDocument):
-	fitbit_activity_score = IntField()
-	fitbit_activity_calories = IntField()
-	calories_out = IntField()
-	distances = ListField(FloatField())
-	elevation = FloatField()
-	floors = IntField()
-	mins_sedentary = IntField()
-	mins_lightly_active = IntField()
-	mins_fairly_active = IntField()
-	mins_highly_active = IntField()
-	marginal_calories = IntField()
-	steps = IntField()
+class FitbitActivitiesSummary(EmbeddedDocument):
+	ftbt_activity_score = IntField()
+	ftbt_activity_calories = IntField()
+	ftbt_calories_out = IntField()
+	ftbt_distance = ListField(FloatField())
+	ftbt_elevation = FloatField()
+	ftbt_floors = IntField()
+	ftbt_mins_sedentary = IntField()
+	ftbt_mins_lightly_active = IntField()
+	ftbt_mins_fairly_active = IntField()
+	ftbt_mins_very_active = IntField()
+	ftbt_marginal_calories = IntField()
+	ftbt_steps = IntField()
 
-class Activity(EmbeddedDocument):
-	date = DateTimeField()
+class FitbitActivity(EmbeddedDocument):
+	date = StringField()
 	user_id = StringField()
 	type = StringField() # fitbit or other activity source (say, nike or )
 	activity_description = EmbeddedDocumentField(ActivitiesDescription)
-	activity_summary = EmbeddedDocumentField(ActivitiesSummary)
+	activity_summary = EmbeddedDocumentField(FitbitActivitiesSummary)
 
-class PhysicalActivity(Document):
-	date = DateTimeField()
+class FitbitPhysicalActivity(Document):
+	created_at = StringField()
 	user_id = StringField()
-	steps = IntField()
-	distance = FloatField()
-	calories_out = IntField()
-	activity_calories = IntField()
-	floors = IntField()
-	elevation = FloatField()
-	mins_sedentary = IntField()
-	mins_lightly_active = IntField()
-	mins_moderately_active = IntField()
-	mins_highly_active = IntField()
-	active_score = IntField()
-	activities = ListField(EmbeddedDocumentField(Activity))
+	ftbt_steps = IntField()
+	ftbt_distance = FloatField()
+	ftbt_calories_out = IntField()
+	ftbt_activity_calories = IntField()
+	ftbt_floors = IntField()
+	ftbt_elevation = FloatField()
+	ftbt_mins_sedentary = IntField()
+	ftbt_mins_lightly_active = IntField()
+	ftbt_mins_fairly_active = IntField()
+	ftbt_mins_very_active = IntField()
+	ftbt_active_score = IntField()
+	ftbt_activities = ListField(EmbeddedDocumentField(FitbitActivity))
 
-
-
-############# NUTRITION ############# 
-class FoodUnit(EmbeddedDocument):
-	fitbit_unit_id = IntField()
-	fitbit_unit_name = StringField()
-	fitbit_unit_plural = StringField()
-
-class Food(Document):
-	date = DateTimeField() #needed?
+class FitbitBodyData(Document):
+	created_at = StringField()
 	user_id = StringField()
-	amount = FloatField()
-	brand = StringField()
-	fitbit_food_id = IntField()
-	fitbit_mealy_type_id = IntField()
-	unit = EmbeddedDocumentField(FoodUnit)
-	calories = IntField()
-	carbs = FloatField()
-	fat = FloatField()
-	fiber = FloatField()
-	protein = FloatField()
-	sodium = FloatField()
-	sugar = FloatField()
-	water = BooleanField()
+	ftbt_weight = FloatField()
+	ftbt_bmi = FloatField()
+	ftbt_fat = FloatField()
+
+class FitbitFoodUnit(EmbeddedDocument):
+	ftbt_unit_id = IntField()
+	ftbt_unit_name = StringField()
+	ftbt_unit_plural = StringField()
+
+class FitbitFood(Document):
+	created_at = StringField() #needed?
+	user_id = StringField()
+	ftbt_amount = FloatField()
+	ftbt_brand = StringField()
+	ftbt_food_id = IntField()
+	ftbt_meal_type_id = IntField()
+	ftbt_unit = EmbeddedDocumentField(FitbitFoodUnit)
+	ftbt_calories = IntField()
+	ftbt_carbs = FloatField()
+	ftbt_fat = FloatField()
+	ftbt_fiber = FloatField()
+	ftbt_protein = FloatField()
+	ftbt_sodium = FloatField()
+	ftbt_sugar = FloatField()
+	ftbt_water = BooleanField()
 	# image = ImageField()
-	location = GeoPointField()
-	fitbit_name = StringField()
-	user_given_name = StringField()
+	# location = GeoPointField()
+	ftbt_name = StringField()
+	# user_given_name = StringField()
 
+class FitbitSleep(Document):
+	created_at = StringField()
+	user_id = StringField()
+	ftbt_start_time = StringField()
+	ftbt_time_in_bed = StringField
+	ftbt_minutes_asleep = IntField()
+	ftbt_awakenings_count = IntField()
+	ftbt_minutes_awake = IntField()
+	ftbt_minutes_to_fall_asleep = IntField()
+	ftbt_minutes_after_wakeup = IntField()
+	ftbt_efficiency = IntField()	
 
 
 ############# SLEEP ############# 
@@ -289,8 +303,8 @@ class ZeoDate(EmbeddedDocument):
 	day = IntField()
 	hour = IntField()
 
-class Sleep(Document):
-	date = DateTimeField()
+class ZeoSleep(Document):
+	date = StringField()
 	user_id = StringField()
 	type = StringField() #zeo, fitbit, other
 	awakenings = IntField()
@@ -326,29 +340,20 @@ class Sleep(Document):
 	wake_window_start_index = IntField() #? is this an int?
 
 
-############# LOCATION ############# 
-class VenueContact(EmbeddedDocument):
-	phone = StringField()
-	formattedPhone = StringField()
-	twitter = StringField()
-	facebook = StringField()
-
-
-class VenueLocation(EmbeddedDocument):
-	address = StringField()
-	cross_street = StringField()
-	location = GeoPointField()
-	postal_code = StringField()
-	city = StringField()
-	state = StringField()
-	country = StringField()
-	cc = StringField()
+############# FOURSQUARE ############# 
+class VenueStats(EmbeddedDocument):
+	tip_count = IntField()
+	checkins_count = IntField()
+	users_field = IntField()
 
 
 class VenueCategory(EmbeddedDocument):
+	category_id = StringField()
 	name = StringField()
 	plural = StringField()
 	short_name = StringField()
+	primary = BooleanField()
+	parents = ListField(StringField)
 
 
 class VenueStats(EmbeddedDocument):
@@ -357,21 +362,80 @@ class VenueStats(EmbeddedDocument):
 	tip_count = IntField()
 
 
+class VenueLikesGroup(EmbeddedDocument):
+	type = StringField()
+	count = IntField()
+	summary = StringField()
+	# itmes = ListField() fs user-object 
+
+
+class VenueBeenHere(EmbeddedDocument):
+	count = IntField()
+	marked = BooleanField()
+
+
+class VenueLikes(EmbeddedDocument):
+	count = IntField()
+	groups = ListField(EmbeddedDocumentField(VenueLikesGroup))
+
+
+class VenueMenu(EmbeddedDocument):
+	url = StringField()
+	mobile_url = StringField()
+	type = StringField()
+
+
+class CheckInLikes(EmbeddedDocument):
+	type = StringField()
+	count = IntField()
+	summary = StringField()
+
+
+class VenueContact(EmbeddedDocument):
+	phone = StringField()
+	formatted_phone = StringField()
+	twitter = StringField()
+	facebook = StringField()
+
+
+class VenueLocation(EmbeddedDocument):
+	address = StringField()
+	cross_street = StringField()
+	lat = FloatField()
+	lng = FloatField()
+	postal_code = StringField()
+	city = StringField()
+	state = StringField()
+	country = StringField()
+	cc = StringField()
+
+
 class Venue(EmbeddedDocument):
-	foursqure_venue_id = StringField()
+	venue_id = StringField()
 	name = StringField()
 	contact = EmbeddedDocumentField(VenueContact)
 	location = EmbeddedDocumentField(VenueLocation)
+	cannonical_url = StringField()
 	categories = ListField(EmbeddedDocumentField(VenueCategory))
+	verified = BooleanField()
 	stats = EmbeddedDocumentField(VenueStats)
+	url = StringField()
+	likes = EmbeddedDocumentField(VenueLikes)
+	like = BooleanField()
+	menu = EmbeddedDocumentField(VenueMenu)
 
-class Location(Document):
-	datetime = DateTimeField
+
+class CheckIn(Document):
+	record_created_at = DateTimeField
 	user_id = StringField()
-	type = StringField() #foursquare or openpaths
-	altitude = FloatField()
-	location = GeoPointField()
-	venue = EmbeddedDocumentField(Venue)
+	fs_id = StringField()
+	fs_created_at = IntField()
+	fs_type = StringField()
+	fs_timezone_offset = IntField()
+	fs_timezone = StringField()
+	fs_venue = EmbeddedDocumentField(Venue)
+	fs_like = BooleanField()
+	fs_likes = ListField(EmbeddedDocumentField(CheckInLikes))
 
 
 ############# EDUCATION ############# 
@@ -405,7 +469,7 @@ class KhanAcademyUserExercise(EmbeddedDocument):
 	last_done = DateTimeField()
 	last_review = DateTimeField()
 	longest_streak = IntField()
-	proficient_date = DateTimeField()
+	proficient_date = StringField()
 	seconds_per_fast_problem = FloatField()
 	streak = IntField()
 	summative = BooleanField()
@@ -426,7 +490,7 @@ class KhanAcademyUserVideos(EmbeddedDocument):
 	exercises = ListField(EmbeddedDocumentField(KhanAcademyUserExercise))
 
 class KhanAcademyStats(Document):
-	date = DateTimeField()
+	date = StringField()
 	user_id = StringField()
 	all_proficient_exercises = ListField()
 	badge_counts = ListField()

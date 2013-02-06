@@ -24,19 +24,29 @@ connect('local_db')
 class Application(tornado.web.Application):
 	def __init__(self):
 		handlers = [
-			(r"/twitter", h.TwitterHandler),
-			(r"/facebook", h.FacebookHandler),
-			(r"/fitbit", h.FitbitHandler),
+			(r"/", h.MainHandler),(r"/signup", h.SignUpHandler),
+			(r"/login", h.LoginHandler),(r"/users/(\w+)", h.UserInfoHandler),
+			(r"/remove", h.RemoveUserHandler),
+			(r"/twitter", h.TwitterConnectHandler),
+			(r"/facebook", h.FacebookConnectHandler),
+			(r"/fitbit", h.FitbitConnectHandler),
 			(r"/zeo", h.ZeoHandler),
 			(r"/foursquare", h.FoursquareHandler),
 			(r"/google", h.GoogleHandler),
 			(r"/flickr", h.FlickrHandler),
 			(r"/khanacademy", h.KhanAcademyHandler),
+			(r"/import/fitbit", h.FitbitImportHandler),
+			(r"/import/foursquare", h.FoursquareImportHandler),
+			(r"/dumps/fitbit", h.FitbitDumpsHandler),
+			(r"/dumps/foursquare", h.FoursquareDumpsHandler),
+			(r"/remove/fitbit", h.RemoveUserFitbitHandler),
+			(r"/remove/foursquare", h.RemoveUserFoursquareHandler),
 			(r"/logout", h.LogoutHandler),
 		]
 		settings = dict(
 			template_path=os.path.join(os.path.dirname(__file__), "templates"),
 			static_path=os.path.join(os.path.dirname(__file__), "static"),
+			login_url="/login",
 			twitter_consumer_key=models.AppSettings.objects[0].twitter_consumer_key,
 			twitter_consumer_secret=models.AppSettings.objects[0].twitter_consumer_secret,
 			facebook_api_key=models.AppSettings.objects[0].facebook_api_key,
