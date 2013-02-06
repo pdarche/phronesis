@@ -427,7 +427,14 @@ class FoursquareMixin(object):
             all_args["oauth_token"] = access_token
             all_args.update(args)
 
-        if all_args: url += "?" + urllib.urlencode(all_args)
+        if args:
+            for k, v in args["args"].iteritems():
+                all_args[k] = v
+                all_args.update(args)
+
+        if all_args: 
+            url += "?" + urllib.urlencode(all_args)
+            print "there are some args" + url
 
         callback = self.async_callback(self._on_foursquare_request, callback)
         if post_args is not None:

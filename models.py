@@ -341,6 +341,56 @@ class ZeoSleep(Document):
 
 
 ############# FOURSQUARE ############# 
+class VenueStats(EmbeddedDocument):
+	tip_count = IntField()
+	checkins_count = IntField()
+	users_field = IntField()
+
+
+class VenueCategory(EmbeddedDocument):
+	category_id = StringField()
+	name = StringField()
+	plural = StringField()
+	short_name = StringField()
+	primary = BooleanField()
+	parents = ListField(StringField)
+
+
+class VenueStats(EmbeddedDocument):
+	checkins_count = IntField()
+	users_count = IntField()
+	tip_count = IntField()
+
+
+class VenueLikesGroup(EmbeddedDocument):
+	type = StringField()
+	count = IntField()
+	summary = StringField()
+	# itmes = ListField() fs user-object 
+
+
+class VenueBeenHere(EmbeddedDocument):
+	count = IntField()
+	marked = BooleanField()
+
+
+class VenueLikes(EmbeddedDocument):
+	count = IntField()
+	groups = ListField(EmbeddedDocumentField(VenueLikesGroup))
+
+
+class VenueMenu(EmbeddedDocument):
+	url = StringField()
+	mobile_url = StringField()
+	type = StringField()
+
+
+class CheckInLikes(EmbeddedDocument):
+	type = StringField()
+	count = IntField()
+	summary = StringField()
+
+
 class VenueContact(EmbeddedDocument):
 	phone = StringField()
 	formatted_phone = StringField()
@@ -358,37 +408,6 @@ class VenueLocation(EmbeddedDocument):
 	state = StringField()
 	country = StringField()
 	cc = StringField()
-
-
-class VenueCategory(EmbeddedDocument):
-	category_id = StringField()
-	name = StringField()
-	plural = StringField()
-	short_name = StringField()
-	primary = BooleanField()
-
-
-class VenueStats(EmbeddedDocument):
-	checkins_count = IntField()
-	users_count = IntField()
-	tip_count = IntField()
-
-
-class VenueLikesGroup(EmbeddedDocument):
-	type = StringField()
-	count = IntField()
-	# itmes = ListField() fs user-object 
-
-
-class VenueLikes(EmbeddedDocument):
-	count = IntField()
-	groups = ListField(EmbeddedDocumentField(VenueLikesGroup))
-
-
-class VenueMenu(EmbeddedDocument):
-	url = StringField()
-	mobileUrl = StringField()
-	type = StringField()
 
 
 class Venue(EmbeddedDocument):
@@ -415,6 +434,8 @@ class CheckIn(Document):
 	fs_timezone_offset = IntField()
 	fs_timezone = StringField()
 	fs_venue = EmbeddedDocumentField(Venue)
+	fs_like = BooleanField()
+	fs_likes = ListField(EmbeddedDocumentField(CheckInLikes))
 
 
 ############# EDUCATION ############# 

@@ -1060,12 +1060,10 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 
 		self.foursquare_request(
 		    path="/users/self/checkins",
+		    args= { "limit" : 250 },
 		    callback=self.async_callback(self._on_imported),
 		    access_token=access_token
 		)
-
-		# self.write("pizza")
-		# self.finish()
 
 	def _on_imported(self, checkins):
 		user_info = self.get_fs_user_info()
@@ -1073,56 +1071,155 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 		
 		checkins = checkins["response"]["checkins"]["items"]
 
-		for checkin in checkins:
+		for index, checkin in enumerate(checkins):
+
+			if "stats" in checkin["venue"].keys():
+				print "has venue stats"	
+				venue_stats =models.VenueStats(
+					checkins_count = checkin["venue"]["stats"]["checkinsCount"] if "checkinsCount" in checkin["venue"]["stats"].keys() else None,
+					users_count = checkin["venue"]["stats"]["usersCount"] if "userCount" in checkin["venue"]["stats"].keys() else None,
+					tips_count = checkin["venue"]["stats"]["tipsCount"] if "tipsCount" in checkin["venue"]["stats"].keys() else None
+				)
+
+				# if venue_stats.save():
+				# 	print "stats saved"
+				# else:
+				# 	print "stats didn't save"
+
+			else:
+				venue_stats = None
+
+			if "beenHere" in checkin.keys():
+				print "has venue been here"
+				been_here = models.VenueBeenHere(
+					count = checkin["beenHere"]["count"] if "count" in checkin["beenHere"].keys() else None,
+					marked = checkin["beenHere"]["marked"] if "marked" in checkin["beenHere"].keys() else None
+				)
+
+				# if been_here.save():
+				# 	print "beenhere saved"
+				# else:
+				# 	print "beenhere didn't save"
+
+			else:
+				been_here = None
 			
+			if "likes" in checkin["venue"].keys():	
+				print "has venue likes"
+				likes = models.VenueLikes(
+					type = checkin["venue"]["type"] if "type" in checkin["venue"].keys() else None,
+					count = checkin["venue"]["count"] if "count" in checkin["venue"].keys() else None,
+					summry = checkin["venue"]["summary"] if "summary" in checkin["venue"].keys() else None
+				)
+
+				# if likes.save():
+				# 	print "likes saved"
+				# else:
+				# 	print "likes didn't save"
+
+			else:
+				likes = None
+
+			if "contact" in checkin["venue"].keys():
+				print "has venue contact"	
+				contact  = models.VenueContact(
+					phone = checkin["venue"]["contact"]["phone"] if "phone" in checkin["venue"]["contact"].keys() else None,
+					formatted_phone = checkin["venue"]["contact"]["formattedPhone"] if "formattedPhone" in checkin["venue"]["contact"].keys() else None,
+					twitter = checkin["venue"]["contact"]["twitter"] if "twitter" in checkin["venue"]["contact"].keys() else None,
+					facebook = checkin["venue"]["contact"]["facebook"] if "facebook" in checkin["venue"]["contact"].keys()
+					 else None
+				)
+
+				# if contact.save():
+				# 	print "contact saved"
+				# else:
+				# 	print "contact didn't save"
+
+			else :
+				contact = None
+
+			if "menu" in checkin["venue"].keys():
+				print "has venue menu"
+				venue_menu = models.VenueMenu(
+					url = checkin["venue"]["menu"]["url"] if "url" in checkin["venue"]["menu"].keys() else None,
+					mobileUrl = checkin["venue"]["menu"]["mobileUrl"] if "url" in checkin["venue"]["menu"].keys() else None,
+					type = checkin["venue"]["menu"]["mobileUrl"] if "type" in checkin["venue"]["menu"].keys() else None
+				)
+
+				# if menu.save():
+				# 	print "menu saved"
+				# else:
+				# 	print "menu didn't save"
+			else:
+				venue_menu = None
+
+			if "location" in checkin["venue"].keys():
+				print "has venue location"
+				location = models.VenueLocation(
+					address = checkin["venue"]["location"]["address"] if "address" in checkin["venue"]["location"].keys() else None,
+					cross_street = checkin["venue"]["location"]["crossStreet"] if "crossStreet" in checkin["venue"]["location"].keys() else None,
+					lat = checkin["venue"]["location"]["lat"] if "lat" in checkin["venue"]["location"].keys() else None,
+					lng = checkin["venue"]["location"]["lng"] if "lng" in checkin["venue"]["location"].keys() else None,
+					postal_code = checkin["venue"]["location"]["postalCode"] if "postalCode" in checkin["venue"]["location"].keys() else None,
+					city = checkin["venue"]["location"]["city"] if "city" in checkin["venue"]["location"].keys() else None,
+					state = checkin["venue"]["location"]["state"] if "state" in checkin["venue"]["location"].keys() else None,
+					country = checkin["venue"]["location"]["country"] if "country" in checkin["venue"]["location"].keys() else None,
+					cc = checkin["venue"]["location"]["cc"] if "cc" in checkin["venue"]["location"].keys() else None
+				)
+
+				# if location.save():
+				# 	print "location saved"
+				# else:
+				# 	print "location didn't save"
 			
-			contact  = models.VenueContact(
-				phone = checkin["venue"]["contact"]["phone"],
-				formatted_phone = checkin["venue"]["contact"]["formattedPhone"],
-				twitter = checkin["venue"]["contact"]["twitter"],
-				facebook = checkin["venue"]["contact"]["facebook"]
-			)
+			else:
+				location = None
 
-			location = models.VenueLocation(
-				address = checkin["venue"]["location"]["address"],
-				cross_street = checkin["venue"]["location"]["crossStreet"],
-				lat = checkin["venue"]["location"]["lat"],
-				lng = checkin["venue"]["location"]["lng"],
-				postal_code = checkin["venue"]["location"]["postalCode"],
-				city = checkin["venue"]["location"]["city"],
-				state = checkin["venue"]["location"]["state"],
-				country = checkin["venue"]["location"]["country"],
-				cc = checkin["venue"]["location"]["cc"]
-			)
+			if "venue" in checkin.keys():
+				print "has venue"
+				venue = models.Venue(
+					venue_id = checkin["venue"]["id"] if "venueId" in checkin["venue"].keys() else None,
+					name = checkin["venue"]["name"] if "name" in checkin["venue"].keys() else None,
+					contact = contact,
+					location = location,
+					cannonical_url = checkin["venue"]["cannonicalUrl"] if "cannonicalUrl" in checkin["venue"].keys() else None,
+					categories = None, #LIST FIELD!!
+					verified = checkin["venue"]["verified"] if "verified" in checkin["venue"].keys() else None,
+					stats = venue_stats,
+					url = checkin["venue"]["url"] if "url" in checkin["venue"].keys() else None,
+					likes = likes,
+					like = checkin["venue"]["like"] if "like" in checkin["venue"].keys() else None,				
+					menu = venue_menu,
+				)
 
-			venue = models.Venue(
-				venue_id = venue["id"],
-				name = venue["venue"]["name"],
-				contact = contact,
-				location = location,
-				cannonical_url = checkin["venue"]["cannonicalUrl"],
-				categories = None,
-				verified = checkin["venue"]["verified"],
-				stats = stats,
-				url = checkin["venue"]["url"],
-				likes = likes,
-				like = checkin["venue"]["like"],				
-				menu = menu,
-			)
+				# if venue.save():
+				# 	print "venue saved"
+				# else:
+				# 	print "venue didn't save"
 
-			checkin = models.CheckIn(
+			else:
+				print "doesn't have venue"
+				venue = None
+
+			checkIn = models.CheckIn(
 				record_created_at = checkin["createdAt"],
 				user_id = self.get_secure_cookie("username"),
 				fs_id = checkin["id"],
 				fs_create_at = checkin["createdAt"],
-				fs_type = checkin["type"]
+				fs_type = checkin["type"],
 				fs_timezone_offset = checkin["timeZoneOffset"],
 				fs_timezone = checkin["timeZone"],
-				fs_venue = venue
-
+				fs_venue = venue,
+				fs_like = checkin["like"],
+				fs_likes = None
 			)
 
-		self.write( checkins )
+			if checkIn.save():
+				print "checkin saved"
+			else:
+				print "checkin didn't save"
+
+		self.write( "success" )
 		self.finish()
 
 
@@ -1157,6 +1254,49 @@ class FitbitDumpsHandler(BaseHandler):
 		self.write( json.dumps(data) )
 
 
+class FoursquareDumpsHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		checkins_documents = models.CheckIn.objects(user_id=self.get_secure_cookie("username"))
+
+		checkins = json.dumps(checkins_documents, default=encode_model)
+
+		self.write( checkins )
+
+# class FoursquareDumpsHandler(BaseHandler, mixins.FoursquareMixin):
+# 	@tornado.web.authenticated
+# 	@tornado.web.asynchronous
+# 	def get(self):
+# 		user_info = self.get_fs_user_info()
+# 		user_id = user_info["user_id"]
+# 		access_token = user_info["access_token"]
+
+# 		self.foursquare_request(
+# 		    path="/users/self/checkins",
+# 		    args= { "limit" : 20 },
+# 		    callback=self.async_callback(self._on_imported),
+# 		    access_token=access_token
+# 		)
+
+# 	def _on_imported(self, user):
+
+# 		checkin_count = len(user["response"]["checkins"]["items"])
+# 		# self.write( str(checkin_count) )
+# 		self.write( json.dumps(user) )	
+# 		self.finish()		
+
+# 	def get_fs_user_info(self):
+# 		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+
+# 		if hasattr(curr_user["foursquare_user_info"], "foursquare_access_token"):
+# 			access_token = curr_user["foursquare_user_info"]["foursquare_access_token"]
+# 			user_id = curr_user["foursquare_user_info"]["foursquare_id"]
+
+# 			user_info = { "access_token" : access_token, "user_id" : user_id }
+
+# 			return user_info
+
+
 class LogoutHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.clear_all_cookies()
@@ -1185,6 +1325,13 @@ class RemoveUserFitbitHandler(BaseHandler):
 
 		self.write(str(len(phys)) + " records")
 
+class RemoveUserFoursquareHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		checkins = models.CheckIn.objects(user_id=self.get_secure_cookie("username"))
+		checkins.delete()
+
+		self.write(str(len(checkins)) + " records")
 
 
 
