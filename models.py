@@ -165,6 +165,12 @@ class GoogleUserInfo(EmbeddedDocument):
 	google_email = StringField()
 
 
+class OpenPathsUserInfo(EmbeddedDocument):
+	created_at = StringField()
+	op_access_key = StringField()
+	op_access_secret = StringField()
+
+
 class User(Document):
 	user_since = StringField()
 	username = StringField()
@@ -179,7 +185,7 @@ class User(Document):
 	khanacademy_user_info = EmbeddedDocumentField(KhanAcademyUserInfo)
 	twitter_user_info = EmbeddedDocumentField(TwitterUserInfo)
 	google_user_info = EmbeddedDocumentField(GoogleUserInfo)
-
+	openpaths_user_info = EmbeddedDocumentField(OpenPathsUserInfo)
 
 
 class BodyMeasurements(EmbeddedDocument):
@@ -436,6 +442,20 @@ class CheckIn(Document):
 	fs_venue = EmbeddedDocumentField(Venue)
 	fs_like = BooleanField()
 	fs_likes = ListField(EmbeddedDocumentField(CheckInLikes))
+
+
+
+############# OPEN PATHS ############# 
+class OpenPathsLocation(Document):
+	record_created_at = StringField()
+	user_id = StringField()
+	device = StringField()
+	os = StringField()
+	t = IntField()
+	lat = FloatField()
+	lon = FloatField()
+	alt = FloatField()
+
 
 
 ############# EDUCATION ############# 

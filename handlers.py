@@ -7,6 +7,8 @@ import datetime
 import time
 from utilities import *
 
+import oauth2, urllib, urllib2
+
 #mongo and models
 from mongoengine import *
 import models
@@ -638,6 +640,48 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 
 		# self.render('test.html', user=user)
 
+
+class OpenPathsHandler(BaseHandler):
+	# @tornado.web.authenticated
+	@tornado.web.asynchronous
+	def get(self):
+		# username = self.get_secure_cookie("username")
+		username = "pdarche"
+		user = models.User.objects(username=username)[0]
+
+		if user.openpaths_user_info == None:
+			self.write("open paths not connected")
+		else:
+			self.write("user already connected")
+
+		self.finish()
+
+	def post(self):
+		username = "pdarche"
+		user = models.User.objects(username=username)[0]
+		access_key = self.get_argument("access_key")
+		access_secret = self.get_argument("access_secret")
+		# username = self.get_secure_cookie("username")
+
+		op = models.OpenPathsUserInfo(
+			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+			op_access_key = access_key,
+			op_access_secret = access_secret
+		)
+
+		user.openpaths_user_info = op
+
+		if user.save():
+			response = "saved"
+			print "openpaths userinfo saved"
+		else:
+			print "openpaths userinfo not saved"
+			response = "not saved"
+
+		self.write( response )
+		self.finish()
+
+
 ####### REFACTOR.  THIS IS TERRIBLE
 class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):	
 	# if user.ftbt_user_info != None:
@@ -1081,11 +1125,6 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 					tips_count = checkin["venue"]["stats"]["tipsCount"] if "tipsCount" in checkin["venue"]["stats"].keys() else None
 				)
 
-				# if venue_stats.save():
-				# 	print "stats saved"
-				# else:
-				# 	print "stats didn't save"
-
 			else:
 				venue_stats = None
 
@@ -1095,11 +1134,6 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 					count = checkin["beenHere"]["count"] if "count" in checkin["beenHere"].keys() else None,
 					marked = checkin["beenHere"]["marked"] if "marked" in checkin["beenHere"].keys() else None
 				)
-
-				# if been_here.save():
-				# 	print "beenhere saved"
-				# else:
-				# 	print "beenhere didn't save"
 
 			else:
 				been_here = None
@@ -1111,11 +1145,6 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 					count = checkin["venue"]["count"] if "count" in checkin["venue"].keys() else None,
 					summry = checkin["venue"]["summary"] if "summary" in checkin["venue"].keys() else None
 				)
-
-				# if likes.save():
-				# 	print "likes saved"
-				# else:
-				# 	print "likes didn't save"
 
 			else:
 				likes = None
@@ -1130,11 +1159,6 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 					 else None
 				)
 
-				# if contact.save():
-				# 	print "contact saved"
-				# else:
-				# 	print "contact didn't save"
-
 			else :
 				contact = None
 
@@ -1146,10 +1170,6 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 					type = checkin["venue"]["menu"]["mobileUrl"] if "type" in checkin["venue"]["menu"].keys() else None
 				)
 
-				# if menu.save():
-				# 	print "menu saved"
-				# else:
-				# 	print "menu didn't save"
 			else:
 				venue_menu = None
 
@@ -1166,11 +1186,6 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 					country = checkin["venue"]["location"]["country"] if "country" in checkin["venue"]["location"].keys() else None,
 					cc = checkin["venue"]["location"]["cc"] if "cc" in checkin["venue"]["location"].keys() else None
 				)
-
-				# if location.save():
-				# 	print "location saved"
-				# else:
-				# 	print "location didn't save"
 			
 			else:
 				location = None
@@ -1191,11 +1206,6 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 					like = checkin["venue"]["like"] if "like" in checkin["venue"].keys() else None,				
 					menu = venue_menu,
 				)
-
-				# if venue.save():
-				# 	print "venue saved"
-				# else:
-				# 	print "venue didn't save"
 
 			else:
 				print "doesn't have venue"
@@ -1234,8 +1244,70 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 
 			return user_info
 
-		# else:
-			# self.redirect('/foursquare')
+		else:
+			self.redirect('/foursquare')
+
+
+
+class OpenPathsImportHandler(BaseHandler):
+	@tornado.web.authenticated
+	@tornado.web.asynchronous
+	def get(self):
+		username = self.get_secure_cookie("username")
+		user = models.User.objects(username=username)[0]
+
+		ACCESS = user["openpaths_user_info"]["op_access_key"]
+		SECRET = user["openpaths_user_info"]["op_access_secret"]
+		URL = "https://openpaths.cc/api/1" 
+
+		def build_auth_header(url, method):
+		    params = {                                            
+		        'oauth_version': "1.0",
+		        'oauth_nonce': oauth2.generate_nonce(),
+		        'oauth_timestamp': int(time.time()),
+		    }
+		    consumer = oauth2.Consumer(key=ACCESS, secret=SECRET)
+		    params['oauth_consumer_key'] = consumer.key 
+		    request = oauth2.Request(method=method, url=url, parameters=params)    
+		    signature_method = oauth2.SignatureMethod_HMAC_SHA1()
+		    request.sign_request(signature_method, consumer, None)
+		    return request.to_header()
+
+		# GET data (last 24 hours)
+		now = time.time()
+		params = { 'num_points' : 2000 }    # get the last 2000 points
+		query = "%s?%s" % (URL, urllib.urlencode(params))
+		print(query)
+		try:
+		    request = urllib2.Request(query)
+		    request.headers = build_auth_header(URL, 'GET')
+		    connection = urllib2.urlopen(request)
+		    data = json.loads(''.join(connection.readlines()))
+		    
+		    for record in data:
+		    	location = models.OpenPathsLocation(
+		    		record_created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+		    		user_id = username,
+		    		device = record["device"],
+		    		os = record["os"],
+		    		t = record["t"],
+		    		lat = record["lat"],
+		    		lon = record["lon"],
+		    		alt = record["alt"]
+		    	)
+
+		    	if location.save():
+		    		print "op location saved"
+		    	else:
+		    		print "op location not saved"
+
+		    self.write("success")
+		    self.finish()
+
+		except urllib2.HTTPError as e:
+		    print(e.read())
+		    self.write("error")
+		    self.finish()
 
 
 class FitbitDumpsHandler(BaseHandler):
@@ -1295,6 +1367,15 @@ class FoursquareDumpsHandler(BaseHandler):
 # 			user_info = { "access_token" : access_token, "user_id" : user_id }
 
 # 			return user_info
+
+class OpenPathsDumpsHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		location_documents = models.OpenPathsLocation.objects(user_id=self.get_secure_cookie("username"))
+
+		locations = json.dumps(location_documents, default=encode_model)
+
+		self.write( locations )
 
 
 class LogoutHandler(tornado.web.RequestHandler):
