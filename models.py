@@ -444,7 +444,6 @@ class CheckIn(Document):
 	fs_likes = ListField(EmbeddedDocumentField(CheckInLikes))
 
 
-
 ############# OPEN PATHS ############# 
 class OpenPathsLocation(Document):
 	record_created_at = StringField()
@@ -455,6 +454,21 @@ class OpenPathsLocation(Document):
 	lat = FloatField()
 	lon = FloatField()
 	alt = FloatField()
+
+
+############# OPEN PATHS ############# 
+class FlickrPhoto(Document):
+	record_created_at = StringField()
+	user_id = StringField()
+	photo_id = StringField()
+	owner = StringField()
+	secret = StringField()
+	server = StringField()
+	farm = IntField()
+	title = StringField()
+	is_public = IntField()
+	is_friend = IntField()
+	is_family = IntField()
 
 
 

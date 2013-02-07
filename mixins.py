@@ -246,7 +246,7 @@ class FlickrMixin(tornado.auth.OAuthMixin):
 
                 def _on_auth(self, user):
                     if not user:
-                        raise tornado.web.HTTPError(500, "Khan Academy auth failed")
+                        raise tornado.web.HTTPError(500, "Flickr auth failed")
                     # Save the user using, e.g., set_secure_cookie()
 
         """

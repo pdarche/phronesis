@@ -1309,6 +1309,31 @@ class OpenPathsImportHandler(BaseHandler):
 		    self.write("error")
 		    self.finish()
 
+class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
+	@tornado.web.authenticated
+	def get(self):
+		username = self.get_secure_cookie("username")
+		user = models.User.objects(username=username)[0]
+		access_token = user["flickr_user_info"]["flickr_access_token"]
+		userId = access_token["flickr_nsid"]
+
+		accessToken = {
+			'key': 		access_token["flickr_key"],
+			'secret':	access_token["flickr_secret"]
+		}
+
+		self.flickr_request('method=flickr.photos.getWithGeoData',
+			access_token =  accessToken,
+			args = 			{ "per_page" : 500 },
+			nojsoncallback = "1",
+			user_id =		userId,
+			callback = 		self.async_callback(self._on_photos)
+		)
+
+	def _on_photos(self, data):
+		self.write( json.dumps( data ) )
+		self.finish()
+
 
 class FitbitDumpsHandler(BaseHandler):
 	@tornado.web.authenticated

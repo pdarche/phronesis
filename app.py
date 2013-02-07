@@ -39,6 +39,7 @@ class Application(tornado.web.Application):
 			(r"/import/fitbit", h.FitbitImportHandler),
 			(r"/import/foursquare", h.FoursquareImportHandler),
 			(r"/import/openpaths", h.OpenPathsImportHandler),
+			(r"/import/flickr", h.FlickrImportHandler),
 			(r"/dumps/fitbit", h.FitbitDumpsHandler),
 			(r"/dumps/foursquare", h.FoursquareDumpsHandler),
 			(r"/dumps/openpaths", h.OpenPathsDumpsHandler),
