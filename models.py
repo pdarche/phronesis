@@ -74,11 +74,11 @@ class FoursquareUserInfo(EmbeddedDocument):
 
 
 class FlickrAccessToken(EmbeddedDocument):
-	flickr_username = StringField()
-	flickr_secret = StringField()
-	flickr_full_name = StringField()
-	flickr_key = StringField()
-	flickr_nsid = StringField()
+	username = StringField()
+	secret = StringField()
+	fullname = StringField()
+	key = StringField()
+	user_nsid = StringField()
 
 class FlickrUserInfo(EmbeddedDocument):
 	created_at = StringField() 			#add updates?

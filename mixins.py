@@ -257,7 +257,7 @@ class FlickrMixin(tornado.auth.OAuthMixin):
         else:
             url = self._FLICKR_BASE_URL + path 
             url += "&api_key=" + self.settings["flickr_consumer_key"] + "&format=json&nojsoncallback=" + nojsoncallback
-        # Add the OAuth resource request signature if we have credentials
+        # Add the OAuth resource request signature if web have credentials
         if access_token:
             all_args = dict()
             all_args.update(args)
@@ -273,12 +273,12 @@ class FlickrMixin(tornado.auth.OAuthMixin):
         http = self.get_auth_http_client()
         log(build_oauth_header(oauth))
         if post_args is not None:
-            print url
+            print "the post urls is: %s" % url
             http.fetch(url, method="POST", body=urllib.urlencode(args),
                        callback=callback,
                        headers={'Authorization': build_oauth_header(oauth)})
         else:
-            print url
+            print "the get urls is: %s" % url
             http.fetch(url, callback=callback,
                     headers={'Authorization': build_oauth_header(oauth)})
 

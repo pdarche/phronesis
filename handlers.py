@@ -514,11 +514,11 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 		# self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
 
 		flkr_access = models.FlickrAccessToken(
-			flickr_usernam = user["access_token"]["username"],
-			flickr_secret = user["access_token"]["secret"],
-			flickr_full_name = user["access_token"]["fullname"],
-			flickr_key = user["access_token"]["key"],
-			flickr_nsid = user["access_token"]["user_nsid"]
+			username = user["access_token"]["username"],
+			secret = user["access_token"]["secret"],
+			fullname = user["access_token"]["fullname"],
+			key = user["access_token"]["key"],
+			user_nsid = user["access_token"]["user_nsid"]
 		)
 
 		flkr = models.FlickrUserInfo(
@@ -1311,27 +1311,29 @@ class OpenPathsImportHandler(BaseHandler):
 
 class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 	@tornado.web.authenticated
+	@tornado.web.asynchronous
 	def get(self):
 		username = self.get_secure_cookie("username")
 		user = models.User.objects(username=username)[0]
 		access_token = user["flickr_user_info"]["flickr_access_token"]
-		userId = access_token["flickr_nsid"]
+		userId = access_token["user_nsid"]
 
 		accessToken = {
-			'key': 		access_token["flickr_key"],
-			'secret':	access_token["flickr_secret"]
+			'key': 		access_token["key"],
+			'secret':	access_token["secret"]
 		}
 
 		self.flickr_request('method=flickr.photos.getWithGeoData',
-			access_token =  accessToken,
-			args = 			{ "per_page" : 500 },
+			access_token =   access_token,
+			# args = 	 { "per_page" : 500 },
 			nojsoncallback = "1",
-			user_id =		userId,
-			callback = 		self.async_callback(self._on_photos)
+			callback = 		 self.async_callback(self._on_photos)
 		)
 
 	def _on_photos(self, data):
-		self.write( json.dumps( data ) )
+
+		# self.write( json.dumps( data ) )
+		self.write( data )
 		self.finish()
 
 
