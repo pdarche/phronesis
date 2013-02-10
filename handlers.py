@@ -9,6 +9,13 @@ from utilities import *
 
 import oauth2, urllib, urllib2
 
+###test
+import base64
+import binascii
+import hashlib
+import hmac
+import uuid
+
 #mongo and models
 from mongoengine import *
 import models
@@ -509,10 +516,6 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, 'Flickr authentication failed')
 
-		# self.set_secure_cookie('fitbit_user_id', str(user['user']['encodedId']))
-		# self.set_secure_cookie('fitbit_oauth_token', user['access_token']['key'])
-		# self.set_secure_cookie('fitbit_oauth_secret', user['access_token']['secret'])
-
 		flkr_access = models.FlickrAccessToken(
 			username = user["access_token"]["username"],
 			secret = user["access_token"]["secret"],
@@ -547,6 +550,9 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
+
+		self.write( json.dumps( user ))
+		self.finish()
 
 		# self.render('test.html', user=user)
 
@@ -692,7 +698,6 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 	body = []
 	@tornado.web.authenticated
 	@tornado.web.asynchronous
-	# @oauthd
 	def get(self):
 		accessToken = self.get_access_token()
 		memberSince = self.get_member_since()
@@ -1310,30 +1315,90 @@ class OpenPathsImportHandler(BaseHandler):
 		    self.finish()
 
 class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
+	geo = None
 	@tornado.web.authenticated
 	@tornado.web.asynchronous
 	def get(self):
 		username = self.get_secure_cookie("username")
 		user = models.User.objects(username=username)[0]
 		access_token = user["flickr_user_info"]["flickr_access_token"]
-		userId = access_token["user_nsid"]
 
-		accessToken = {
-			'key': 		access_token["key"],
-			'secret':	access_token["secret"]
-		}
-
-		self.flickr_request('method=flickr.photos.getWithGeoData',
-			access_token =   access_token,
-			# args = 	 { "per_page" : 500 },
-			nojsoncallback = "1",
-			callback = 		 self.async_callback(self._on_photos)
+		self.flickr_request(
+			"empty string", #why is this needed????
+			format="json",
+			api_key=self.settings["flickr_consumer_key"],
+			nojsoncallback="1", 
+			method="flickr.photos.getWithGeoData",
+			access_token=access_token,
+			callback=self.async_callback(self._on_geo)
 		)
 
-	def _on_photos(self, data):
+	def _on_geo(self, data):
+		username = self.get_secure_cookie("username")
+		user = models.User.objects(username=username)[0]
+		access_token = user["flickr_user_info"]["flickr_access_token"]
+		self.geo = data
 
-		# self.write( json.dumps( data ) )
-		self.write( data )
+		self.flickr_request(
+			"empty string", #why is this needed????
+			format="json",
+			api_key=self.settings["flickr_consumer_key"],
+			nojsoncallback="1", 
+			method="flickr.photos.getWithoutGeoData",
+			access_token=access_token,
+			callback=self.async_callback(self._on_non_geo)
+		)
+
+	def _on_non_geo(self, data):
+
+		for photo in data["photos"]["photo"]:
+			pic = models.FlickrPhoto(
+				record_created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+				user_id = self.get_secure_cookie("username"),
+				photo_id = photo["id"],
+				owner = photo["owner"],
+				secret = photo["secret"],
+				server = photo["server"],
+				farm = photo["farm"],
+				title = photo["title"],
+				is_public = photo["ispublic"],
+				is_friend = photo["isfriend"],
+				is_family = photo["isfamily"],
+				has_geo = False
+			)
+
+			if pic.save():
+				print "non-geo saved"
+			else:
+				print "non-geo not saved"
+
+
+		for photo in self.geo["photos"]["photo"]:
+			pic = models.FlickrPhoto(
+				record_created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+				user_id = self.get_secure_cookie("username"),
+				photo_id = photo["id"],
+				owner = photo["owner"],
+				secret = photo["secret"],
+				server = photo["server"],
+				farm = photo["farm"],
+				title = photo["title"],
+				is_public = photo["ispublic"],
+				is_friend = photo["isfriend"],
+				is_family = photo["isfamily"],
+				has_geo = True
+			)
+
+			if pic.save():
+				print "geo saved"
+			else:
+				print "geo not saved"
+
+		self.write("saved")
+		self.finish()
+
+	def _on_photos(self, data):
+		self.write( json.dumps(data) )
 		self.finish()
 
 
@@ -1405,6 +1470,15 @@ class OpenPathsDumpsHandler(BaseHandler):
 		self.write( locations )
 
 
+class FlickrDumpsHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		photo_documents = models.FlickrPhoto.objects(user_id=self.get_secure_cookie("username"))
+
+		photos = json.dumps(photo_documents, default=encode_model)
+
+		self.write( photos )
+
 class LogoutHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.clear_all_cookies()
@@ -1433,6 +1507,7 @@ class RemoveUserFitbitHandler(BaseHandler):
 
 		self.write(str(len(phys)) + " records")
 
+
 class RemoveUserFoursquareHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
@@ -1440,6 +1515,16 @@ class RemoveUserFoursquareHandler(BaseHandler):
 		checkins.delete()
 
 		self.write(str(len(checkins)) + " records")
+
+
+class RemoveUserFlickrHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		photos = models.FlickrPhoto.objects(user_id=self.get_secure_cookie("username"))
+		photos.delete()
+
+		self.write(str(len(photos)) + " records")
+
 
 
 

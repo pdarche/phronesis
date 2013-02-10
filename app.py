@@ -43,8 +43,10 @@ class Application(tornado.web.Application):
 			(r"/dumps/fitbit", h.FitbitDumpsHandler),
 			(r"/dumps/foursquare", h.FoursquareDumpsHandler),
 			(r"/dumps/openpaths", h.OpenPathsDumpsHandler),
+			(r"/dumps/flickr", h.FlickrDumpsHandler),
 			(r"/remove/fitbit", h.RemoveUserFitbitHandler),
 			(r"/remove/foursquare", h.RemoveUserFoursquareHandler),
+			(r"/remove/flickr", h.RemoveUserFlickrHandler),
 			(r"/logout", h.LogoutHandler),
 		]
 		settings = dict(

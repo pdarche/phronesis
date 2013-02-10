@@ -24,7 +24,7 @@ class FitbitMixin(tornado.auth.OAuthMixin):
     you registered as your application's Callback URL.
 
     When your application is set up, you can use this Mixin like this
-    to authenticate the user with Twitter and get access to their stream::
+    to authenticate the user with Fitbit and get access to their stream::
 
         class FitbitHandler(tornado.web.RequestHandler,
                              tornado.auth.FitbitMixin):
@@ -217,7 +217,7 @@ class FlickrMixin(tornado.auth.OAuthMixin):
             self._on_request_token, self._OAUTH_AUTHENTICATE_URL, None))
 
     def flickr_request(self, path, callback, access_token=None,
-                           nojsoncallback=None, post_args=None, **args):
+                                post_args=None, **args):
         """Fetches the given API path, e.g., "http://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos"
 
         The path can be either the full url or just the desired method.
@@ -251,24 +251,25 @@ class FlickrMixin(tornado.auth.OAuthMixin):
 
         """
         if path.startswith('http:') or path.startswith('https:'):
-            # Raw urls are useful for e.g. search which doesn't follow the
-            # usual pattern: http://search.twitter.com/search.json
+            # Raw urls are useful for things queries don't follow the usual pattern
             url = path
         else:
-            url = self._FLICKR_BASE_URL + path 
-            url += "&api_key=" + self.settings["flickr_consumer_key"] + "&format=json&nojsoncallback=" + nojsoncallback
+            url_elems = []
+            url_elems.append(self._FLICKR_BASE_URL)
+            url_elems.append("&".join("%s=%s" % (k, str(v)) for k, v in sorted(args.items())))             
+            url = "&".join(e for e in url_elems)
+        
         # Add the OAuth resource request signature if web have credentials
         if access_token:
             all_args = dict()
             all_args.update(args)
             if post_args is not None:
                 all_args.update(post_args)
-            method = "POST" if post_args is not None else "GET"
+            method = "POST" if post_args is not None else "GET"            
             oauth = self._oauth_request_parameters(
                 url, access_token, all_args, method=method)
             # args.update(oauth)
-        if args:
-            url += "?" + urllib.urlencode(args)
+
         callback = self.async_callback(self._on_flickr_request, callback)
         http = self.get_auth_http_client()
         log(build_oauth_header(oauth))
@@ -298,8 +299,11 @@ class FlickrMixin(tornado.auth.OAuthMixin):
         callback = self.async_callback(self._parse_user_response, callback)
 
         self.flickr_request(
-            "method=flickr.urls.getUserProfile",
-            nojsoncallback="1",
+            "empty string",
+            format="json",
+            api_key=self.settings["flickr_consumer_key"],
+            nojsoncallback="1", 
+            method="flickr.urls.getUserProfile",
             access_token=access_token,
             callback=callback
         )
@@ -635,10 +639,10 @@ class KhanAcademyMixin(tornado.auth.OAuthMixin):
             callback(user)
 
 class ZeoMixin(tornado.auth.OAuthMixin):
-    """Fitbit OAuth authentication.
+    """Zeo OAuth authentication.
 
     To authenticate with Zeo, register your application with
-    Fitbit at https://dev.zeo.com/apps. Then copy your Consumer Key and
+    Zeo at https://dev.zeo.com/apps. Then copy your Consumer Key and
     Consumer Secret to the application settings 'zeo_consumer_key' and
     'zeo_consumer_secret'. Use this Mixin on the handler for the URL
     you registered as your application's Callback URL.

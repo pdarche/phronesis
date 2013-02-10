@@ -469,6 +469,7 @@ class FlickrPhoto(Document):
 	is_public = IntField()
 	is_friend = IntField()
 	is_family = IntField()
+	has_geo = BooleanField()
 
 
 
