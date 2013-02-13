@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*- 
 import tornado.web
 import tornado.auth
 import mixins
@@ -5,6 +7,7 @@ import json
 import simplejson
 import datetime
 import time
+import zeoapi
 from utilities import *
 
 import oauth2, urllib, urllib2
@@ -378,15 +381,9 @@ class ZeoHandler(tornado.web.RequestHandler, mixins.ZeoMixin):
 		self.authorize_redirect('http://localhost:8000/zeo')
 
 	def _zeo_on_auth(self, *args):
-		self.write( "maybe worked?" )
-		self.finish()
-		# if not user:
-		# 	self.clear_all_cookies()
-		# 	raise tornado.web.HTTPError(500, 'Zeo authentication failed')
-
-		# self.set_secure_cookie('zeo_user_id', str(user['user']['encodedId']))
-		# self.set_secure_cookie('zeo_oauth_token', user['access_token']['key'])
-		# self.set_secure_cookie('zeo_oauth_secret', user['access_token']['secret'])
+		if not user:
+			self.clear_all_cookies()
+			raise tornado.web.HTTPError(500, 'Zeo authentication failed')
 
 		# self.render('test.html', user=json.dumps(user))
 
@@ -398,6 +395,137 @@ class ZeoHandler(tornado.web.RequestHandler, mixins.ZeoMixin):
 		self.render('test.html', user=json.dumps(user))
 
 
+class ZeoBasicAuth(tornado.web.RequestHandler):
+	@tornado.web.authenticated
+	def post(self):
+		username = self.get_argument('username')
+		password = self.get_argument('password')
+		user = models.User.objects(username="pdarche")[0]
+
+		zeo = models.ZeoUserInfo(
+			create_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+			zeo_username = username,
+			zeo_password = password
+		)
+
+		user.update(set__zeo_user_info=zeo)
+
+		if user.save():
+			response = "zeo added"
+			print "user saved"
+		else:
+			response = "failure"
+			print "user not saved"
+
+		self.write( response )
+		self.finish()
+
+	@tornado.web.asynchronous
+	def get(self):
+		user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+		zeo_username = user.zeo_user_info.zeo_username
+		zeo_password = user.zeo_user_info.zeo_password
+		api_key = '99B70750EA14609996C38F0B4618D934'
+
+		z = zeoapi.Api()
+		z.username = zeo_username
+		z.password = zeo_password
+		z.apikey = api_key
+		z.referrer = "http://localhost:8000"
+
+		data = z.getAllDatesWithSleepData()
+		nights = []
+
+		for d in data:
+			date = '%s-%s-%s' % (d["year"], d["month"], d["day"])
+			record = z.getSleepRecordForDate(date=date)
+		 	
+		 	for_date = models.ZeoDateTime(
+		 		year = record["startDate"]["year"],
+		 		month = record["startDate"]["month"],
+		 		day = record["startDate"]["day"],
+		 		hour = None,
+		 		minute = None,
+		 		second = None
+		 	)
+
+		 	bed_time = models.ZeoDateTime(
+		 		year = record["bedTime"]["year"],
+		 		month = record["bedTime"]["month"],
+		 		day = record["bedTime"]["day"],
+		 		hour = record["bedTime"]["hour"],
+		 		minute = record["bedTime"]["hour"],
+		 		second = record["bedTime"]["second"]
+		 	)
+
+		 	rise_time = models.ZeoDateTime(
+		 		year = record["riseTime"]["year"],
+		 		month = record["riseTime"]["month"],
+		 		day = record["riseTime"]["day"],
+		 		hour = record["riseTime"]["hour"],
+		 		minute = record["riseTime"]["hour"],
+		 		second = record["riseTime"]["second"]
+		 	)
+
+		 	sleep_graph_start = models.ZeoDateTime(
+		 		year = record["sleepGraphStartTime"]["year"],
+		 		month = record["sleepGraphStartTime"]["month"],
+		 		day = record["sleepGraphStartTime"]["day"],
+		 		hour = record["sleepGraphStartTime"]["hour"],
+		 		minute = record["sleepGraphStartTime"]["hour"],
+		 		second = record["sleepGraphStartTime"]["second"]
+		 	)
+
+			sleep_record = models.ZeoSleepRecord(
+				created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+				user_id = self.get_secure_cookie("username"),
+				start_date = for_date,
+				awakenings = record["awakenings"],
+				awakenings_zq_points = record["awakeningsZqPoints"],
+				bed_time = bed_time,
+				grouping = record["grouping"],
+				morning_feel = record["morningFeel"],
+				rise_time = rise_time,
+				time_in_deep = record["timeInDeep"],
+				time_in_deep_percentage = record["timeInDeepPercentage"],
+				time_in_deep_zq_points = record["timeInDeepZqPoints"],
+				time_in_light = record["timeInLight"],
+				time_in_light_percentage = record["timeInLightPercentage"],
+				time_in_rem = record["timeInRem"],
+				time_in_rem_percentage = record["timeInRemPercentage"],
+				time_in_rem_zq_points = record["timeInRemZqPoints"],
+				time_in_wake = record["timeInWake"],
+				time_in_wake_percentage = record["timeInWakePercentage"],
+				time_in_wake_zq_points = record["timeInWakeZqPoints"],
+				time_to_z = record["timeToZ"],
+				total_z = record["totalZ"],
+				totalz_z_zq_points = record["totalZZqPoints"],
+				zq = record["zq"],
+				alarm_reason = record["alarmReason"],
+				alarm_ring_index = record["alarmRingIndex"],
+				day_feel = record["dayFeel"],
+				sleep_graph = record["sleepGraph"],
+				sleep_graph_start_time = sleep_graph_start,
+				sleep_stealer_score = record["sleepStealerScore"],
+				wake_window_end_index = record["wakeWindowEndIndex"],
+				wake_window_start_index = record["wakeWindowStartIndex"]
+			)
+
+			if sleep_record.save():
+				response = "sleep record saved"
+				print "sleep record saved"
+			else:
+				response = "sleep record didn't"
+				response = "sleep record didn't save"
+
+
+
+		self.write( response )
+		self.finish()
+
+	def _on_data(self, data):
+		self.write( json.dumps( data ))
+		self.finish()
 
 class FoursquareHandler(tornado.web.RequestHandler, mixins.FoursquareMixin):
     @tornado.web.asynchronous
@@ -1466,9 +1594,7 @@ class OpenPathsDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
 		location_documents = models.OpenPathsLocation.objects(user_id=self.get_secure_cookie("username"))
-
 		locations = json.dumps(location_documents, default=encode_model)
-
 		self.write( locations )
 
 
@@ -1476,10 +1602,15 @@ class FlickrDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
 		photo_documents = models.FlickrPhoto.objects(user_id=self.get_secure_cookie("username"))
-
 		photos = json.dumps(photo_documents, default=encode_model)
-
 		self.write( photos )
+
+class ZeoDumpsHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		zeo_documents = models.ZeoSleepRecord.objects(user_id=self.get_secure_cookie("username"))
+		nights = json.dumps(zeo_documents, default=encode_model)
+		self.write( nights )
 
 class LogoutHandler(tornado.web.RequestHandler):
 	def get(self):
