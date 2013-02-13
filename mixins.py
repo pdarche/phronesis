@@ -694,7 +694,7 @@ class ZeoMixin(tornado.auth.OAuthMixin):
 
     def zeo_request(self, path, callback, referer, access_token=None,
                            post_args=None, **args):
-        """Fetches the given API path, e.g., "/user/-/activities/log/steps/date/today/7d"
+        """Fetches the given API path, e.g., #example query
 
         The path should not include the format (we automatically append
         ".json" and parse the JSON output).
@@ -771,6 +771,7 @@ class ZeoMixin(tornado.auth.OAuthMixin):
         }
 
     def _oauth_get_user(self, access_token, callback):
+        print "getting the user stuff"
         callback = self.async_callback(self._parse_user_response, callback)
 
         self.zeo_request(

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+<h1> Api Documentation </h1>
+<h2>data api</h2>
+<p> The general scheme is base_url/<<i>version</i>>/<<i>username</i>>/<<i>l1_data_category</i>>/<<i>l2_data_category</i>>/<<i>resource</i>> ? <<i>parameters</i>></p>
+<p> Parameters are: start_date, end_date, location (lat, lon), radius, users, descriptive_stats (mean, med, mode, sd).
+<p>example: localhost:8000/v1/pdarche/body/nutrition/meals?start_date=101010&end_date=101020&location=home&r=500</p>
+
+
+
+<p>(l1) Body</p>
+<ul>
+	<li>
+		<p>(l2) Physical Activity</p>
+		<ul>
+			<li>steps</li>
+			<li>distance</li>
+			<li>minutes sedentary</li>
+			<li>minutes lightly active</li>
+			<li>minutes moderately active</li>
+			<li>minutes very active</li>
+			<li>summary</li>
+		</ul>
+	</li>
+	<li>
+		<p>(l2) Sleep</p>
+		<ul>
+			<li>total sleep</li>
+			<li>light sleep</li>
+			<li>deep sleep</li>
+			<li>rem sleep</li>
+			<li>time awake</li>
+			<li>times awaken</li>
+			<li>bed time</li>
+			<li>rise tme</li>
+			<li>summary</li>
+		</ul>
+	</li>
+	<li>
+		<p>(l2) Bodily Attributes</p>
+		<ul>
+			<li>height</li>
+			<li>weight</li>
+			<li>age</li>
+			<li>sex</li>
+			<li>blood pressure</li>
+			<li>cholesterol</li>
+			<li>bed time</li>
+			<li>rise tme</li>
+			<li>summary</li>
+		</ul>
+	</li>
+	<li>
+		<p>(l2) Nutrition</p>
+		<ul>
+			<li>meals</li>
+			<li>protein</li>
+			<li>fat</li>
+			<li>carbs</li>
+			<li>sodium</li>
+			<li>sugar</li>
+			<li>vitamins</li>
+			<li>summary</li>
+		</ul>
+	</li>
+	<li>
+		<ul>Summary</ul>
+	</li>
+</ul>
+
+<p>Mind</p>
+
+<p>Emotions and Relationships</p>
+
+<p>Society</p>
+
+<p>Environment</p>
+
+<p>Projects</p>
+
+<h2>Outcomes api</h2>
+
+<p> The general scheme is base_url/<<i>version</i>>/<<i>username</i>>/ <<i>l1_outcomes_category</i>>/<<i>l2_data_category</i>>/<<i></i>></p>
+
+
+{% end %}

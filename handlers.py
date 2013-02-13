@@ -377,16 +377,18 @@ class ZeoHandler(tornado.web.RequestHandler, mixins.ZeoMixin):
 
 		self.authorize_redirect('http://localhost:8000/zeo')
 
-	def _zeo_on_auth(self, user):
-		if not user:
-			self.clear_all_cookies()
-			raise tornado.web.HTTPError(500, 'Zeo authentication failed')
+	def _zeo_on_auth(self, *args):
+		self.write( "maybe worked?" )
+		self.finish()
+		# if not user:
+		# 	self.clear_all_cookies()
+		# 	raise tornado.web.HTTPError(500, 'Zeo authentication failed')
 
-		self.set_secure_cookie('zeo_user_id', str(user['user']['encodedId']))
-		self.set_secure_cookie('zeo_oauth_token', user['access_token']['key'])
-		self.set_secure_cookie('zeo_oauth_secret', user['access_token']['secret'])
+		# self.set_secure_cookie('zeo_user_id', str(user['user']['encodedId']))
+		# self.set_secure_cookie('zeo_oauth_token', user['access_token']['key'])
+		# self.set_secure_cookie('zeo_oauth_secret', user['access_token']['secret'])
 
-		self.render('test.html', user=json.dumps(user))
+		# self.render('test.html', user=json.dumps(user))
 
 	def _zeo_on_user(self, user):
 		if not user:
@@ -1525,8 +1527,9 @@ class RemoveUserFlickrHandler(BaseHandler):
 
 		self.write(str(len(photos)) + " records")
 
-
-
+class DocumentationHandler(tornado.web.RequestHandler):
+	def get(self):
+		self.render( "docs.html" )
 
 
 
