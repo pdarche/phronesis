@@ -171,6 +171,11 @@ class OpenPathsUserInfo(EmbeddedDocument):
 	op_access_secret = StringField()
 
 
+class ZeoUserInfo(EmbeddedDocument):
+	create_at = StringField()
+	zeo_username = StringField()
+	zeo_password = StringField()
+
 class User(Document):
 	user_since = StringField()
 	username = StringField()
@@ -186,6 +191,7 @@ class User(Document):
 	twitter_user_info = EmbeddedDocumentField(TwitterUserInfo)
 	google_user_info = EmbeddedDocumentField(GoogleUserInfo)
 	openpaths_user_info = EmbeddedDocumentField(OpenPathsUserInfo)
+	zeo_user_info = EmbeddedDocumentField(ZeoUserInfo)
 
 
 class BodyMeasurements(EmbeddedDocument):
@@ -310,13 +316,12 @@ class ZeoDate(EmbeddedDocument):
 	hour = IntField()
 
 class ZeoSleep(Document):
-	date = StringField()
+	start_date = StringField()
 	user_id = StringField()
-	type = StringField() #zeo, fitbit, other
 	awakenings = IntField()
 	awakenings_zq_points = IntField()
 	bed_time = DateTimeField()
-	grouping = ListField() #find out what type this is?  docs say 'enum', so list?
+	grouping = StringField() #find out what type this is?  docs say 'enum', so list?
 	morning_feel = IntField()
 	rise_time = DateTimeField()
 	start_time = DateTimeField()

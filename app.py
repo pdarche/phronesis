@@ -25,13 +25,14 @@ class Application(tornado.web.Application):
 	def __init__(self):
 		handlers = [
 			(r"/", h.MainHandler),(r"/signup", h.SignUpHandler),
-			(r"/login", h.LoginHandler),(r"/users/(\w+)", h.UserInfoHandler),
+			(r"/login", h.LoginHandler),(r"/v1/users/(\w+)", h.UserInfoHandler),
 			(r"/remove", h.RemoveUserHandler),
 			(r"/docs", h.DocumentationHandler),
 			(r"/v1/connect/twitter", h.TwitterConnectHandler),
 			(r"/v1/connect/facebook", h.FacebookConnectHandler),
 			(r"/v1/fitbit", h.FitbitConnectHandler),
 			(r"/zeo", h.ZeoHandler),
+			(r"/v1/zeobasic", h.ZeoBasicAuth),
 			(r"/v1/foursquare", h.FoursquareHandler),
 			(r"/v1/google", h.GoogleHandler),
 			(r"/v1/flickr", h.FlickrHandler),

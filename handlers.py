@@ -5,6 +5,7 @@ import json
 import simplejson
 import datetime
 import time
+import zeoapi
 from utilities import *
 
 import oauth2, urllib, urllib2
@@ -378,15 +379,9 @@ class ZeoHandler(tornado.web.RequestHandler, mixins.ZeoMixin):
 		self.authorize_redirect('http://localhost:8000/zeo')
 
 	def _zeo_on_auth(self, *args):
-		self.write( "maybe worked?" )
-		self.finish()
-		# if not user:
-		# 	self.clear_all_cookies()
-		# 	raise tornado.web.HTTPError(500, 'Zeo authentication failed')
-
-		# self.set_secure_cookie('zeo_user_id', str(user['user']['encodedId']))
-		# self.set_secure_cookie('zeo_oauth_token', user['access_token']['key'])
-		# self.set_secure_cookie('zeo_oauth_secret', user['access_token']['secret'])
+		if not user:
+			self.clear_all_cookies()
+			raise tornado.web.HTTPError(500, 'Zeo authentication failed')
 
 		# self.render('test.html', user=json.dumps(user))
 
@@ -398,6 +393,59 @@ class ZeoHandler(tornado.web.RequestHandler, mixins.ZeoMixin):
 		self.render('test.html', user=json.dumps(user))
 
 
+class ZeoBasicAuth(tornado.web.RequestHandler):
+	@tornado.web.authenticated
+	def post(self):
+		username = self.get_argument('username')
+		password = self.get_argument('password')
+		user = models.User.objects(username="pdarche")[0]
+
+		zeo = models.ZeoUserInfo(
+			create_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
+			zeo_username = username,
+			zeo_password = password
+		)
+
+		user.update(set__zeo_user_info=zeo)
+
+		if user.save():
+			response = "zeo added"
+			print "user saved"
+		else:
+			response = "failure"
+			print "user not saved"
+
+		self.write( response )
+		self.finish()
+
+	@tornado.web.asynchronous
+	def get(self):
+		user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+		zeo_username = user.zeo_user_info.zeo_username
+		zeo_password = user.zeo_user_info.zeo_password
+		api_key = '99B70750EA14609996C38F0B4618D934'
+
+		z = zeoapi.Api()
+		z.username = zeo_username
+		z.password = zeo_password
+		z.apikey = api_key
+		z.referrer = "http://localhost:8000"
+
+		data = z.getAllDatesWithSleepData()
+		nights = []
+
+		for d in data[1:5]:
+			date = '%s-%s-%s' % (d["year"], d["month"], d["day"])
+			record = z.getSleepRecordForDate(date=date)
+			print nights.append( record )
+
+		records = { "data" : nights }
+		self.write( json.dumps( records ))
+		self.finish()
+
+	def _on_data(self, data):
+		self.write( json.dumps( data ))
+		self.finish()
 
 class FoursquareHandler(tornado.web.RequestHandler, mixins.FoursquareMixin):
     @tornado.web.asynchronous
