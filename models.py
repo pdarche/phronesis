@@ -309,28 +309,29 @@ class FitbitSleep(Document):
 
 
 ############# SLEEP ############# 
-class ZeoDate(EmbeddedDocument):
+class ZeoDateTime(EmbeddedDocument):
 	year = IntField()
 	month = IntField()
 	day = IntField()
 	hour = IntField()
+	minute = IntField()
+	second = IntField()
 
-class ZeoSleep(Document):
-	start_date = StringField()
+class ZeoSleepRecord(Document):
+	created_at = StringField()
 	user_id = StringField()
+	start_date = EmbeddedDocumentField(ZeoDateTime)
 	awakenings = IntField()
 	awakenings_zq_points = IntField()
-	bed_time = DateTimeField()
+	bed_time = EmbeddedDocumentField(ZeoDateTime)
 	grouping = StringField() #find out what type this is?  docs say 'enum', so list?
 	morning_feel = IntField()
-	rise_time = DateTimeField()
-	start_time = DateTimeField()
+	rise_time = EmbeddedDocumentField(ZeoDateTime)
 	time_in_deep = IntField()
 	time_in_deep_percentage = IntField()
 	time_in_deep_zq_points = IntField()
 	time_in_light = IntField()
 	time_in_light_perentage = IntField()
-	time_in_light_zq_points = IntField()
 	time_in_rem = IntField()
 	time_in_rem_percentage = IntField()
 	time_in_rem_zq_points = IntField()
@@ -344,8 +345,8 @@ class ZeoSleep(Document):
 	alarm_reason = StringField()
 	alarm_ring_index = IntField()
 	dayFeel = IntField()
-	sleep_graph = ListField(StringField())
-	sleep_graph_start_time = DateTimeField()
+	sleep_graph = ListField()
+	sleep_graph_start_time = EmbeddedDocumentField(ZeoDateTime)
 	sleep_stealer_score = IntField()
 	wake_window_end_index = IntField() #? is this an int?
 	wake_window_start_index = IntField() #? is this an int?
