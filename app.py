@@ -49,6 +49,7 @@ class Application(tornado.web.Application):
 			(r"/v1/remove/foursquare", h.RemoveUserFoursquareHandler),
 			(r"/v1/remove/flickr", h.RemoveUserFlickrHandler),
 			(r"/v1/logout", h.LogoutHandler),
+			(r"/settings", h.PrintAppSettings),
 		]
 		settings = dict(
 			template_path=os.path.join(os.path.dirname(__file__), "templates"),

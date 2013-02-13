@@ -680,6 +680,7 @@ class ZeoMixin(tornado.auth.OAuthMixin):
     _OAUTH_VERSION ="1.0"
     _ZEO_API_KEY = '64DD3496BF4D5E090DE4542A5C39F06F'
     _REFERER = 'http://stu.itp.nyu.edu/~pmd299'
+    
 
     def authenticate_redirect(self, callback_uri=None):
         """Just like authorize_redirect(), but auto-redirects if authorized.

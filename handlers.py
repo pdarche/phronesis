@@ -1532,4 +1532,14 @@ class DocumentationHandler(tornado.web.RequestHandler):
 		self.render( "docs.html" )
 
 
+class PrintAppSettings(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		key = models.AppSettings.objects[0].zeo_consumer_key,
+		secret = models.AppSettings.objects[0].zeo_consumer_secret
+
+		data = { "key" : key, "secret" : secret }
+
+		self.write( json.dumps( data ))
+		self.finish()
 
