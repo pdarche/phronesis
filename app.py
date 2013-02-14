@@ -40,6 +40,7 @@ class Application(tornado.web.Application):
 			(r"/v1/flickr", h.FlickrHandler),
 			(r"/v1/khanacademy", h.KhanAcademyHandler),
 			(r"/v1/openpaths", h.OpenPathsHandler),
+			(r"/v1/withings", h.WithingsHandler),
 			(r"/v1/import/fitbit", h.FitbitImportHandler),
 			(r"/v1/import/foursquare", h.FoursquareImportHandler),
 			(r"/v1/import/openpaths", h.OpenPathsImportHandler),
@@ -76,6 +77,8 @@ class Application(tornado.web.Application):
 			flickr_consumer_secret=models.AppSettings.objects[0].flickr_consumer_secret,
 			khanacademy_consumer_key=models.AppSettings.objects[0].khanacademy_consumer_key,
 			khanacademy_consumer_secret=models.AppSettings.objects[0].khanacademy_consumer_secret,
+			withings_consumer_key=models.AppSettings.objects[0].withings_consumer_key,
+			withings_consumer_secret=models.AppSettings.objects[0].withings_consumer_secret,
 			cookie_secret=models.AppSettings.objects[0].cookie_secret,
 			debug=True,
 		)

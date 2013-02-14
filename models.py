@@ -27,6 +27,8 @@ class AppSettings(Document):
 	flickr_consumer_secret = StringField()
 	khanacademy_consumer_key = StringField()
 	khanacademy_consumer_secret = StringField()
+	withings_consumer_key = StringField()
+	withings_consumer_secret = StringField()
 	cookie_secret = StringField()
 
 

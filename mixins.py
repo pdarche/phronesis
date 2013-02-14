@@ -7,6 +7,14 @@ from tornado.httputil import url_concat
 import logging
 import urllib
 import json
+import base64
+import binascii
+import hashlib
+import hmac
+import logging
+import time
+import urlparse
+import uuid
 
 log = logging.info
 
@@ -733,7 +741,7 @@ class ZeoMixin(tornado.auth.OAuthMixin):
             # usual pattern: http://search.twitter.com/search.json
             url = path
         else:
-            url = self._FITBIT_BASE_URL + path + ".json"
+            url = self._ZEO_BASE_URL + path + ".json"
         # Add the OAuth resource request signature if we have credentials
         if access_token:
             all_args = dict()
@@ -785,4 +793,219 @@ class ZeoMixin(tornado.auth.OAuthMixin):
     def _parse_user_response(self, callback, user):
         if user:
             user["username"] = user["user"]["encodedId"]
+        callback(user)
+
+
+class WithingsMixin(tornado.auth.OAuthMixin):
+    """Withings OAuth authentication.
+
+    To authenticate with Withings, register your application 
+    at https://oauth.withings.com/en/partner/add. 
+    Then copy your Consumer Key and Consumer Secret to the application 
+    settings 'zeo_consumer_key' and'zeo_consumer_secret'. 
+    Use this Mixin on the handler for the URL
+    you registered as your application's Callback URL.
+
+    When your application is set up, you can use this Mixin like this
+    to authenticate the user with Zeo and get access to their data::
+
+        class WithingsHandler(tornado.web.RequestHandler,
+                             tornado.auth.ZeoMixin):
+            @tornado.web.asynchronous
+            def get(self):
+                if self.get_argument("oauth_token", None):
+                    self.get_authenticated_user(self.async_callback(self._on_auth))
+                    return
+                self.authorize_redirect()
+
+            def _on_auth(self, user):
+                if not user:
+                    raise tornado.web.HTTPError(500, "Withings auth failed")
+                # Save the user using, e.g., set_secure_cookie()
+
+    The user object returned by get_authenticated_user() includes the
+    attributes 'user-id', 'name', and all of the custom Fitbit user
+    attributes describe at
+    https://wiki.zeo.com/display/API/API-Get-User-Info
+    in addition to 'access_token'. You should save the access token with
+    the user; it is required to make requests on behalf of the user later
+    with zeo_request().
+    """
+    _OAUTH_REQUEST_TOKEN_URL = "https://oauth.withings.com/account/request_token"
+    _OAUTH_ACCESS_TOKEN_URL = "https://oauth.withings.com/account/access_token"
+    _OAUTH_AUTHORIZE_URL = "https://oauth.withings.com/account/authorize"
+    _OAUTH_NO_CALLBACKS = False
+    _WITHINGS_BASE_URL = "http://wbsapi.withings.net"
+    _OAUTH_VERSION ="1.0"
+    
+
+    def authenticate_redirect(self, callback_uri=None):
+        """Just like authorize_redirect(), but auto-redirects if authorized.
+
+        This is generally the right interface to use if you are using
+        Zeo for single-sign on.
+        """
+
+        http = self.get_auth_http_client()
+        http.fetch(self._oauth_request_token_url(callback_uri=callback_uri), self.async_callback(
+            self._on_request_token, self._OAUTH_AUTHORIZE_URL, None))
+
+    def withings_request(self, callback, service, action, access_token=None,
+                            post_args=None, **args):
+        """Fetches the given API path, e.g., 
+        http://wbsapi.withings.net/measure?action=getmeas&userid=29
+        The path should not include the format (we automatically append
+        ".json" and parse the JSON output).
+
+        If the request is a POST, post_args should be provided. Query
+        string arguments should be given as keyword arguments.
+
+        All the Withings methods are documented at
+        http://www.withings.com/api
+
+        Many methods require an OAuth access token which you can obtain
+        through authorize_redirect() and get_authenticated_user(). The
+        user returned through that process includes an 'access_token'
+        attribute that can be used to make authenticated requests via
+        this method. Example usage::
+
+            class MainHandler(tornado.web.RequestHandler,
+                              tornado.auth.WithingsMixin):
+                @tornado.web.authenticated
+                @tornado.web.asynchronous
+                def get(self):
+                    self.withings_request(
+                        service="user",
+                        action="getbyuserid"
+                        access_token=user["access_token"],
+                        callback=self.async_callback(self._on_post))
+
+                def _on_auth(self, user):
+                    if not user:
+                        raise tornado.web.HTTPError(500, "Zeo auth failed")
+                    # Save the user using, e.g., set_secure_cookie()
+        """
+        
+        url = self._WITHINGS_BASE_URL + "/" + service + "?action=" + action + "&userid=110334"
+        # Add the OAuth resource request signature if we have credentials
+        if access_token:
+            all_args = dict()
+            all_args.update(args)
+            if post_args is not None:
+                all_args.update(post_args)
+            method = "POST" if post_args is not None else "GET"
+            oauth = self._oauth_request_parameters(
+                url, access_token, all_args, method=method)
+            # args.update(oauth)
+        oauth["userid"] = "110334"
+        callback = self.async_callback(self._on_withings_request, callback)
+        http = self.get_auth_http_client()
+        log(build_oauth_header(oauth))
+        logging.warning("the oauth params are %r" % build_oauth_header(oauth))
+        if post_args is not None:
+            print url
+            http.fetch(url, method="POST", body=urllib.urlencode(args),
+                       callback=callback)
+        else:
+            print url
+            http.fetch(url, callback=callback)
+
+    def _on_withings_request(self, callback, response):
+        log("Got response %s fetching %s", (str(response), response.body))
+        callback(json.loads(response.body))
+
+    def _oauth_consumer_token(self):
+        self.require_setting("withings_consumer_key", "Withings OAuth")
+        self.require_setting("withings_consumer_secret", "Withings OAuth")
+        return {
+            'key': self.settings["withings_consumer_key"],
+            'secret': self.settings["withings_consumer_secret"]
+        }
+
+    def authorize_withings_redirect(self, callback_uri=None, extra_params=None,
+                           http_client=None):
+        """Redirects the user to obtain OAuth authorization for this service.
+
+        Twitter and FriendFeed both require that you register a Callback
+        URL with your application. You should call this method to log the
+        user in, and then call get_authenticated_user() in the handler
+        you registered as your Callback URL to complete the authorization
+        process.
+
+        This method sets a cookie called _oauth_request_token which is
+        subsequently used (and cleared) in get_authenticated_user for
+        security purposes.
+        """
+        if callback_uri and getattr(self, "_OAUTH_NO_CALLBACKS", False):
+            raise Exception("This service does not support oauth_callback")
+        if http_client is None:
+            http_client = self.get_auth_http_client()
+        if getattr(self, "_OAUTH_VERSION", "1.0a") == "1.0a":
+            http_client.fetch(
+                self._oauth_request_token_url(callback_uri=callback_uri,
+                                              extra_params=extra_params),
+                self.async_callback(
+                    self._on_request_token,
+                    self._OAUTH_AUTHORIZE_URL,
+                callback_uri))
+        else:
+            http_client.fetch(
+                self._oauth_request_token_url(extra_params=extra_params),
+                self.async_callback(
+                    self._on_request_token, self._OAUTH_AUTHORIZE_URL,
+                    callback_uri))
+
+
+    def get_authenticated_withings_user(self, callback, http_client=None):
+        """Gets the OAuth authorized user and access token on callback.
+
+        This method should be called from the handler for your registered
+        OAuth Callback URL to complete the registration process. We call
+        callback with the authenticated user, which in addition to standard
+        attributes like 'name' includes the 'access_key' attribute, which
+        contains the OAuth access you can use to make authorized requests
+        to this service on behalf of the user.
+
+        """
+        request_key = escape.utf8(self.get_argument("oauth_token"))
+        oauth_verifier = self.get_argument("oauth_verifier", None)
+        user_id = self.get_argument("user_id", None)
+        request_cookie = self.get_cookie("_oauth_request_token")
+        if not request_cookie:
+            logging.warning("Missing OAuth request token cookie")
+            callback(None)
+            return
+        # self.clear_cookie("_oauth_request_token")
+        cookie_key, cookie_secret = [base64.b64decode(escape.utf8(i)) for i in request_cookie.split("|")]
+        if cookie_key != request_key:
+            logging.info((cookie_key, request_key, request_cookie))
+            logging.warning("Request token does not match cookie")
+            callback(None)
+            return
+        token = dict(key=cookie_key, secret=cookie_secret)
+        if oauth_verifier:
+            token["verifier"] = oauth_verifier
+        if user_id:
+            token["userid"] = user_id
+        if http_client is None:
+            http_client = self.get_auth_http_client()    
+
+        http_client.fetch(self._oauth_access_token_url(token),
+                          self.async_callback(self._on_access_token, callback))
+
+    def _oauth_get_user(self, access_token, callback):
+        callback = self.async_callback(self._parse_user_response, callback)
+
+        self.withings_request(
+            service="user",
+            action = "getbyuserid",
+            userid = 110334, 
+            access_token=access_token,
+            callback=callback
+        )
+
+    def _parse_user_response(self, callback, user):
+        print user
+        # if user:
+        #     user["username"] = user["user"]["encodedId"]
         callback(user)

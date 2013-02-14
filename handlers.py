@@ -380,7 +380,7 @@ class ZeoHandler(tornado.web.RequestHandler, mixins.ZeoMixin):
 
 		self.authorize_redirect('http://localhost:8000/zeo')
 
-	def _zeo_on_auth(self, *args):
+	def _zeo_on_auth(self, *args):		
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, 'Zeo authentication failed')
@@ -517,8 +517,6 @@ class ZeoBasicAuth(tornado.web.RequestHandler):
 			else:
 				response = "sleep record didn't"
 				response = "sleep record didn't save"
-
-
 
 		self.write( response )
 		self.finish()
@@ -816,6 +814,43 @@ class OpenPathsHandler(BaseHandler):
 
 		self.write( response )
 		self.finish()
+
+
+class WithingsHandler(tornado.web.RequestHandler, mixins.WithingsMixin): 
+	@tornado.web.asynchronous
+	def get(self):
+		oAuthToken = self.get_secure_cookie('zeo_oauth_token')
+		oAuthSecret = self.get_secure_cookie('zeo_oauth_secret')
+		userID = self.get_secure_cookie('zeo_user_id')
+
+		if self.get_argument('oauth_token', None):	
+			self.get_authenticated_withings_user(self.async_callback(self._withings_on_auth))
+			return
+
+		elif oAuthToken and oAuthSecret:
+				accessToken = {
+					'key': 		oAuthToken,
+					'secret':	oAuthSecret
+				}
+
+				self.zeo_request('/users/show',
+					access_token =  accessToken,
+					user_id =		userID,
+					callback = 		self.async_callback(self._fitbit_on_user)
+				)
+				return
+
+		callback_uri = { "oauth_callback" : "http://localhost:8000/v1/withings" }
+		self.authorize_withings_redirect(extra_params=callback_uri)
+
+	def _withings_on_auth(self, user):		
+		if not user:
+			self.clear_all_cookies()
+			raise tornado.web.HTTPError(500, 'Withings authentication failed')
+
+		self.write( json.dumps(user) )
+		self.finish()
+		# self.render('test.html', user=json.dumps(user))
 
 
 ####### REFACTOR.  THIS IS TERRIBLE
