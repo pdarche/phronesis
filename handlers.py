@@ -30,7 +30,7 @@ import bson
 from bson import json_util
 
 def oauthd(fn):
-	curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+	curr_user = models.userinfo.User.objects(username=self.get_secure_cookie("username"))[0]
 	if hasattr(curr_user["ftbt_user_info"], "ftbt_access_token"):
 		def wrapped():
 			oAuthToken = curr_user["ftbt_user_info"]["ftbt_access_token"]["key"]
@@ -62,8 +62,8 @@ class SignUpHandler(tornado.web.RequestHandler):
 		password = self.get_argument('password')
 		
 		#if the username isn't already taken, create new user object 
-		if len( models.User.objects(username=username) ) == 0:
-			newuser = models.User(
+		if len( models.userinfo.User.objects(username=username) ) == 0:
+			newuser = models.userinfo.User(
 				date = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 				username = username,
 				password = password,
@@ -93,7 +93,7 @@ class LoginHandler(tornado.web.RequestHandler):
 		username = self.get_argument('username')
 		password = self.get_argument('password')
 
-		user = models.User.objects(username=username)
+		user = models.userinfo.User.objects(username=username)
 
 		if len( user ) == 0 or username == None:
 			response = "Der, we don't have a user with that username\n"
@@ -117,7 +117,7 @@ class UserInfoHandler(BaseHandler):
 		print "input is %s" % input
 		if input == self.current_user:
 			
-			user = models.User.objects(username=input)
+			user = models.userinfo.User.objects(username=input)
 			
 			response = json.dumps(user[0], default=encode_model)			
 
@@ -191,7 +191,7 @@ class TwitterConnectHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixi
 			twitter_is_translator = user["is_translator"]
 		)
 
-		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj = models.userinfo.User.objects(username=self.get_secure_cookie("username"))
 		user_obj[0].update(set__twitter_user_info=tw)
 
 		if user_obj[0].save():
@@ -254,7 +254,7 @@ class FacebookConnectHandler(tornado.web.RequestHandler, tornado.auth.FacebookGr
 			facebook_id = user["id"]
 		)
 
-		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj = models.userinfo.User.objects(username=self.get_secure_cookie("username"))
 		user_obj[0].update(set__facebook_user_info=fb)
 
 		if user_obj[0].save():
@@ -274,7 +274,7 @@ class FitbitConnectHandler(BaseHandler, mixins.FitbitMixin):
 	@tornado.web.asynchronous
 	def get(self):
 
-		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+		curr_user = models.userinfo.User.objects(username=self.get_secure_cookie("username"))[0]
 
 		if self.get_argument('oauth_token', None):			
 			self.get_authenticated_user(self.async_callback(self._fitbit_on_auth))
@@ -304,13 +304,13 @@ class FitbitConnectHandler(BaseHandler, mixins.FitbitMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, 'Fitbit authentication failed')
 
-		ftbt_access = models.FitbitAccessToken(
+		ftbt_access = models.userinfo.FitbitAccessToken(
 			key = user["access_token"]["key"],
 			encoded_user_id = user["access_token"]["encoded_user_id"],
 			secret = user["access_token"]["secret"]
 		)
 
-		ftbt = models.FitbitUserInfo(
+		ftbt = models.userinfo.FitbitUserInfo(
 			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 			fitbit_user_name = user["username"],
 			ftbt_access_token = ftbt_access,
@@ -333,7 +333,7 @@ class FitbitConnectHandler(BaseHandler, mixins.FitbitMixin):
 			ftbt_stride_length_running = user["user"]["strideLengthRunning"]
 		)
 
-		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj = models.userinfo.User.objects(username=self.get_secure_cookie("username"))
 		user_obj[0].update(set__ftbt_user_info=ftbt)
 
 		if user_obj[0].save():
@@ -400,9 +400,9 @@ class ZeoBasicAuth(tornado.web.RequestHandler):
 	def post(self):
 		username = self.get_argument('username')
 		password = self.get_argument('password')
-		user = models.User.objects(username="pdarche")[0]
+		user = models.userinfo.User.objects(username="pdarche")[0]
 
-		zeo = models.ZeoUserInfo(
+		zeo = models.userinfo.ZeoUserInfo(
 			create_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 			zeo_username = username,
 			zeo_password = password
@@ -422,7 +422,7 @@ class ZeoBasicAuth(tornado.web.RequestHandler):
 
 	@tornado.web.asynchronous
 	def get(self):
-		user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+		user = models.userinfo.User.objects(username=self.get_secure_cookie("username"))[0]
 		zeo_username = user.zeo_user_info.zeo_username
 		zeo_password = user.zeo_user_info.zeo_password
 		api_key = '99B70750EA14609996C38F0B4618D934'
@@ -440,7 +440,7 @@ class ZeoBasicAuth(tornado.web.RequestHandler):
 			date = '%s-%s-%s' % (d["year"], d["month"], d["day"])
 			record = z.getSleepRecordForDate(date=date)
 		 	
-		 	for_date = models.ZeoDateTime(
+		 	for_date = models.zeo.ZeoDateTime(
 		 		year = record["startDate"]["year"],
 		 		month = record["startDate"]["month"],
 		 		day = record["startDate"]["day"],
@@ -449,7 +449,7 @@ class ZeoBasicAuth(tornado.web.RequestHandler):
 		 		second = None
 		 	)
 
-		 	bed_time = models.ZeoDateTime(
+		 	bed_time = models.zeo.ZeoDateTime(
 		 		year = record["bedTime"]["year"],
 		 		month = record["bedTime"]["month"],
 		 		day = record["bedTime"]["day"],
@@ -458,7 +458,7 @@ class ZeoBasicAuth(tornado.web.RequestHandler):
 		 		second = record["bedTime"]["second"]
 		 	)
 
-		 	rise_time = models.ZeoDateTime(
+		 	rise_time = models.zeo.ZeoDateTime(
 		 		year = record["riseTime"]["year"],
 		 		month = record["riseTime"]["month"],
 		 		day = record["riseTime"]["day"],
@@ -467,7 +467,7 @@ class ZeoBasicAuth(tornado.web.RequestHandler):
 		 		second = record["riseTime"]["second"]
 		 	)
 
-		 	sleep_graph_start = models.ZeoDateTime(
+		 	sleep_graph_start = models.zeo.ZeoDateTime(
 		 		year = record["sleepGraphStartTime"]["year"],
 		 		month = record["sleepGraphStartTime"]["month"],
 		 		day = record["sleepGraphStartTime"]["day"],
@@ -476,7 +476,7 @@ class ZeoBasicAuth(tornado.web.RequestHandler):
 		 		second = record["sleepGraphStartTime"]["second"]
 		 	)
 
-			sleep_record = models.ZeoSleepRecord(
+			sleep_record = models.zeo.ZeoSleepRecord(
 				created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 				user_id = self.get_secure_cookie("username"),
 				start_date = for_date,
@@ -546,7 +546,7 @@ class FoursquareHandler(tornado.web.RequestHandler, mixins.FoursquareMixin):
     def _on_login(self, user):
         # Do something interesting with user here. See: user["access_token"]
         
-		fs = models.FoursquareUserInfo(
+		fs = models.userinfo.FoursquareUserInfo(
 			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 			foursquare_last_name = user["last_name"],
 			foursquare_first_name = user["first_name"],
@@ -560,7 +560,7 @@ class FoursquareHandler(tornado.web.RequestHandler, mixins.FoursquareMixin):
 			foursquare_checkin_pings = user["response"]["user"]["checkinPings"]
 		)
 
-		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj = models.userinfo.User.objects(username=self.get_secure_cookie("username"))
 		user_obj[0].update(set__foursquare_user_info=fs)
 
 		if user_obj[0].save():
@@ -596,7 +596,7 @@ class GoogleHandler(tornado.web.RequestHandler, tornado.auth.GoogleMixin):
 			google_email = user["email"]
 		)
 		
-		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj = models.userinfo.User.objects(username=self.get_secure_cookie("username"))
 		user_obj[0].update(set__google_user_info=g)
 
 		if user_obj[0].save():
@@ -644,7 +644,7 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, 'Flickr authentication failed')
 
-		flkr_access = models.FlickrAccessToken(
+		flkr_access = models.userinfo.FlickrAccessToken(
 			username = user["access_token"]["username"],
 			secret = user["access_token"]["secret"],
 			fullname = user["access_token"]["fullname"],
@@ -652,7 +652,7 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 			user_nsid = user["access_token"]["user_nsid"]
 		)
 
-		flkr = models.FlickrUserInfo(
+		flkr = models.userinfo.FlickrUserInfo(
 			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 			flickr_access_token = flkr_access,
 			flickr_stat = user["stat"],
@@ -660,7 +660,7 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 			flickr_nsid = user["user"]["nsid"]
 		)
 
-		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj = models.userinfo.User.objects(username=self.get_secure_cookie("username"))
 		user_obj[0].update(set__flickr_user_info=flkr)
 
 		if user_obj[0].save():
@@ -716,12 +716,12 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, 'Khan Academy authentication failed')
 
-		ka_access = models.KhanAcademyAccessToken(
+		ka_access = models.userinfo.KhanAcademyAccessToken(
 			khanacademy_secret = user["access_token"]["secret"],
 			khanacademy_key = user["access_token"]["key"],
 		)
 
-		ka = models.KhanAcademyUserInfo(
+		ka = models.userinfo.KhanAcademyUserInfo(
 			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 			khanacademy_has_notification = user["has_notification"],
 			khanacademy_can_record_tutorial = user["can_record_tutorial"],
@@ -750,7 +750,7 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 			khanacademy_gae_bingo_identity = user["gae_bingo_identity"].encode('utf-8')
 		)
 
-		user_obj = models.User.objects(username=self.get_secure_cookie("username"))
+		user_obj = models.userinfo.User.objects(username=self.get_secure_cookie("username"))
 		user_obj[0].update(set__khanacademy_user_info=ka)
 
 		if user_obj[0].save():
@@ -781,7 +781,7 @@ class OpenPathsHandler(BaseHandler):
 	def get(self):
 		# username = self.get_secure_cookie("username")
 		username = "pdarche"
-		user = models.User.objects(username=username)[0]
+		user = models.userinfo.User.objects(username=username)[0]
 
 		if user.openpaths_user_info == None:
 			self.write("open paths not connected")
@@ -792,12 +792,12 @@ class OpenPathsHandler(BaseHandler):
 
 	def post(self):
 		username = "pdarche"
-		user = models.User.objects(username=username)[0]
+		user = models.userinfo.User.objects(username=username)[0]
 		access_key = self.get_argument("access_key")
 		access_secret = self.get_argument("access_secret")
 		# username = self.get_secure_cookie("username")
 
-		op = models.OpenPathsUserInfo(
+		op = models.userinfo.OpenPathsUserInfo(
 			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 			op_access_key = access_key,
 			op_access_secret = access_secret
@@ -1150,7 +1150,7 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		)
 
 		for day in zipped_activities:
-			activity_record = models.FitbitPhysicalActivity(
+			activity_record = models.fitbit.FitbitPhysicalActivity(
 					created_at = day[0]["dateTime"],
 					user_id = self.get_secure_cookie("usernmane"),
 					ftbt_steps = int(day[1]["value"]),
@@ -1191,7 +1191,7 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		)
 
 		for sleep_day in zipped_sleep:
-			sleep_record = models.FitbitSleep(
+			sleep_record = models.fitbit.FitbitSleep(
 					created_at = sleep_day[0]["dateTime"],
 					user_id = self.get_secure_cookie("usernmane"),
 					ftbt_start_time = sleep_day[1]["value"],
@@ -1221,7 +1221,7 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		)
 
 		for body_day in zipped_body:
-			body_record = models.FitbitBodyData(
+			body_record = models.fitbit.FitbitBodyData(
 					created_at = body_day[0]["dateTime"],
 					user_id = self.get_secure_cookie("usernmane"),
 					ftbt_weight =  float(body_day[1]["value"]),
@@ -1238,7 +1238,7 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		self.finish()
 
 	def get_access_token(self):
-		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+		curr_user = models.userinfo.User.objects(username=self.get_secure_cookie("username"))[0]
 
 		if hasattr(curr_user["ftbt_user_info"], "ftbt_access_token"):
 			oAuthToken = curr_user["ftbt_user_info"]["ftbt_access_token"]["key"]
@@ -1256,11 +1256,11 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 			self.redirect('/fitbit')
 
 	def get_member_since(self):
-		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+		curr_user = models.userinfo.User.objects(username=self.get_secure_cookie("username"))[0]
 		return curr_user["ftbt_user_info"]["ftbt_member_since"]
 
 	def get_user_id(self):
-		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+		curr_user = models.userinfo.User.objects(username=self.get_secure_cookie("username"))[0]
 		return curr_user["ftbt_user_info"]["ftbt_access_token"]["encoded_user_id"]
 
 
@@ -1289,7 +1289,7 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 
 			if "stats" in checkin["venue"].keys():
 				print "has venue stats"	
-				venue_stats =models.VenueStats(
+				venue_stats =models.foursquare.VenueStats(
 					checkins_count = checkin["venue"]["stats"]["checkinsCount"] if "checkinsCount" in checkin["venue"]["stats"].keys() else None,
 					users_count = checkin["venue"]["stats"]["usersCount"] if "userCount" in checkin["venue"]["stats"].keys() else None,
 					tips_count = checkin["venue"]["stats"]["tipsCount"] if "tipsCount" in checkin["venue"]["stats"].keys() else None
@@ -1300,7 +1300,7 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 
 			if "beenHere" in checkin.keys():
 				print "has venue been here"
-				been_here = models.VenueBeenHere(
+				been_here = models.foursquare.VenueBeenHere(
 					count = checkin["beenHere"]["count"] if "count" in checkin["beenHere"].keys() else None,
 					marked = checkin["beenHere"]["marked"] if "marked" in checkin["beenHere"].keys() else None
 				)
@@ -1310,7 +1310,7 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 			
 			if "likes" in checkin["venue"].keys():	
 				print "has venue likes"
-				likes = models.VenueLikes(
+				likes = models.foursquare.VenueLikes(
 					type = checkin["venue"]["type"] if "type" in checkin["venue"].keys() else None,
 					count = checkin["venue"]["count"] if "count" in checkin["venue"].keys() else None,
 					summry = checkin["venue"]["summary"] if "summary" in checkin["venue"].keys() else None
@@ -1321,7 +1321,7 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 
 			if "contact" in checkin["venue"].keys():
 				print "has venue contact"	
-				contact  = models.VenueContact(
+				contact  = models.foursquare.VenueContact(
 					phone = checkin["venue"]["contact"]["phone"] if "phone" in checkin["venue"]["contact"].keys() else None,
 					formatted_phone = checkin["venue"]["contact"]["formattedPhone"] if "formattedPhone" in checkin["venue"]["contact"].keys() else None,
 					twitter = checkin["venue"]["contact"]["twitter"] if "twitter" in checkin["venue"]["contact"].keys() else None,
@@ -1334,7 +1334,7 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 
 			if "menu" in checkin["venue"].keys():
 				print "has venue menu"
-				venue_menu = models.VenueMenu(
+				venue_menu = models.foursquare.VenueMenu(
 					url = checkin["venue"]["menu"]["url"] if "url" in checkin["venue"]["menu"].keys() else None,
 					mobileUrl = checkin["venue"]["menu"]["mobileUrl"] if "url" in checkin["venue"]["menu"].keys() else None,
 					type = checkin["venue"]["menu"]["mobileUrl"] if "type" in checkin["venue"]["menu"].keys() else None
@@ -1345,7 +1345,7 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 
 			if "location" in checkin["venue"].keys():
 				print "has venue location"
-				location = models.VenueLocation(
+				location = models.foursquare.VenueLocation(
 					address = checkin["venue"]["location"]["address"] if "address" in checkin["venue"]["location"].keys() else None,
 					cross_street = checkin["venue"]["location"]["crossStreet"] if "crossStreet" in checkin["venue"]["location"].keys() else None,
 					lat = checkin["venue"]["location"]["lat"] if "lat" in checkin["venue"]["location"].keys() else None,
@@ -1362,7 +1362,7 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 
 			if "venue" in checkin.keys():
 				print "has venue"
-				venue = models.Venue(
+				venue = models.foursquare.Venue(
 					venue_id = checkin["venue"]["id"] if "venueId" in checkin["venue"].keys() else None,
 					name = checkin["venue"]["name"] if "name" in checkin["venue"].keys() else None,
 					contact = contact,
@@ -1381,7 +1381,7 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 				print "doesn't have venue"
 				venue = None
 
-			checkIn = models.CheckIn(
+			checkIn = models.foursquare.CheckIn(
 				record_created_at = checkin["createdAt"],
 				user_id = self.get_secure_cookie("username"),
 				fs_id = checkin["id"],
@@ -1404,7 +1404,7 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 
 
 	def get_fs_user_info(self):
-		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+		curr_user = models.userinfo.User.objects(username=self.get_secure_cookie("username"))[0]
 
 		if hasattr(curr_user["foursquare_user_info"], "foursquare_access_token"):
 			access_token = curr_user["foursquare_user_info"]["foursquare_access_token"]
@@ -1424,7 +1424,7 @@ class OpenPathsImportHandler(BaseHandler):
 	@tornado.web.asynchronous
 	def get(self):
 		username = self.get_secure_cookie("username")
-		user = models.User.objects(username=username)[0]
+		user = models.userinfo.User.objects(username=username)[0]
 
 		ACCESS = user["openpaths_user_info"]["op_access_key"]
 		SECRET = user["openpaths_user_info"]["op_access_secret"]
@@ -1455,7 +1455,7 @@ class OpenPathsImportHandler(BaseHandler):
 		    data = json.loads(''.join(connection.readlines()))
 		    
 		    for record in data:
-		    	location = models.OpenPathsLocation(
+		    	location = models.openpaths.OpenPathsLocation(
 		    		record_created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 		    		user_id = username,
 		    		device = record["device"],
@@ -1485,7 +1485,7 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 	@tornado.web.asynchronous
 	def get(self):
 		username = self.get_secure_cookie("username")
-		user = models.User.objects(username=username)[0]
+		user = models.userinfo.User.objects(username=username)[0]
 		access_token = user["flickr_user_info"]["flickr_access_token"]
 
 		self.flickr_request(
@@ -1500,7 +1500,7 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 
 	def _on_geo(self, data):
 		username = self.get_secure_cookie("username")
-		user = models.User.objects(username=username)[0]
+		user = models.userinfo.User.objects(username=username)[0]
 		access_token = user["flickr_user_info"]["flickr_access_token"]
 		self.geo = data
 
@@ -1517,7 +1517,7 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 	def _on_non_geo(self, data):
 
 		for photo in data["photos"]["photo"]:
-			pic = models.FlickrPhoto(
+			pic = models.flickr.FlickrPhoto(
 				record_created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 				user_id = self.get_secure_cookie("username"),
 				photo_id = photo["id"],
@@ -1539,7 +1539,7 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 
 
 		for photo in self.geo["photos"]["photo"]:
-			pic = models.FlickrPhoto(
+			pic = models.flickr.FlickrPhoto(
 				record_created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 				user_id = self.get_secure_cookie("username"),
 				photo_id = photo["id"],
@@ -1570,9 +1570,9 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 class FitbitDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		db_activity_records = models.FitbitPhysicalActivity.objects()
-		db_sleep_records = models.FitbitSleep.objects
-		db_body_records = models.FitbitBodyData.objects()
+		db_activity_records = models.fitbit.FitbitPhysicalActivity.objects()
+		db_sleep_records = models.fitbit.FitbitSleep.objects
+		db_body_records = models.fitbit.FitbitBodyData.objects()
 
 		activities = json.dumps(db_activity_records, default=encode_model)
 		sleep = json.dumps(db_sleep_records, default=encode_model)
@@ -1586,7 +1586,7 @@ class FitbitDumpsHandler(BaseHandler):
 class FoursquareDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		checkins_documents = models.CheckIn.objects(user_id=self.get_secure_cookie("username"))
+		checkins_documents = models.foursquare.CheckIn.objects(user_id=self.get_secure_cookie("username"))
 
 		checkins = json.dumps(checkins_documents, default=encode_model)
 
@@ -1615,7 +1615,7 @@ class FoursquareDumpsHandler(BaseHandler):
 # 		self.finish()		
 
 # 	def get_fs_user_info(self):
-# 		curr_user = models.User.objects(username=self.get_secure_cookie("username"))[0]
+# 		curr_user = models.userinfo.User.objects(username=self.get_secure_cookie("username"))[0]
 
 # 		if hasattr(curr_user["foursquare_user_info"], "foursquare_access_token"):
 # 			access_token = curr_user["foursquare_user_info"]["foursquare_access_token"]
@@ -1628,7 +1628,7 @@ class FoursquareDumpsHandler(BaseHandler):
 class OpenPathsDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		location_documents = models.OpenPathsLocation.objects(user_id=self.get_secure_cookie("username"))
+		location_documents = models.openpaths.OpenPathsLocation.objects(user_id=self.get_secure_cookie("username"))
 		locations = json.dumps(location_documents, default=encode_model)
 		self.write( locations )
 
@@ -1636,14 +1636,14 @@ class OpenPathsDumpsHandler(BaseHandler):
 class FlickrDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		photo_documents = models.FlickrPhoto.objects(user_id=self.get_secure_cookie("username"))
+		photo_documents = models.flickr.FlickrPhoto.objects(user_id=self.get_secure_cookie("username"))
 		photos = json.dumps(photo_documents, default=encode_model)
 		self.write( photos )
 
 class ZeoDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		zeo_documents = models.ZeoSleepRecord.objects(user_id=self.get_secure_cookie("username"))
+		zeo_documents = models.zeo.ZeoSleepRecord.objects(user_id=self.get_secure_cookie("username"))
 		nights = json.dumps(zeo_documents, default=encode_model)
 		self.write( nights )
 
@@ -1657,7 +1657,7 @@ class RemoveUserHandler(tornado.web.RequestHandler):
 		username = self.get_argument('username')
 		password = self.get_argument('password')
 		
-		user = models.User.objects(username=username, password=password)
+		user = models.userinfo.User.objects(username=username, password=password)
 
 		user[0].delete(safe=True)
 		self.write("user deleted\n")
@@ -1667,8 +1667,8 @@ class RemoveUserHandler(tornado.web.RequestHandler):
 class RemoveUserFitbitHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		phys = models.FitbitPhysicalActivity.objects()
-		sleep = models.FitbitSleep.objects()
+		phys = models.fitbit.FitbitPhysicalActivity.objects()
+		sleep = models.fitbit.FitbitSleep.objects()
 
 		phys.delete()
 		sleep.delete()
@@ -1679,7 +1679,7 @@ class RemoveUserFitbitHandler(BaseHandler):
 class RemoveUserFoursquareHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		checkins = models.CheckIn.objects(user_id=self.get_secure_cookie("username"))
+		checkins = models.foursquare.CheckIn.objects(user_id=self.get_secure_cookie("username"))
 		checkins.delete()
 
 		self.write(str(len(checkins)) + " records")
@@ -1688,7 +1688,7 @@ class RemoveUserFoursquareHandler(BaseHandler):
 class RemoveUserFlickrHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		photos = models.FlickrPhoto.objects(user_id=self.get_secure_cookie("username"))
+		photos = models.flickr.FlickrPhoto.objects(user_id=self.get_secure_cookie("username"))
 		photos.delete()
 
 		self.write(str(len(photos)) + " records")
