@@ -25,7 +25,7 @@ import handlers as h
 
 #mongo and models
 from mongoengine import *
-import models
+import models.models as models
 
 #python mongo hooks
 from pymongo import MongoClient
