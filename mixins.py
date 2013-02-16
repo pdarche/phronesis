@@ -802,19 +802,19 @@ class WithingsMixin(tornado.auth.OAuthMixin):
     To authenticate with Withings, register your application 
     at https://oauth.withings.com/en/partner/add. 
     Then copy your Consumer Key and Consumer Secret to the application 
-    settings 'zeo_consumer_key' and'zeo_consumer_secret'. 
+    settings 'withings_consumer_key' and'withings_consumer_secret'. 
     Use this Mixin on the handler for the URL
     you registered as your application's Callback URL.
 
     When your application is set up, you can use this Mixin like this
-    to authenticate the user with Zeo and get access to their data::
+    to authenticate the user with Withings and get access to their data::
 
         class WithingsHandler(tornado.web.RequestHandler,
                              tornado.auth.ZeoMixin):
             @tornado.web.asynchronous
             def get(self):
                 if self.get_argument("oauth_token", None):
-                    self.get_authenticated_user(self.async_callback(self._on_auth))
+                    self.get_authenticated_withings_user(self.async_callback(self._on_auth))
                     return
                 self.authorize_redirect()
 
@@ -850,8 +850,8 @@ class WithingsMixin(tornado.auth.OAuthMixin):
         http.fetch(self._oauth_request_token_url(callback_uri=callback_uri), self.async_callback(
             self._on_request_token, self._OAUTH_AUTHORIZE_URL, None))
 
-    def withings_request(self, callback, service, action, access_token=None,
-                            post_args=None, **args):
+    def withings_request(self, callback, service, action,
+                            access_token=None, post_args=None, **args):
         """Fetches the given API path, e.g., 
         http://wbsapi.withings.net/measure?action=getmeas&userid=29
         The path should not include the format (we automatically append
@@ -886,7 +886,8 @@ class WithingsMixin(tornado.auth.OAuthMixin):
                     # Save the user using, e.g., set_secure_cookie()
         """
         
-        url = self._WITHINGS_BASE_URL + "/" + service + "?action=" + action + "&userid=110334"
+        url = self._WITHINGS_BASE_URL + "/" + service + "?action=" + action
+        url += "&userid=" + access_token["userid"]
         # Add the OAuth resource request signature if we have credentials
         if access_token:
             all_args = dict()
@@ -896,18 +897,17 @@ class WithingsMixin(tornado.auth.OAuthMixin):
             method = "POST" if post_args is not None else "GET"
             oauth = self._oauth_request_parameters(
                 url, access_token, all_args, method=method)
-            # args.update(oauth)
-        oauth["userid"] = "110334"
         callback = self.async_callback(self._on_withings_request, callback)
         http = self.get_auth_http_client()
-        log(build_oauth_header(oauth))
-        logging.warning("the oauth params are %r" % build_oauth_header(oauth))
+        oauth["userid"] = access_token["userid"]
+        
         if post_args is not None:
-            print url
             http.fetch(url, method="POST", body=urllib.urlencode(args),
                        callback=callback)
         else:
-            print url
+            for key in sorted(oauth.iterkeys()):
+                url+= "%s=%s&" % (key, oauth[key])
+            log("the url is %r" % url[:-1])
             http.fetch(url, callback=callback)
 
     def _on_withings_request(self, callback, response):
@@ -999,7 +999,7 @@ class WithingsMixin(tornado.auth.OAuthMixin):
         self.withings_request(
             service="user",
             action = "getbyuserid",
-            userid = 110334, 
+            userid = access_token["userid"],
             access_token=access_token,
             callback=callback
         )
