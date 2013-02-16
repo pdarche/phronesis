@@ -2,7 +2,7 @@
 # -*- coding: utf8 -*- 
 import tornado.web
 import tornado.auth
-import mixins
+import mixins.mixins as mixins 
 import json
 import simplejson
 import datetime
@@ -11,13 +11,6 @@ import zeoapi
 from utilities import *
 
 import oauth2, urllib, urllib2
-
-###test
-import base64
-import binascii
-import hashlib
-import hmac
-import uuid
 
 #mongo and models
 from mongoengine import *
