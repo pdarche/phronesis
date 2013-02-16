@@ -1585,38 +1585,6 @@ class FoursquareDumpsHandler(BaseHandler):
 
 		self.write( checkins )
 
-# class FoursquareDumpsHandler(BaseHandler, mixins.FoursquareMixin):
-# 	@tornado.web.authenticated
-# 	@tornado.web.asynchronous
-# 	def get(self):
-# 		user_info = self.get_fs_user_info()
-# 		user_id = user_info["user_id"]
-# 		access_token = user_info["access_token"]
-
-# 		self.foursquare_request(
-# 		    path="/users/self/checkins",
-# 		    args= { "limit" : 20 },
-# 		    callback=self.async_callback(self._on_imported),
-# 		    access_token=access_token
-# 		)
-
-# 	def _on_imported(self, user):
-
-# 		checkin_count = len(user["response"]["checkins"]["items"])
-# 		# self.write( str(checkin_count) )
-# 		self.write( json.dumps(user) )	
-# 		self.finish()		
-
-# 	def get_fs_user_info(self):
-# 		curr_user = models.userinfo.User.objects(username=self.get_secure_cookie("username"))[0]
-
-# 		if hasattr(curr_user["foursquare_user_info"], "foursquare_access_token"):
-# 			access_token = curr_user["foursquare_user_info"]["foursquare_access_token"]
-# 			user_id = curr_user["foursquare_user_info"]["foursquare_id"]
-
-# 			user_info = { "access_token" : access_token, "user_id" : user_id }
-
-# 			return user_info
 
 class OpenPathsDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
@@ -1701,4 +1669,10 @@ class PrintAppSettings(BaseHandler):
 
 		self.write( json.dumps( data ))
 		self.finish()
+
+class RegexHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self, input):
+		self.write( input )
+
 

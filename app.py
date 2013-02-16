@@ -39,8 +39,10 @@ connect('local_db')
 class Application(tornado.web.Application):
 	def __init__(self):
 		handlers = [
-			(r"/", h.MainHandler),(r"/signup", h.SignUpHandler),
-			(r"/login", h.LoginHandler),(r"/v1/users/(\w+)", h.UserInfoHandler),
+			(r"/", h.MainHandler),
+			(r"/signup", h.SignUpHandler),
+			(r"/login", h.LoginHandler),
+			(r"/v1/users/(\w+)", h.UserInfoHandler),
 			(r"/remove", h.RemoveUserHandler),
 			(r"/docs", h.DocumentationHandler),
 			(r"/v1/connect/twitter", h.TwitterConnectHandler),
@@ -68,6 +70,7 @@ class Application(tornado.web.Application):
 			(r"/v1/remove/flickr", h.RemoveUserFlickrHandler),
 			(r"/v1/logout", h.LogoutHandler),
 			# (r"/settings", h.PrintAppSettings),
+			(r"/v1/data/\w+", h.RegexHandler),
 		]
 		settings = dict(
 			template_path=os.path.join(os.path.dirname(__file__), "templates"),
