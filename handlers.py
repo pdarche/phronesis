@@ -1673,6 +1673,22 @@ class PrintAppSettings(BaseHandler):
 class RegexHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self, input):
-		self.write( input )
+		args = input.split('/')
+		username = args[0]
+		l1 = args[1]
+		l2 = args[2]
+		resource = args[3]
 
+		test = { 
+			"body" : {
+				"physicalActivity" : models.fitbit.FitbitPhysicalActivity,
+				"sleep" : models.fitbit.FitbitSleep,
+				"nutrition" : models.flickr.FlickrPhoto
+			}
+		}
+
+		objs = test[l1][l2].objects()
+
+		activities = json.dumps(objs, default=encode_model)
+		self.write( activities )
 
