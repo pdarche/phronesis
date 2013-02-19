@@ -1,4 +1,7 @@
-import os, sys
+import os
+import sys
+import time
+
 from mongoengine import *
 from mongoengine_extras.fields import AutoSlugField
 from mongoengine_extras.fields import SlugField
@@ -91,8 +94,9 @@ class Venue(EmbeddedDocument):
 
 
 class CheckIn(Document):
-	record_created_at = DateTimeField
-	user_id = StringField()
+	id = ObjectIdField()
+	phro_created_at = IntField()
+	username = StringField()	
 	fs_id = StringField()
 	fs_created_at = IntField()
 	fs_type = StringField()

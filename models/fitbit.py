@@ -37,7 +37,6 @@ class FitbitActivitiesSummary(EmbeddedDocument):
 class FitbitActivity(EmbeddedDocument):
 	date = StringField()
 	user_id = StringField()
-	type = StringField() # fitbit or other activity source (say, nike or )
 	activity_description = EmbeddedDocumentField(ActivitiesDescription)
 	activity_summary = EmbeddedDocumentField(FitbitActivitiesSummary)
 

@@ -9,37 +9,23 @@ import datetime
 import time
 import zeoapi
 from utilities import *
+import os
 
-import oauth2, urllib, urllib2
+import oauth2 
+import urllib 
+import urllib2
 
 #mongo and models
 from mongoengine import *
 import models
+import models.location as loc
 
 #python mongo hooks
 from pymongo import MongoClient
 import bson
 
 from bson import json_util
-
-def oauthd(fn):
-	curr_user = models.userinfo.User.objects(username=self.get_secure_cookie("username"))[0]
-	if hasattr(curr_user["ftbt_user_info"], "ftbt_access_token"):
-		def wrapped():
-			oAuthToken = curr_user["ftbt_user_info"]["ftbt_access_token"]["key"]
-			oAuthSecret = curr_user["ftbt_user_info"]["ftbt_access_token"]["secret"]
-			userID = curr_user["ftbt_user_info"]["ftbt_access_token"]["encoded_user_id"]
-
-			accessToken = {
-				'key': 		oAuthToken,
-				'secret':	oAuthSecret
-			}
-
-			fn()
-		return wrapped
-
-	else:
-		self.redirect('/fitbit')
+from bson import objectid
 
 class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
@@ -78,7 +64,7 @@ class SignUpHandler(tornado.web.RequestHandler):
 		else:
 			response = "that username is not available!\n"
 
-		self.write( response )
+		self.write(response)
 
 
 class LoginHandler(tornado.web.RequestHandler):
@@ -96,7 +82,7 @@ class LoginHandler(tornado.web.RequestHandler):
 			self.set_secure_cookie("username", username)
 			response = "logged in\n"
 
-		self.write( response )
+		self.write(response)
 
 	def get(self):
 		# username = self.get_secure_cookie("user")
@@ -117,7 +103,7 @@ class UserInfoHandler(BaseHandler):
 			print "fb user info %r" % user[0].facebook_user_info
 			print "fb user info %r" % user[0].id
 
-			self.write( response )
+			self.write(response)
 		else:
 			response
 			self.render('test.html', user=input)
@@ -136,14 +122,14 @@ class TwitterConnectHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixi
 
 		elif oAuthToken and oAuthSecret:
 				accessToken = {
-					'key': 		oAuthToken,
-					'secret':	oAuthSecret
+					'key': oAuthToken,
+					'secret': oAuthSecret
 				}
 
 				self.twitter_request('/users/show',
-					access_token =  accessToken,
-					user_id =		userID,
-					callback = 		self.async_callback(self._twitter_on_user)
+					access_token = accessToken,
+					user_id = userID,
+					callback = self.async_callback(self._twitter_on_user)
 				)
 				return
 
@@ -209,11 +195,11 @@ class FacebookConnectHandler(tornado.web.RequestHandler, tornado.auth.FacebookGr
 		if self.get_argument('code', None):
 			print "getting authenticated user"
 			self.get_authenticated_user(
-				redirect_uri 	= 'http://localhost:8000/facebook',
-				client_id 		= self.settings['facebook_api_key'],
-				client_secret 	= self.settings['facebook_secret'],
-				code 			= self.get_argument('code'),
-				callback 		= self.async_callback(self._on_facebook_login)
+				redirect_uri = 'http://localhost:8000/facebook',
+				client_id = self.settings['facebook_api_key'],
+				client_secret = self.settings['facebook_secret'],
+				code = self.get_argument('code'),
+				callback = self.async_callback(self._on_facebook_login)
 			)
 			return
 
@@ -221,9 +207,9 @@ class FacebookConnectHandler(tornado.web.RequestHandler, tornado.auth.FacebookGr
 			self.write('logged into the facebook')
 
 		self.authorize_redirect(
-			redirect_uri 	= 'http://localhost:8000/facebook',
-			client_id 		= self.settings['facebook_api_key'],
-			extra_params	= { 'scope' : 'read_stream, publish_stream' }
+			redirect_uri = 'http://localhost:8000/facebook',
+			client_id = self.settings['facebook_api_key'],
+			extra_params = { 'scope' : 'read_stream, publish_stream' }
 		)
 
 	def _on_facebook_login(self, user):
@@ -344,7 +330,7 @@ class FitbitConnectHandler(BaseHandler, mixins.FitbitMixin):
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-		self.write( json.dumps(user) )
+		self.write(json.dumps(user))
 		self.finish()
 
 class ZeoHandler(tornado.web.RequestHandler, mixins.ZeoMixin): 
@@ -410,7 +396,7 @@ class ZeoBasicAuth(tornado.web.RequestHandler):
 			response = "failure"
 			print "user not saved"
 
-		self.write( response )
+		self.write(response)
 		self.finish()
 
 	@tornado.web.asynchronous
@@ -511,7 +497,7 @@ class ZeoBasicAuth(tornado.web.RequestHandler):
 				response = "sleep record didn't"
 				response = "sleep record didn't save"
 
-		self.write( response )
+		self.write(response)
 		self.finish()
 
 	def _on_data(self, data):
@@ -754,11 +740,9 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 			print "not saved"
 
 		self.write(response)
-
 		self.finish()
 
 		# self.render('test.html', user=json.dumps(user))
-
 
 	def _khanacademy_on_user(self, user):
 		if not user:
@@ -805,7 +789,7 @@ class OpenPathsHandler(BaseHandler):
 			print "openpaths userinfo not saved"
 			response = "not saved"
 
-		self.write( response )
+		self.write(response)
 		self.finish()
 
 
@@ -1144,21 +1128,21 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 
 		for day in zipped_activities:
 			activity_record = models.fitbit.FitbitPhysicalActivity(
-					created_at = day[0]["dateTime"],
-					user_id = self.get_secure_cookie("usernmane"),
-					ftbt_steps = int(day[1]["value"]),
-					ftbt_distance = float(day[3]["value"]),
-					ftbt_calories_out = int(day[2]["value"]),
-					ftbt_activity_calories = None,
-					ftbt_floors = int(day[4]["value"]),
-					ftbt_elevation = float(day[5]["value"]),
-					ftbt_mins_sedentary = int(day[6]["value"]),
-					ftbt_mins_lightly_active = int(day[7]["value"]),
-					ftbt_mins_farily_active = int(day[8]["value"]),
-					ftbt_mins_very_active = int(day[9]["value"]),
-					ftbt_active_score = None,
-					ftbt_activities = None
-				)
+				created_at = day[0]["dateTime"],
+				user_id = self.get_secure_cookie("usernmane"),
+				ftbt_steps = int(day[1]["value"]),
+				ftbt_distance = float(day[3]["value"]),
+				ftbt_calories_out = int(day[2]["value"]),
+				ftbt_activity_calories = None,
+				ftbt_floors = int(day[4]["value"]),
+				ftbt_elevation = float(day[5]["value"]),
+				ftbt_mins_sedentary = int(day[6]["value"]),
+				ftbt_mins_lightly_active = int(day[7]["value"]),
+				ftbt_mins_farily_active = int(day[8]["value"]),
+				ftbt_mins_very_active = int(day[9]["value"]),
+				ftbt_active_score = None,
+				ftbt_activities = None
+			)
 
 			if activity_record.save():
 				print "saved activity record"
@@ -1185,17 +1169,17 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 
 		for sleep_day in zipped_sleep:
 			sleep_record = models.fitbit.FitbitSleep(
-					created_at = sleep_day[0]["dateTime"],
-					user_id = self.get_secure_cookie("usernmane"),
-					ftbt_start_time = sleep_day[1]["value"],
-					ftbt_time_in_bed = sleep_day[2]["value"],
-					ftbt_minutes_asleep = int(sleep_day[3]["value"]),
-					ftbt_awakenings_count = int(sleep_day[4]["value"]),
-					ftbt_minutes_awake = int(sleep_day[5]["value"]),
-					ftbt_minutes_to_fall_asleep = int(sleep_day[6]["value"]),
-					ftbt_minutes_after_wakeup = int(sleep_day[7]["value"]),
-					ftbt_efficiency = int(sleep_day[8]["value"])
-				)
+				created_at = sleep_day[0]["dateTime"],
+				user_id = self.get_secure_cookie("usernmane"),
+				ftbt_start_time = sleep_day[1]["value"],
+				ftbt_time_in_bed = sleep_day[2]["value"],
+				ftbt_minutes_asleep = int(sleep_day[3]["value"]),
+				ftbt_awakenings_count = int(sleep_day[4]["value"]),
+				ftbt_minutes_awake = int(sleep_day[5]["value"]),
+				ftbt_minutes_to_fall_asleep = int(sleep_day[6]["value"]),
+				ftbt_minutes_after_wakeup = int(sleep_day[7]["value"]),
+				ftbt_efficiency = int(sleep_day[8]["value"])
+			)
 
 			if sleep_record.save():
 				print "saved sleep record"
@@ -1215,12 +1199,12 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 
 		for body_day in zipped_body:
 			body_record = models.fitbit.FitbitBodyData(
-					created_at = body_day[0]["dateTime"],
-					user_id = self.get_secure_cookie("usernmane"),
-					ftbt_weight =  float(body_day[1]["value"]),
-					ftbt_bmi = float(body_day[2]["value"]),
-					ftbt_fat = float(body_day[3]["value"])
-				)
+				created_at = body_day[0]["dateTime"],
+				user_id = self.get_secure_cookie("usernmane"),
+				ftbt_weight =  float(body_day[1]["value"]),
+				ftbt_bmi = float(body_day[2]["value"]),
+				ftbt_fat = float(body_day[3]["value"])
+			)
 
 			if body_record.save():
 				print "saved body record"
@@ -1374,11 +1358,13 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 				print "doesn't have venue"
 				venue = None
 
-			checkIn = models.foursquare.CheckIn(
+			checkIn = models.foursquare.CheckIn(				
+				id = objectid.ObjectId(),
+				phro_created_at = int(time.time()),
+				username = self.get_secure_cookie("username"),
 				record_created_at = checkin["createdAt"],
-				user_id = self.get_secure_cookie("username"),
 				fs_id = checkin["id"],
-				fs_create_at = checkin["createdAt"],
+				fs_created_at = checkin["createdAt"],
 				fs_type = checkin["type"],
 				fs_timezone_offset = checkin["timeZoneOffset"],
 				fs_timezone = checkin["timeZone"],
@@ -1394,6 +1380,11 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 
 		self.write( "success" )
 		self.finish()
+
+
+	# def _on_test(self, checkins):
+	# 	self.write( checkins )
+	# 	self.finish()
 
 
 	def get_fs_user_info(self):
@@ -1449,8 +1440,8 @@ class OpenPathsImportHandler(BaseHandler):
 		    
 		    for record in data:
 		    	location = models.openpaths.OpenPathsLocation(
-		    		record_created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
-		    		user_id = username,
+		    		phro_created_at = int(time.time()),
+		    		username = username,
 		    		device = record["device"],
 		    		os = record["os"],
 		    		t = record["t"],
@@ -1579,7 +1570,7 @@ class FitbitDumpsHandler(BaseHandler):
 class FoursquareDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		checkins_documents = models.foursquare.CheckIn.objects(user_id=self.get_secure_cookie("username"))
+		checkins_documents = models.foursquare.CheckIn.objects(username=self.get_secure_cookie("username"))
 
 		checkins = json.dumps(checkins_documents, default=encode_model)
 
@@ -1589,7 +1580,7 @@ class FoursquareDumpsHandler(BaseHandler):
 class OpenPathsDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		location_documents = models.openpaths.OpenPathsLocation.objects(user_id=self.get_secure_cookie("username"))
+		location_documents = models.openpaths.OpenPathsLocation.objects(username=self.get_secure_cookie("username"))
 		locations = json.dumps(location_documents, default=encode_model)
 		self.write( locations )
 
@@ -1640,7 +1631,7 @@ class RemoveUserFitbitHandler(BaseHandler):
 class RemoveUserFoursquareHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		checkins = models.foursquare.CheckIn.objects(user_id=self.get_secure_cookie("username"))
+		checkins = models.foursquare.CheckIn.objects(username=self.get_secure_cookie("username"))
 		checkins.delete()
 
 		self.write(str(len(checkins)) + " records")
@@ -1656,7 +1647,7 @@ class RemoveUserFlickrHandler(BaseHandler):
 
 class DocumentationHandler(tornado.web.RequestHandler):
 	def get(self):
-		self.render( "docs.html" )
+		self.render("docs.html")
 
 
 class PrintAppSettings(BaseHandler):
@@ -1671,24 +1662,44 @@ class PrintAppSettings(BaseHandler):
 		self.finish()
 
 class RegexHandler(BaseHandler):
+	callval = "None"
 	@tornado.web.authenticated
 	def get(self, input):
+		input = input.decode('utf-8')
 		args = input.split('/')
-		username = args[0]
-		l1 = args[1]
-		l2 = args[2]
-		resource = args[3]
+
+		username = args[1]
+		# start_time = self.get_argument('start_time')
+		# end_time = self.get_argument('end_time')
 
 		test = { 
-			"body" : {
-				"physicalActivity" : models.fitbit.FitbitPhysicalActivity,
-				"sleep" : models.fitbit.FitbitSleep,
-				"nutrition" : models.flickr.FlickrPhoto
+			"pdarche" :	{	
+				"body" : {
+					"physicalActivity" : models.fitbit.FitbitPhysicalActivity,
+					"sleep" : models.fitbit.FitbitSleep,
+					"nutrition" : models.flickr.FlickrPhoto,
+					"location" : loc.Location
+				}
 			}
 		}
 
-		objs = test[l1][l2].objects()
+		self.walk(test, args)
+		objs = self.callval.objects()
+		data = json.dumps(objs, default=encode_model)
 
-		activities = json.dumps(objs, default=encode_model)
-		self.write( activities )
+		self.write( data )
+
+	def walk(self, d, args):
+		for arg in args:			
+			if arg in d:
+				if type(d[arg]) != type({}):
+					self.callval = d[arg]						
+				else:
+					newd = d[arg]
+					newargs = args[1:]
+					self.walk(newd, newargs)
+			else:
+				break
+
+
 

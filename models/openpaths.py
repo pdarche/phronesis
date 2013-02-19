@@ -7,8 +7,8 @@ from datetime import datetime
 
 ############# OPEN PATHS MODELS ############# 
 class OpenPathsLocation(Document):
-	record_created_at = StringField()
-	user_id = StringField()
+	phro_created_at = IntField()
+	username = StringField()
 	device = StringField()
 	os = StringField()
 	t = IntField()

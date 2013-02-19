@@ -3,10 +3,17 @@
 <h1> Api Documentation </h1>
 <h2>data api</h2>
 <p> The general scheme is base_url/<<i>version</i>>/<<i>username</i>>/<<i>l1_data_category</i>>/<<i>l2_data_category</i>>/<<i>resource</i>> ? <<i>parameters</i>></p>
-<p> Parameters are: start_date, end_date, location (lat, lon), radius, users, descriptive_stats (mean, med, mode, sd).
 <p>example: localhost:8000/v1/pdarche/body/nutrition/meals?start_date=101010&end_date=101020&location=home&r=500</p>
 
-
+<p> Parameters are: start_date, end_date, location (lat, lon), radius, users, descriptive_stats (mean, med, mode, sd).
+<ul>
+	<li>start_time (unix timestamp)</li>
+	<li>end_time (unix timestamp)</li>
+	<li>descriptive_stats (boolean)</li>
+	<li>near( lat,lon ) </li>
+	<li>gt (greater than) </li>
+	<li>lt (less than) </li>
+</ul>
 
 <p>(l1) Body</p>
 <ul>
@@ -64,7 +71,26 @@
 		</ul>
 	</li>
 	<li>
-		<ul>Summary</ul>
+		<p>Location</p>
+		<ul>
+			<li>lat</li>
+			<li>lon</li>
+			<li>venue</li>
+			<li>address</li>
+			<li>cross_street</li>
+			<li>neighborhoood</li>
+			<li>postal code</li>
+			<li>city</li>
+			<li>locality</li>
+			<li>county</li>
+			<li>state</li>
+			<li>region</li>
+			<li>country</li>
+			<li>country code</li>
+		</ul>
+	</li>
+	<li>
+		<p>Summary</p>
 	</li>
 </ul>
 
