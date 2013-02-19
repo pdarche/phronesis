@@ -1687,7 +1687,7 @@ class RegexHandler(BaseHandler):
 		objs = self.callval.objects()
 		data = json.dumps(objs, default=encode_model)
 
-		self.write( data )
+		self.write( data )	
 
 	def walk(self, d, args):
 		for arg in args:			
