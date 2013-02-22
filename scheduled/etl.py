@@ -11,9 +11,9 @@ from mongoengine_extras.fields import SlugField
 
 from datetime import datetime
 
-#for each service, go throug and create new records for the data mart 
-last_fs = location.Location.first(source="Fourquare")
-last_op = location.Location.first(source="Open Paths")
+
+last_fs = location.Location.objects(source="Fourquare").order_by("-phro_created_at").limit(1)
+last_op = location.Location.objects(source="Open Paths").order_by("-phro_created_at").limit(1)
 # last_op = models.location.Location.first(source="Flickr")
 
 

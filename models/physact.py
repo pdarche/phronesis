@@ -43,9 +43,9 @@ class Activty(EmbeddedDocument):
 
 class PhysicalActivity(Document)
 	prho_created_at = IntField()
-	user_id = StringField()
-	source = ListFieled(StringField) #fitbit, nike+
-	source_id = ListFieled(ObjectIdField)
+	username = StringField()
+	source = ListFieled(StringField) #fitbit, nike+, etc
+	source_id = ListFieled(ObjectIdField)x
 	steps = IntField()
 	distance = FloatField()
 	calories_out = IntField()

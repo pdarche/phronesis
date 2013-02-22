@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*- 
 import tornado.web
 import tornado.auth
+import tornado.gen
 import mixins.mixins as mixins 
 import json
 import simplejson
@@ -1465,6 +1466,7 @@ class OpenPathsImportHandler(BaseHandler):
 
 class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 	geo = None
+	photos = []
 	@tornado.web.authenticated
 	@tornado.web.asynchronous
 	def get(self):
@@ -1498,12 +1500,16 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 			callback=self.async_callback(self._on_non_geo)
 		)
 
+	# @tornado.gen.engine
 	def _on_non_geo(self, data):
+		username = self.get_secure_cookie("username")
+		user = models.userinfo.User.objects(username=username)[0]
+		access_token = user["flickr_user_info"]["flickr_access_token"]
 
 		for photo in data["photos"]["photo"]:
 			pic = models.flickr.FlickrPhoto(
-				record_created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
-				user_id = self.get_secure_cookie("username"),
+				phro_created_at = int(time.time()),
+				username = self.get_secure_cookie("username"),
 				photo_id = photo["id"],
 				owner = photo["owner"],
 				secret = photo["secret"],
@@ -1521,11 +1527,10 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 			else:
 				print "non-geo not saved"
 
-
 		for photo in self.geo["photos"]["photo"]:
 			pic = models.flickr.FlickrPhoto(
-				record_created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
-				user_id = self.get_secure_cookie("username"),
+				phro_created_at = int(time.time()),
+				username = self.get_secure_cookie("username"),
 				photo_id = photo["id"],
 				owner = photo["owner"],
 				secret = photo["secret"],
@@ -1543,8 +1548,23 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 			else:
 				print "geo not saved"
 
-		self.write("saved")
-		self.finish()
+
+		photos = models.flickr.FlickrPhoto.objects(username=self.get_secure_cookie("username"))
+
+		for i, photo in photos[1:5]:
+			self.flickr_request(
+				"empty string", #why is this needed????
+				format="json",
+				api_key=self.settings["flickr_consumer_key"],
+				nojsoncallback="1", 
+				method="flickr.photos.getinfo",
+				photo_id=photo.photo_id,
+				access_token=access_token,
+				callback=callback
+			)
+
+	def push_to_ar(self, photo):
+		self.photos.append(photo)
 
 	def _on_photos(self, data):
 		self.write( json.dumps(data) )
@@ -1588,7 +1608,7 @@ class OpenPathsDumpsHandler(BaseHandler):
 class FlickrDumpsHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		photo_documents = models.flickr.FlickrPhoto.objects(user_id=self.get_secure_cookie("username"))
+		photo_documents = models.flickr.FlickrPhoto.objects(username=self.get_secure_cookie("username"))
 		photos = json.dumps(photo_documents, default=encode_model)
 		self.write( photos )
 
@@ -1640,7 +1660,7 @@ class RemoveUserFoursquareHandler(BaseHandler):
 class RemoveUserFlickrHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		photos = models.flickr.FlickrPhoto.objects(user_id=self.get_secure_cookie("username"))
+		photos = models.flickr.FlickrPhoto.objects(username=self.get_secure_cookie("username"))
 		photos.delete()
 
 		self.write(str(len(photos)) + " records")
@@ -1661,6 +1681,16 @@ class PrintAppSettings(BaseHandler):
 		self.write( json.dumps( data ))
 		self.finish()
 
+
+class RemoveLocationHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		locations = models.location.Location.objects(username=self.get_secure_cookie("username"))
+		locations.delete()
+
+		self.write(str(len(locations)) + " records")
+
+
 class RegexHandler(BaseHandler):
 	callval = "None"
 	@tornado.web.authenticated
@@ -1669,8 +1699,8 @@ class RegexHandler(BaseHandler):
 		args = input.split('/')
 
 		username = args[1]
-		# start_time = self.get_argument('start_time')
-		# end_time = self.get_argument('end_time')
+		kw = keyword_args(self.request.arguments)
+		print kw
 
 		test = { 
 			"pdarche" :	{	
@@ -1684,10 +1714,10 @@ class RegexHandler(BaseHandler):
 		}
 
 		self.walk(test, args)
-		objs = self.callval.objects()
+		objs = self.callval.objects(**kw)
 		data = json.dumps(objs, default=encode_model)
 
-		self.write( data )	
+		self.write( data )
 
 	def walk(self, d, args):
 		for arg in args:			
@@ -1701,5 +1731,10 @@ class RegexHandler(BaseHandler):
 			else:
 				break
 
-
+def keyword_args(kwargs):
+	# kwargs is a dict of the keyword args passed to the function
+	new_dict = dict()
+	for key, value in kwargs.iteritems():
+		new_dict[key] = value[0]
+	return new_dict 
 

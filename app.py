@@ -68,6 +68,7 @@ class Application(tornado.web.Application):
 			(r"/v1/remove/fitbit", h.RemoveUserFitbitHandler),
 			(r"/v1/remove/foursquare", h.RemoveUserFoursquareHandler),
 			(r"/v1/remove/flickr", h.RemoveUserFlickrHandler),
+			(r"/v1/remove/location", h.RemoveLocationHandler),
 			(r"/v1/logout", h.LogoutHandler),
 			# (r"/settings", h.PrintAppSettings),
 			(r"/v1/data/(.*)", h.RegexHandler),
