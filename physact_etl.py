@@ -25,8 +25,14 @@ def last_ftbt():
 		return ftbt_records
 	else:
 		last_record = physact.PhysicalActivity.objects(username="pdarche").order_by("-t")
-		latest = last_record[0].phro_create_at
+		latest = last_record[0].phro_created_at
 		new_records = fitbit.FitbitPhysicalActivity.objects(t__gte=latest)
+
+		if len(new_records) == 0:
+			print "all updated"
+		else:
+			print "records to update"
+
 
 phys_activities = last_ftbt()
 if phys_activities != 0:

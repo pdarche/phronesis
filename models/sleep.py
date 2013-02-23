@@ -1,12 +1,13 @@
 import os, sys
+
 from mongoengine import *
 from mongoengine_extras.fields import AutoSlugField
 from mongoengine_extras.fields import SlugField
 
 from datetime import datetime
 
-############# SLEEP ############# 
-class ZeoDateTime(EmbeddedDocument):
+
+class DateTime(EmbeddedDocument):
 	year = IntField()
 	month = IntField()
 	day = IntField()
@@ -14,16 +15,15 @@ class ZeoDateTime(EmbeddedDocument):
 	minute = IntField()
 	second = IntField()
 
-class ZeoSleepRecord(Document):
-	phro_created_at = IntField()
+class SleepRecord(Document):
+	phro_create_at = IntField()
 	username = StringField()
-	start_date = EmbeddedDocumentField(ZeoDateTime)
+	start_date = EmbeddedDocumentField(DateTime)
 	awakenings = IntField()
-	awakenings_zq_points = IntField()
-	bed_time = EmbeddedDocumentField(ZeoDateTime)
-	grouping = StringField() #find out what type this is?  docs say 'enum', so list?
+	bed_time = EmbeddedDocumentField(DateTime)
+	grouping = StringField()
 	morning_feel = IntField()
-	rise_time = EmbeddedDocumentField(ZeoDateTime)
+	rise_time = EmbeddedDocumentField(DateTime)
 	time_in_deep = IntField()
 	time_in_deep_percentage = IntField()
 	time_in_deep_zq_points = IntField()
@@ -43,7 +43,7 @@ class ZeoSleepRecord(Document):
 	alarm_ring_index = IntField()
 	dayFeel = IntField()
 	sleep_graph = ListField()
-	sleep_graph_start_time = EmbeddedDocumentField(ZeoDateTime)
+	sleep_graph_start_time = EmbeddedDocumentField(DateTime)
 	sleep_stealer_score = IntField()
 	wake_window_end_index = IntField() #? is this an int?
 	wake_window_start_index = IntField() #? is this an int?

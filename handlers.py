@@ -458,8 +458,8 @@ class ZeoBasicAuth(tornado.web.RequestHandler):
 		 	)
 
 			sleep_record = models.zeo.ZeoSleepRecord(
-				created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
-				user_id = self.get_secure_cookie("username"),
+				phro_created_at = int(time.time()),
+				username = self.get_secure_cookie("username"),
 				start_date = for_date,
 				awakenings = record["awakenings"],
 				awakenings_zq_points = record["awakeningsZqPoints"],
@@ -1712,13 +1712,12 @@ class RegexHandler(BaseHandler):
 
 		username = args[1]
 		kw = keyword_args(self.request.arguments)
-		print kw
 
 		test = { 
 			"pdarche" :	{	
 				"body" : {
 					"physicalActivity" : physact.PhysicalActivity,
-					"sleep" : models.fitbit.FitbitSleep,
+					"sleep" : models.zeo.ZeoSleepRecord,
 					"nutrition" : models.flickr.FlickrPhoto,
 					"location" : loc.Location
 				}
