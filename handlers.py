@@ -20,6 +20,7 @@ import urllib2
 from mongoengine import *
 import models
 import models.location as loc
+import models.physact as physact
 
 #python mongo hooks
 from pymongo import MongoClient
@@ -847,9 +848,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		userID = self.get_user_id()
 
 		self.fitbit_request('/user/-/activities/steps/date/%s/today' % memberSince,
-			access_token =  accessToken,
-			user_id =		userID,
-			callback = 		self.async_callback(self._on_steps)
+			access_token = accessToken,
+			user_id = userID,
+			callback = self.async_callback(self._on_steps)
 		)
 		return
 
@@ -859,9 +860,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		userID = self.get_user_id()
 
 		self.fitbit_request('/user/-/activities/calories/date/%s/today' % memberSince,
-			access_token =  accessToken,
-			user_id =		userID,
-			callback = 		self.async_callback(self._on_calories)
+			access_token = accessToken,
+			user_id = userID,
+			callback = self.async_callback(self._on_calories)
 		)
 		self.activities.append(data)
 
@@ -871,9 +872,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		userID = self.get_user_id()
 
 		self.fitbit_request('/user/-/activities/distance/date/%s/today' % memberSince,
-			access_token =  accessToken,
-			user_id =		userID,
-			callback = 		self.async_callback(self._on_distance)
+			access_token = accessToken,
+			user_id = userID,
+			callback = self.async_callback(self._on_distance)
 		)
 		self.activities.append(data)
 
@@ -1040,9 +1041,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		userID = self.get_user_id()
 
 		self.fitbit_request('/user/-/sleep/minutesAfterWakeup/date/%s/today' % memberSince,
-			access_token =  accessToken,
-			user_id =		userID,
-			callback = 		self.async_callback(self._on_minutes_after_wakeup)
+			access_token = accessToken,
+			user_id = userID,
+			callback = self.async_callback(self._on_minutes_after_wakeup)
 		)
 		self.sleep.append(data)
 
@@ -1052,9 +1053,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		userID = self.get_user_id()
 
 		self.fitbit_request('/user/-/sleep/efficiency/date/%s/today' % memberSince,
-			access_token =  accessToken,
-			user_id =		userID,
-			callback = 		self.async_callback(self._on_efficiency)
+			access_token = accessToken,
+			user_id = userID,
+			callback = self.async_callback(self._on_efficiency)
 		)
 		self.sleep.append(data)
 
@@ -1064,9 +1065,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		userID = self.get_user_id()
 
 		self.fitbit_request('/user/-/body/weight/date/%s/today' % memberSince,
-			access_token =  accessToken,
-			user_id =		userID,
-			callback = 		self.async_callback(self._on_weight)
+			access_token = accessToken,
+			user_id = userID,
+			callback = self.async_callback(self._on_weight)
 		)
 		self.sleep.append(data)
 
@@ -1076,9 +1077,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		userID = self.get_user_id()
 
 		self.fitbit_request('/user/-/body/bmi/date/%s/today' % memberSince,
-			access_token =  accessToken,
-			user_id =		userID,
-			callback = 		self.async_callback(self._on_bmi)
+			access_token = accessToken,
+			user_id = userID,
+			callback = self.async_callback(self._on_bmi)
 		)
 		self.body.append(data)
 
@@ -1088,9 +1089,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		userID = self.get_user_id()
 
 		self.fitbit_request('/user/-/body/fat/date/%s/today' % memberSince,
-			access_token =  accessToken,
-			user_id =		userID,
-			callback = 		self.async_callback(self._on_fat)
+			access_token = accessToken,
+			user_id = userID,
+			callback = self.async_callback(self._on_fat)
 		)
 		self.body.append(data)
 
@@ -1100,9 +1101,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		userID = self.get_user_id()
 
 		self.fitbit_request('/user/-/body/fat/date/%s/today' % memberSince,
-			access_token =  accessToken,
-			user_id =		userID,
-			callback = 		self.async_callback(self._on_imported)
+			access_token = accessToken,
+			user_id = userID,
+			callback = self.async_callback(self._on_imported)
 		)
 		self.body.append(data)
 
@@ -1129,8 +1130,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 
 		for day in zipped_activities:
 			activity_record = models.fitbit.FitbitPhysicalActivity(
+				phro_created_at = int(time.time()),
+				username = self.get_secure_cookie("username"),
 				created_at = day[0]["dateTime"],
-				user_id = self.get_secure_cookie("usernmane"),
 				ftbt_steps = int(day[1]["value"]),
 				ftbt_distance = float(day[3]["value"]),
 				ftbt_calories_out = int(day[2]["value"]),
@@ -1170,8 +1172,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 
 		for sleep_day in zipped_sleep:
 			sleep_record = models.fitbit.FitbitSleep(
+				phro_created_at = int(time.time()),
+				username = self.get_secure_cookie("username"),
 				created_at = sleep_day[0]["dateTime"],
-				user_id = self.get_secure_cookie("usernmane"),
 				ftbt_start_time = sleep_day[1]["value"],
 				ftbt_time_in_bed = sleep_day[2]["value"],
 				ftbt_minutes_asleep = int(sleep_day[3]["value"]),
@@ -1200,8 +1203,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 
 		for body_day in zipped_body:
 			body_record = models.fitbit.FitbitBodyData(
+				phro_created_at = int(time.time()),
+				username = self.get_secure_cookie("username"),
 				created_at = body_day[0]["dateTime"],
-				user_id = self.get_secure_cookie("usernmane"),
 				ftbt_weight =  float(body_day[1]["value"]),
 				ftbt_bmi = float(body_day[2]["value"]),
 				ftbt_fat = float(body_day[3]["value"])
@@ -1690,6 +1694,14 @@ class RemoveLocationHandler(BaseHandler):
 
 		self.write(str(len(locations)) + " records")
 
+class RemovePhysactHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		phys = physact.PhysicalActivity.objects(username=self.get_secure_cookie("username"))
+		phys.delete()
+
+		self.write(str(len(phys)) + " records")
+
 
 class RegexHandler(BaseHandler):
 	callval = "None"
@@ -1705,7 +1717,7 @@ class RegexHandler(BaseHandler):
 		test = { 
 			"pdarche" :	{	
 				"body" : {
-					"physicalActivity" : models.fitbit.FitbitPhysicalActivity,
+					"physicalActivity" : physact.PhysicalActivity,
 					"sleep" : models.fitbit.FitbitSleep,
 					"nutrition" : models.flickr.FlickrPhoto,
 					"location" : loc.Location

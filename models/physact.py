@@ -37,15 +37,17 @@ class ActivitySummary(EmbeddedDocument):
 	marginal_calories = IntField()
 	steps = IntField()
 
-class Activty(EmbeddedDocument):
+class Activity(EmbeddedDocument):
+	created_at = StringField()
 	activity_description = EmbeddedDocumentField(ActivityDescription)
-	activity_summary = EmbeddedDocumentField(ActivitiesSummary)
+	activity_summary = EmbeddedDocumentField(ActivitySummary)
 
-class PhysicalActivity(Document)
-	prho_created_at = IntField()
+class PhysicalActivity(Document):
+	phro_created_at = IntField()
 	username = StringField()
-	source = ListFieled(StringField) #fitbit, nike+, etc
-	source_id = ListFieled(ObjectIdField)x
+	created_at = IntField()
+	source = ListField(StringField()) #fitbit, nike+, etc
+	# source_id = ListField(ObjectIdField)
 	steps = IntField()
 	distance = FloatField()
 	calories_out = IntField()
@@ -54,6 +56,6 @@ class PhysicalActivity(Document)
 	mins_ligthly_active = IntField()
 	mins_farily_active = IntField()
 	mins_very_active = IntField()
-	intra_day_stesp = ListField(EmbeddedDocumentField(IntraDayStep))
+	intra_day_steps = ListField(EmbeddedDocumentField(IntraDayStep))
 	activities = ListField(EmbeddedDocumentField(Activity))
 

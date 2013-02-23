@@ -36,13 +36,14 @@ class FitbitActivitiesSummary(EmbeddedDocument):
 
 class FitbitActivity(EmbeddedDocument):
 	date = StringField()
-	user_id = StringField()
+	username = StringField()
 	activity_description = EmbeddedDocumentField(ActivitiesDescription)
 	activity_summary = EmbeddedDocumentField(FitbitActivitiesSummary)
 
 class FitbitPhysicalActivity(Document):
+	phro_created_at = IntField()
+	username = StringField()
 	created_at = StringField()
-	user_id = StringField()
 	ftbt_steps = IntField()
 	ftbt_distance = FloatField()
 	ftbt_calories_out = IntField()
@@ -57,8 +58,9 @@ class FitbitPhysicalActivity(Document):
 	ftbt_activities = ListField(EmbeddedDocumentField(FitbitActivity))
 
 class FitbitBodyData(Document):
+	phro_created_at = IntField()
+	username = StringField()
 	created_at = StringField()
-	user_id = StringField()
 	ftbt_weight = FloatField()
 	ftbt_bmi = FloatField()
 	ftbt_fat = FloatField()
@@ -69,8 +71,9 @@ class FitbitFoodUnit(EmbeddedDocument):
 	ftbt_unit_plural = StringField()
 
 class FitbitFood(Document):
-	created_at = StringField() #needed?
-	user_id = StringField()
+	phro_created_at = IntField() #needed?
+	username = StringField()
+	created_at = StringField()
 	ftbt_amount = FloatField()
 	ftbt_brand = StringField()
 	ftbt_food_id = IntField()
@@ -90,8 +93,9 @@ class FitbitFood(Document):
 	# user_given_name = StringField()
 
 class FitbitSleep(Document):
+	phro_created_at = IntField()
+	username = StringField()
 	created_at = StringField()
-	user_id = StringField()
 	ftbt_start_time = StringField()
 	ftbt_time_in_bed = StringField
 	ftbt_minutes_asleep = IntField()
