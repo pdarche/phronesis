@@ -12,8 +12,7 @@ class Location(Document):
 	created_at = IntField()
 	source = StringField() #foursquare, openpaths, flickr
 	# source_id = ObjectIdField()
-	lat = FloatField()
-	lon = FloatField()
+	loc = GeoPointField()
 	alt = IntField()
 	accuracy = IntField()
 	venue_name = StringField()

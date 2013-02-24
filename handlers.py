@@ -21,6 +21,7 @@ from mongoengine import *
 import models
 import models.location as loc
 import models.physact as physact
+import models.sleep as sleep
 
 #python mongo hooks
 from pymongo import MongoClient
@@ -1702,6 +1703,22 @@ class RemovePhysactHandler(BaseHandler):
 
 		self.write(str(len(phys)) + " records")
 
+class RemoveSleepHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		sleep_records = sleep.SleepRecord.objects(username=self.get_secure_cookie("username"))
+		sleep_records.delete()
+
+		self.write(str(len(sleep_records)) + " records")
+
+class RemoveZeoHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		zeo_records = models.zeo.ZeoSleepRecord.objects()
+		zeo_records.delete()
+
+		self.write(str(len(zeo_records)) + " records")
+
 
 class RegexHandler(BaseHandler):
 	callval = "None"
@@ -1711,13 +1728,31 @@ class RegexHandler(BaseHandler):
 		args = input.split('/')
 
 		username = args[1]
-		kw = keyword_args(self.request.arguments)
+		order_by = None
+		limit = None
+		params = self.request.arguments
+		if "order_by" in params.keys():
+			split = params["order_by"][0].split("_")
+			if split[1] == "desc":
+				print "descending"
+				order_by = "-%s" % split[0]
+			else:
+				print "acending"
+				order_by = "+%s" % split[0]
+			del params["order_by"]
+
+		if "limit" in params.keys():
+			limit = int(params["limit"][0])
+			del params["limit"]
+
+		kw = keyword_args(params)
 
 		test = { 
 			"pdarche" :	{	
 				"body" : {
 					"physicalActivity" : physact.PhysicalActivity,
 					"sleep" : models.zeo.ZeoSleepRecord,
+					"fitbit_sleep" : models.fitbit.FitbitSleep,
 					"nutrition" : models.flickr.FlickrPhoto,
 					"location" : loc.Location
 				}
@@ -1725,9 +1760,15 @@ class RegexHandler(BaseHandler):
 		}
 
 		self.walk(test, args)
-		objs = self.callval.objects(**kw)
-		data = json.dumps(objs, default=encode_model)
+		if order_by != None:
+			objs = self.callval.objects(**kw).order_by(order_by)
+		else:
+			objs = self.callval.objects(**kw)
 
+		if limit != None:
+			objs = objs[:limit]
+
+		data = json.dumps(objs, default=encode_model)
 		self.write( data )
 
 	def walk(self, d, args):

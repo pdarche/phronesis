@@ -70,6 +70,8 @@ class Application(tornado.web.Application):
 			(r"/v1/remove/flickr", h.RemoveUserFlickrHandler),
 			(r"/v1/remove/location", h.RemoveLocationHandler),
 			(r"/v1/remove/physact", h.RemovePhysactHandler),
+			(r"/v1/remove/sleep", h.RemoveSleepHandler),
+			(r"/v1/remove/zeo", h.RemoveZeoHandler),
 			(r"/v1/logout", h.LogoutHandler),
 			# (r"/settings", h.PrintAppSettings),
 			(r"/v1/data/(.*)", h.RegexHandler),
