@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 20 Facebook
+# Copyright 2013 Peter Darche
 #
 # Licensed under the Creative Commons, Attribution-NonCommercial 3.0 Unported 
 # License(the "License"); you may not use this file except in compliance 
