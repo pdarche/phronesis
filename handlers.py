@@ -672,7 +672,6 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 	def get(self):
 		oAuthToken = self.get_secure_cookie('khanacademy_oauth_token')
 		oAuthSecret = self.get_secure_cookie('khanacademy_oauth_secret')
-		# userID = self.get_secure_cookie('flickr_user_id')
 
 		if self.get_argument('oauth_token', None):			
 			self.get_authenticated_khanacademy_user(self.async_callback(self._khanacademy_on_auth))
@@ -1480,7 +1479,6 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 		access_token = user["flickr_user_info"]["flickr_access_token"]
 
 		self.flickr_request(
-			"empty string", #why is this needed????
 			format="json",
 			api_key=self.settings["flickr_consumer_key"],
 			nojsoncallback="1", 
@@ -1496,7 +1494,6 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 		self.geo = data
 
 		self.flickr_request(
-			"empty string", #why is this needed????
 			format="json",
 			api_key=self.settings["flickr_consumer_key"],
 			nojsoncallback="1", 
@@ -1553,20 +1550,8 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 			else:
 				print "geo not saved"
 
-
-		photos = models.flickr.FlickrPhoto.objects(username=self.get_secure_cookie("username"))
-
-		for i, photo in photos[1:5]:
-			self.flickr_request(
-				"empty string", #why is this needed????
-				format="json",
-				api_key=self.settings["flickr_consumer_key"],
-				nojsoncallback="1", 
-				method="flickr.photos.getinfo",
-				photo_id=photo.photo_id,
-				access_token=access_token,
-				callback=callback
-			)
+			self.write("success")
+			self.finish()			
 
 	def push_to_ar(self, photo):
 		self.photos.append(photo)

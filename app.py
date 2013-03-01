@@ -31,6 +31,8 @@ import models.models as models
 from pymongo import MongoClient
 import bson
 
+import nutrition_elt as n
+
 define("port", default=8000, help="run on the given port", type=int)
 
 #mongo connection
@@ -52,7 +54,7 @@ class Application(tornado.web.Application):
 			(r"/v1/zeobasic", h.ZeoBasicAuth),
 			(r"/v1/foursquare", h.FoursquareHandler),
 			(r"/v1/google", h.GoogleHandler),
-			(r"/v1/flickr", h.FlickrHandler),
+			(r"/flickr", h.FlickrHandler),
 			(r"/v1/khanacademy", h.KhanAcademyHandler),
 			(r"/v1/openpaths", h.OpenPathsHandler),
 			(r"/v1/withings", h.WithingsHandler),
@@ -75,6 +77,7 @@ class Application(tornado.web.Application):
 			(r"/v1/logout", h.LogoutHandler),
 			# (r"/settings", h.PrintAppSettings),
 			(r"/v1/data/(.*)", h.RegexHandler),
+			(r"/test", n.FlickrRequest),
 		]
 		settings = dict(
 			template_path=os.path.join(os.path.dirname(__file__), "templates"),

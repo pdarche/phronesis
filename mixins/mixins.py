@@ -224,7 +224,7 @@ class FlickrMixin(tornado.auth.OAuthMixin):
         http.fetch(self._oauth_request_token_url(callback_uri=callback_uri), self.async_callback(
             self._on_request_token, self._OAUTH_AUTHENTICATE_URL, None))
 
-    def flickr_request(self, path, callback, access_token=None,
+    def flickr_request(self, callback, access_token=None,
                                 post_args=None, **args):
         """Fetches the given API path, e.g., "http://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos"
 
@@ -258,14 +258,10 @@ class FlickrMixin(tornado.auth.OAuthMixin):
                     # Save the user using, e.g., set_secure_cookie()
 
         """
-        if path.startswith('http:') or path.startswith('https:'):
-            # Raw urls are useful for things queries don't follow the usual pattern
-            url = path
-        else:
-            url_elems = []
-            url_elems.append(self._FLICKR_BASE_URL)
-            url_elems.append("&".join("%s=%s" % (k, str(v)) for k, v in sorted(args.items())))             
-            url = "&".join(e for e in url_elems)
+        url_elems = []
+        url_elems.append(self._FLICKR_BASE_URL)
+        url_elems.append("&".join("%s=%s" % (k, str(v)) for k, v in sorted(args.items())))             
+        url = "&".join(e for e in url_elems)
         
         # Add the OAuth resource request signature if web have credentials
         if access_token:
@@ -307,7 +303,6 @@ class FlickrMixin(tornado.auth.OAuthMixin):
         callback = self.async_callback(self._parse_user_response, callback)
 
         self.flickr_request(
-            "empty string",
             format="json",
             api_key=self.settings["flickr_consumer_key"],
             nojsoncallback="1", 
