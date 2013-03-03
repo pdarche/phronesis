@@ -6,7 +6,7 @@ from mongoengine_extras.fields import SlugField
 
 from datetime import datetime
 
-class StandardLabelNutritionInfo(EmbeddedDocument)
+class StandardLabelNutritionInfo(EmbeddedDocument):
 	calories = FloatField()
 	calories_from_fat = FloatField()
 	total_fat = FloatField()
@@ -24,7 +24,7 @@ class StandardLabelNutritionInfo(EmbeddedDocument)
 	iron = IntField()
 
 
-class MyPyramidNutritionInfo(EmbeddedDocument)
+class MyPyramidNutritionInfo(EmbeddedDocument):
 	food_code = IntField()
 	display_name = StringField()
 	portion_default = FloatField()
@@ -65,5 +65,95 @@ class NutritionRecord(Document):
 	loc = GeopointField()
 	my_pyramid = EmbeddedDocumentField(MyPyramidNutritionInfo())
 	standard_label = EmbeddedDocumentField(StandardLabelNutritionInfo())
+	# sr_25 = EmbeddedDocumentField(SR25NutritionInfo())
+
+
+# class SR25NutritionInfo(EmbeddedDocument):
+
+class SR25FoodDescription(Document):
+	NBD_No = StringField()
+	FdGrp_Cd = StringField()
+	Long_Desc = StringField()
+	Shrt_Desc = StringField()
+	ComName = StringField()
+	ManufacName = StringField()
+	Survey = StringField()
+	Ref_desc = StringField()
+	Refuse = FloatField()
+	SciName = StringField()
+	N_Factor = FloatField()
+	Pro_Factor = FloatField()
+	Fat_Factor = FloatField()
+	CHO_Factor = FloatField()
+
+
+class SR25LanguaLFactor(Document):
+	NDB_No = IntField()
+	Factor_Code = IntField()
+
+
+class SR25LangauLFactorsDescription(Document):
+	Factor_Code = IntField()
+	Descrtiption = IntField()
+
+
+class SR25NutrientData(Document):
+	NDB_No = IntField()
+	Nutr_No = IntField()
+	Nutr_Val = FloatField()
+	Num_Data_Pts = FloatField()
+	Std_Error = FloatField()
+	Src_Cd = StringField()
+	Deriv_Cd = StringField()
+	Ref_NDB_No = StringField()
+	Add_Nutr_Mark = StringField()
+	Num_Studies = IntField()
+	Min = FloatField()
+	Max = FloatField()
+	DF = IntField()
+	Low_EB = FloatField()
+	Up_EB = FloatField()
+	Stat_cmt = IntField()
+	AddMod_Date = IntField()
+	CC = IntField()
+
+
+class SR25NutrientDefinition(Document):
+	Nutr_No = StringField()
+	Units = StringField()
+	Tagname = StringField()
+	NutrDesc = StringField()
+	Num_Dec = StringField()
+	SR_Order = IntField()
+
+
+class SR25SourceCode(Document):
+	Scr_Cd = StringField()
+	SrcCd_Desc = StringField()
+
+
+class SR25DataDerivation(Document):
+	Deriv_Cd = StringField()
+	Deriv_Desc = StringField()
+
+
+class SR25Weight(Document):
+	NDB_No = StringField()
+	Seq = StringField()
+	Amount = FloatField()
+	Msre_Desc = StringField()
+	Gm_Wgt = FloatField()
+	Num_Data_Pts = IntField()
+	Std_Dev = FloatField()
+
+
+
+
+
+
+
+
+
+
 
 

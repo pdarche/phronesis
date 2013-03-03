@@ -22,6 +22,7 @@ import models
 import models.location as loc
 import models.physact as physact
 import models.sleep as sleep
+import models.mypyramid as pyramid
 
 #python mongo hooks
 from pymongo import MongoClient
@@ -1608,6 +1609,13 @@ class ZeoDumpsHandler(BaseHandler):
 		nights = json.dumps(zeo_documents, default=encode_model)
 		self.write( nights )
 
+class FoodDumpsHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		foods = pyramid.MyPyramidReferenceInfo.objects()
+		foods = json.dumps(foods, default=encode_model)
+		self.write( foods )		
+
 class LogoutHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.clear_all_cookies()
@@ -1737,7 +1745,8 @@ class RegexHandler(BaseHandler):
 					"physicalActivity" : physact.PhysicalActivity,
 					"sleep" : models.sleep.SleepRecord,
 					"nutrition" : models.flickr.FlickrPhoto,
-					"location" : loc.Location
+					"location" : loc.Location,
+					"foods" : pyramid.MyPyramidReferenceInfo
 				}
 			}
 		}

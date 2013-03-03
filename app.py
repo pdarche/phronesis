@@ -67,6 +67,7 @@ class Application(tornado.web.Application):
 			(r"/v1/dumps/openpaths", h.OpenPathsDumpsHandler),
 			(r"/v1/dumps/flickr", h.FlickrDumpsHandler),
 			(r"/v1/dumps/zeo", h.ZeoDumpsHandler),
+			(r"/v1/dumps/foods", h.FoodDumpsHandler),
 			(r"/v1/remove/fitbit", h.RemoveUserFitbitHandler),
 			(r"/v1/remove/foursquare", h.RemoveUserFoursquareHandler),
 			(r"/v1/remove/flickr", h.RemoveUserFlickrHandler),
