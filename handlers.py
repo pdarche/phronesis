@@ -150,7 +150,6 @@ class TwitterConnectHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixi
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, "Couldn't retrieve user information")
 
-
 		tw = models.TwitterUserInfo(
 			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 			twitter_default_profile_image = user["default_profile_image"],
@@ -1736,8 +1735,7 @@ class RegexHandler(BaseHandler):
 			"pdarche" :	{	
 				"body" : {
 					"physicalActivity" : physact.PhysicalActivity,
-					"sleep" : models.zeo.ZeoSleepRecord,
-					"fitbit_sleep" : models.fitbit.FitbitSleep,
+					"sleep" : models.sleep.SleepRecord,
 					"nutrition" : models.flickr.FlickrPhoto,
 					"location" : loc.Location
 				}

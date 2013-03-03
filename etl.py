@@ -4,6 +4,7 @@ import time
 
 import models.openpaths as openpaths
 import models.foursquare as foursquare
+import models.flickr as flickr
 import models.location as location
 
 from mongoengine import *
@@ -34,7 +35,6 @@ def last_op():
 		else:
 			print "records to update"
 
-
 def last_fs():
 	last_fs = location.Location.objects(source="Foursquare")
 
@@ -51,6 +51,21 @@ def last_fs():
 		else:
 			print "records to update"
 
+def last_flkr():
+	last_flkr = location.Location.objects(source="Flickr")
+	
+	if len(last_flkr) == 0:
+		flkr_locations = flickr.FlickrPhoto.objects(username="pdarche") 
+		return flkr_locations
+	else:
+		last_record = flickr.FlickrPhoto.objects(username="pdarche").order_by("-phro_created_at")
+		latest = last_record[0].info.date_uploaded
+		new_records = flickr.FlickrPhoto.objects(phro_created_at__gte=latest)
+		
+		if len(new_records) == 0:
+			print "all updated"
+		else:
+			print "records to update"
 
 #check for phro_created_at time for the last raw record
 checkins = last_fs()
@@ -113,4 +128,37 @@ if op_locations != None:
 		else:
 			print "location not saved"
 
+flkr_locations = last_flkr()
+if flkr_locations != None:
+	for flkr_location in flkr_locations:
+		if 	flkr_location.info.location != None:
+			loc = location.Location(
+				phro_created_at = int(time.time()),
+				username = "pdarche",
+				create_at = int(flkr_location.info.date_uploaded),
+				source = "Flickr",
+				# source_id = op_location.null,
+				loc = [flkr_location.info.location.lon, flkr_location.info.location.lat],
+				alt = None,
+				accuracy = flkr_location.info.location.accuracy,
+				venue_name = None,
+				address = None,
+				cross_street = None,
+				neighborhood = flkr_location.info.location.neighborhood,
+				postal_code = None,
+				city = None,
+				locality = flkr_location.info.location.locality,
+				county = flkr_location.info.location.county,
+				state = flkr_location.info.location.region,
+				country = None,
+				cc = None
+			)
 
+			if loc.save():
+				print "location saved",
+			else:
+				print "location not saved"
+				
+		# if 	flkr_location.info.location != None:
+		# 	print "location obj: %s lat: %s lon: %s" % (flkr_location.info.location,
+		# 									flkr_location.info.location.lat,flkr_location.info.location.lon) 

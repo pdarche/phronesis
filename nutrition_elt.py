@@ -8,6 +8,7 @@ import sys
 import time
 import urllib
 import json
+import ast
 
 import models.flickr as flickr
 import models.userinfo as userinfo
@@ -34,25 +35,126 @@ class FlickrRequest(tornado.web.RequestHandler, tornado.auth.OAuthMixin):
 	@tornado.gen.engine
 	def get(self):
 		user = userinfo.User.objects(username="pdarche")[0]
-		photo = flickr.FlickrPhoto.objects(username="pdarche")[0]		
-		# http = tornado.httpclient.AsyncHTTPClient()
-		http = self.get_auth_http_client()
-		oauth = self.return_oauth(
-				api_key="89e19ea49458a66cf9aa8c980e898655",
-				format="json",
-				nojsoncallback="1", 
-				method="flickr.photos.getInfo",
-				photo_id=photo.photo_id,
-				access_token=user.flickr_user_info.flickr_access_token,
-			)
+		photos = flickr.FlickrPhoto.objects(username="pdarche")
+		for photo in photos:
+			http = self.get_auth_http_client()
+			oauth = self.return_oauth(
+					api_key=self.settings["flickr_consumer_key"],
+					format="json",
+					nojsoncallback="1", 
+					method="flickr.photos.getInfo",
+					photo_id=photo.photo_id,
+					access_token=user.flickr_user_info.flickr_access_token,
+				)
 
-		response = yield tornado.gen.Task( http.fetch,
-							oauth["url"],
-							headers = {"authorization" : oauth["headers"] }
-						)
+			response = yield tornado.gen.Task( http.fetch,
+								oauth["url"],
+								headers = {"authorization" : oauth["headers"] }
+							)
 
-		self.write(response.body)
-		self.finish()
+			res = ast.literal_eval(response.body)
+
+			owner = flickr.FlickrPhotoOwner(
+					nsid = res["photo"]["owner"]["nsid"],
+					username = res["photo"]["owner"]["username"],
+					realname = res["photo"]["owner"]["realname"],
+					location = res["photo"]["owner"]["location"],
+					iconserver = res["photo"]["owner"]["iconserver"],
+					iconfarm = res["photo"]["owner"]["iconfarm"]
+				)
+
+			description = flickr.FlickrPhotoDescription(
+					_content = res["photo"]["description"]["_content"]
+				)
+
+			visibility = flickr.FlickrPhotoVisibility(
+					is_public = res["photo"]["visibility"]["ispublic"],
+					is_friend = res["photo"]["visibility"]["isfriend"],
+					is_family = res["photo"]["visibility"]["isfamily"]
+				)
+
+			dates = flickr.FlickrPhotoDates(
+					posted = res["photo"]["dates"]["posted"],
+					taken = res["photo"]["dates"]["taken"],
+					taken_granularity = res["photo"]["dates"]["takengranularity"],
+					last_update = res["photo"]["dates"]["lastupdate"]
+				)
+
+			permissions = flickr.FlickrPhotoPermissions(
+					perm_comment = res["photo"]["permissions"]["permcomment"],
+					perm_add_meta = res["photo"]["permissions"]["permaddmeta"]
+				)
+
+			editability = flickr.FlickrPhotoEditability(
+					can_comment = res["photo"]["editability"]["cancomment"],
+					can_meta_data = res["photo"]["editability"]["canaddmeta"]
+				)
+
+			public_editability = flickr.FlickrPhotoPublicEditability(
+					can_comment = res["photo"]["editability"]["cancomment"],
+					can_meta_data = res["photo"]["editability"]["canaddmeta"]
+				)
+
+			usage = flickr.FlickrPhotoUsage(
+					can_download = res["photo"]["usage"]["candownload"],
+					can_blog = res["photo"]["usage"]["canblog"],
+					can_print = res["photo"]["usage"]["canprint"]
+				)
+
+			# tags = flickr.PhotoTags()
+
+			url = flickr.FlickrPhotoUrl(
+					type = res["photo"]["urls"]["url"][0]["type"],
+					_content = res["photo"]["urls"]["url"][0]["_content"]
+				)
+
+			if "location" in res["photo"].keys():		
+				location = flickr.FlickrPhotoLocation(
+						lat = res["photo"]["location"]["latitude"] if "latitude" in res["photo"]["location"].keys() else None,
+						lon = res["photo"]["location"]["longitude"] if "longitude" in res["photo"]["location"].keys() else None,
+						accuracy = res["photo"]["location"]["accuracy"] if "accuracy" in res["photo"]["location"].keys() else None,
+						context = res["photo"]["location"]["context"] if "context" in res["photo"]["location"].keys() else None,
+						neighborhood = res["photo"]["location"]["neighbourhood"]["_content"] if "neighbourhood" in res["photo"]["location"].keys() else None,
+						locality = res["photo"]["location"]["locality"]["_content"] if "locality" in res["photo"]["location"].keys() else None,
+						country = res["photo"]["location"]["country"]["_content"] if "country" in res["photo"]["location"].keys() else None,
+						region = res["photo"]["location"]["region"]["_content"] if "region" in res["photo"]["location"].keys() else None
+					)
+			else:
+				location = None
+
+			photo_info = flickr.FlickrPhotoInfo(
+					photo_id = res["photo"]["id"],
+					secret = res["photo"]["secret"],
+					server = res["photo"]["server"],
+					farm = res["photo"]["farm"],
+					date_uploaded = res["photo"]["dateuploaded"],
+					is_favorite = res["photo"]["isfavorite"],
+					license = res["photo"]["license"],
+					safety_level = res["photo"]["safety_level"],
+					rotation = res["photo"]["rotation"],
+					original_secret = res["photo"]["originalsecret"],
+					original_format = res["photo"]["originalformat"],
+					owner = owner,
+					title = res["photo"]["title"]["_content"],
+					description = description,
+					visibility = visibility,
+					dates = dates,
+					permissions = permissions,
+					editability = editability,
+					public_editability = public_editability,
+					usage = usage,
+					notes = None,
+					people = None,
+					tages = None,
+					location = location,
+					urls = url
+				)
+
+			photo.update(set__info=photo_info)
+			self.write("success")
+			print "updated"
+		
+		self.finish()		
 
 	def return_oauth(self, access_token=None, post_args=None, **args):
 		""" make oauth authenticated requests without callbacks"""
@@ -75,7 +177,16 @@ class FlickrRequest(tornado.web.RequestHandler, tornado.auth.OAuthMixin):
 		return params
 
 	def _oauth_consumer_token(self):
+		self.require_setting("flickr_consumer_key", "Flickr OAuth")
+		self.require_setting("flickr_consumer_secret", "Flickr OAuth")
 		return {
-		    'key': "89e19ea49458a66cf9aa8c980e898655",
-		    'secret': "03656cf0a41a75e1"
+		    'key': self.settings["flickr_consumer_key"],
+		    'secret': self.settings["flickr_consumer_secret"]
 		}
+
+
+
+
+
+
+

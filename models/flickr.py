@@ -68,7 +68,7 @@ class FlickrPhotoLocation(EmbeddedDocument):
 	lon = FloatField()
 	accuracy = IntField()
 	context = IntField()
-	neightborhood = StringField()
+	neighborhood = StringField()
 	locality = StringField()
 	county = StringField()
 	region = StringField()

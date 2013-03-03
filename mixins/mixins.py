@@ -62,7 +62,7 @@ class FitbitMixin(tornado.auth.OAuthMixin):
     _OAUTH_AUTHENTICATE_URL = "http://www.fitbit.com/oauth/authenticate"
     _OAUTH_NO_CALLBACKS = False
     _FITBIT_BASE_URL = "http://api.fitbit.com/1"
-    _OAUTH_VERSION="1.0"
+    _OAUTH_VERSION = "1.0"
 
     def authenticate_redirect(self, callback_uri=None):
         """Just like authorize_redirect(), but auto-redirects if authorized.

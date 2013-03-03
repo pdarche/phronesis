@@ -16,8 +16,9 @@ class DateTime(EmbeddedDocument):
 	second = IntField()
 
 class SleepRecord(Document):
-	phro_create_at = IntField()
+	phro_created_at = IntField()
 	username = StringField()
+	source = ListField()
 	start_date = EmbeddedDocumentField(DateTime)
 	awakenings = IntField()
 	bed_time = EmbeddedDocumentField(DateTime)
@@ -41,7 +42,7 @@ class SleepRecord(Document):
 	zq = IntField()
 	alarm_reason = StringField()
 	alarm_ring_index = IntField()
-	dayFeel = IntField()
+	day_feel = IntField()
 	sleep_graph = ListField()
 	sleep_graph_start_time = EmbeddedDocumentField(DateTime)
 	sleep_stealer_score = IntField()

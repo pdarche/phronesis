@@ -27,9 +27,9 @@ def last_zeo():
 		sleep_records = zeo.ZeoSleepRecord.objects(username="pdarche") 
 		return sleep_records
 	else:
-		last_record = sleep.SleepRecord.objects(username="pdarche").order_by("-t")
+		last_record = sleep.SleepRecord.objects(username="pdarche").order_by("-phro_created_at")
 		latest = last_record[0].phro_created_at
-		new_records = zeo.ZeoSleepRecord.objects(t__gte=latest)
+		new_records = zeo.ZeoSleepRecord.objects(phro_created_at__gte=latest)
 
 		if len(new_records) == 0:
 			print "all updated"
@@ -43,9 +43,9 @@ def last_ftbt():
 		sleep_records = fitbit.FitbitSleep.objects(username="pdarche")
 		return sleep_records
 	else:
-		last_record = sleep.SleepRecord.objects(username="pdarche").order_by("-t")
+		last_record = sleep.SleepRecord.objects(username="pdarche").order_by("-phro_created_at")
 		latest = last_record[0].phro_created_at
-		new_records = fitbit.FitbitSleep.objects(t__gte=latest)
+		new_records = fitbit.FitbitSleep.objects(phro_created_at__gte=latest)
 
 		if len(new_records) == 0:
 			print "all updated"
@@ -112,27 +112,258 @@ for i,p in enumerate(iterator(len(unique_dates))):
 		p0 += 1
 		p1 += 1
 
-	elif z_date < f_date:		
+	elif z_date < f_date:
 		new_record = { "date" : unique_dates[i], "zeo" : z[p[0]], "fitbit" : None }
 		fin_list.append(new_record)
-		if p0 != len(f) - 1:
+		if p0 != len(z) - 1:
 			p0 += 1
 
 	elif z_date > f_date:
 		new_record = { "date" : unique_dates[i], "zeo" : None, "fitbit" : f[p[1]] }
 		fin_list.append(new_record)
-		if p1 != len(z) - 1:
+		if p1 != len(f) - 1:
 			p1 += 1
+		else:
+			print "switchin over"
+			new_record = { "date" : unique_dates[i], "zeo" : z[p[0]], "fitbit" : None }
+			fin_list.append(new_record)
+			p0 += 1
+
+	print p0, p1
 
 for el in fin_list:
 	if el["fitbit"] != None and el["zeo"] != None:
 		z = el["zeo"]
-		print "%s, fitbit %s, zeo %s" % (el["date"], el["fitbit"].created_at, 
-						"%s-%s-%s" % (z.start_date.year, z.start_date.month, z.start_date.day))
+		f = el["fitbit"]
+
+		start_date = sleep.DateTime(
+				year = z.start_date.year,
+				month = z.start_date.month,
+				day = z.start_date.day,
+				hour = z.start_date.hour,
+				minute = z.start_date.minute,
+				second = z.start_date.second
+			)
+
+		bed_time = sleep.DateTime(
+				year = z.bed_time.year,
+				month = z.bed_time.month,
+				day = z.bed_time.day,
+				hour = z.bed_time.hour,
+				minute = z.bed_time.minute,
+				second = z.bed_time.second
+			)
+
+		rise_time = sleep.DateTime(
+				year = z.rise_time.year,
+				month = z.rise_time.month,
+				day = z.rise_time.day,
+				hour = z.rise_time.hour,
+				minute = z.rise_time.minute,
+				second = z.rise_time.second
+			)
+
+		sleep_graph_start_time = sleep.DateTime(
+				year = z.sleep_graph_start_time.year,
+				month = z.sleep_graph_start_time.month,
+				day = z.sleep_graph_start_time.day,
+				hour = z.sleep_graph_start_time.hour,
+				minute = z.sleep_graph_start_time.minute,
+				second = z.sleep_graph_start_time.second
+			)
+
+		sleep_record = sleep.SleepRecord(
+				phro_created_at = int(time.time()),
+				username = "pdarche",
+				source = ["Zeo", "Fitbit"],
+				start_date = start_date,
+				awakenings = int(round((z.awakenings + f.ftbt_awakenings_count)/2)),
+				bed_time = bed_time,
+				grouping = z.grouping,
+				morning_feel = z.morning_feel,
+				rise_time = rise_time,
+				time_in_deep = z.time_in_deep,
+				time_in_deep_percentage = z.time_in_deep_percentage,
+				time_in_deep_zq_points = z.time_in_deep_zq_points,
+				time_in_light = z.time_in_light,
+				time_in_light_percentage = z.time_in_light_percentage,
+				time_in_rem = z.time_in_rem,
+				time_in_rem_percentage = z.time_in_rem_percentage,
+				time_in_rem_zq_points = z.time_in_rem_zq_points,
+				time_in_wake = z.time_in_wake,
+				time_in_wake_percentage = z.time_in_wake_percentage,
+				time_in_wake_zq_points = z.time_in_wake_zq_points,
+				time_to_z = z.time_to_z,
+				total_z = z.total_z,
+				total_z_zq_points = z.total_z_zq_points,
+				zq = z.zq,
+				alarm_reason = z.alarm_reason,
+				day_feel = z.day_feel,
+				sleep_graph = z.sleep_graph,
+				sleep_graph_start_time = sleep_graph_start_time,
+				sleep_stealer_score  = z.sleep_stealer_score,
+				wake_window_end_index = z.wake_window_end_index,
+				wake_window_start_index = z.wake_window_start_index
+			)
+
+		if sleep_record.save():
+			print "zeo fitbit saved"
+		else:
+			print "not saved"
+		# z = el["zeo"]
+		# print "%s, fitbit %s, zeo %s" % (el["date"], el["fitbit"].created_at, 
+		# 				"%s-%s-%s" % (z.start_date.year, z.start_date.month, z.start_date.day))
+	
 	elif el["fitbit"] != None:
-		print "%s, fitbit: %s" % (el["date"], el["fitbit"].created_at)
+		f = el["fitbit"]
+		start_date = f.created_at.split('-')
+		year = start_date[0]
+		month = start_date[1]
+		day = start_date[2]
+		# t = datetime.strptime(f.ftbt_start_time, 
+		# 					"%H:%M").strftime('%I:%M').lower().split(':')
+		t = f.ftbt_start_time.split(":")
+		hour = t[0]
+		minute = t[1]
+		
+		start_date = sleep.DateTime(
+				year = year,
+				month = month,
+				day = day,
+				hour = None,
+				minute = None,
+				second = None
+			)
+
+		bed_time = sleep.DateTime(
+				year = year,
+				month = month,
+				day = day,
+				hour = hour,
+				minute = minute,
+				second = None
+			)
+
+		sleep_record = sleep.SleepRecord(
+				phro_created_at = int(time.time()),
+				username = "pdarche",
+				source = ["Fitbit"],
+				start_date = start_date,
+				awakenings = f.ftbt_awakenings_count,
+				bed_time = bed_time,
+				grouping = None,
+				morning_feel = None,
+				rise_time = None,
+				time_in_deep = None,
+				time_in_deep_percentage = None,
+				time_in_deep_zq_points = None,
+				time_in_light = None,
+				time_in_light_percentage = None,
+				time_in_rem = None,
+				time_in_rem_percentage = None,
+				time_in_rem_zq_points = None,
+				time_in_wake = f.ftbt_minutes_awake,
+				time_in_wake_percentage = int(round(f.ftbt_minutes_awake/f.ftbt_minutes_asleep)),
+				time_in_wake_zq_points = None,
+				time_to_z = f.ftbt_minutes_to_fall_asleep,
+				total_z = f.ftbt_minutes_asleep,
+				total_z_zq_points = None,
+				zq = None,
+				alarm_reason = None,
+				day_feel = None,
+				sleep_graph = None,
+				sleep_graph_start_time = None,
+				sleep_stealer_score  = None,
+				wake_window_end_index = None,
+				wake_window_start_index = None
+			)
+	
+		if sleep_record.save():
+			print "fitbit saved"
+		else:
+			print "not saved"
+
+		# print "%s, fitbit: %s" % (el["date"], el["fitbit"].created_at)
+	
 	elif el["zeo"] != None:
 		z = el["zeo"]
-		print "%s, zeo: %s" % (el["date"], "%s-%s-%s" % (z.start_date.year, 
-				z.start_date.month, z.start_date.day))
+
+		start_date = sleep.DateTime(
+				year = z.start_date.year,
+				month = z.start_date.month,
+				day = z.start_date.day,
+				hour = z.start_date.hour,
+				minute = z.start_date.minute,
+				second = z.start_date.second
+			)
+
+		bed_time = sleep.DateTime(
+				year = z.bed_time.year,
+				month = z.bed_time.month,
+				day = z.bed_time.day,
+				hour = z.bed_time.hour,
+				minute = z.bed_time.minute,
+				second = z.bed_time.second
+			)
+
+		rise_time = sleep.DateTime(
+				year = z.rise_time.year,
+				month = z.rise_time.month,
+				day = z.rise_time.day,
+				hour = z.rise_time.hour,
+				minute = z.rise_time.minute,
+				second = z.rise_time.second
+			)
+
+		sleep_graph_start_time = sleep.DateTime(
+				year = z.sleep_graph_start_time.year,
+				month = z.sleep_graph_start_time.month,
+				day = z.sleep_graph_start_time.day,
+				hour = z.sleep_graph_start_time.hour,
+				minute = z.sleep_graph_start_time.minute,
+				second = z.sleep_graph_start_time.second
+			)
+
+		sleep_record = sleep.SleepRecord(
+				phro_created_at = int(time.time()),
+				username = "pdarche",
+				source = ["Zeo", "Fitbit"],
+				start_date = start_date,
+				awakenings = int(round((z.awakenings + f.ftbt_awakenings_count)/2)),
+				bed_time = bed_time,
+				grouping = z.grouping,
+				morning_feel = z.morning_feel,
+				rise_time = rise_time,
+				time_in_deep = z.time_in_deep,
+				time_in_deep_percentage = z.time_in_deep_percentage,
+				time_in_deep_zq_points = z.time_in_deep_zq_points,
+				time_in_light = z.time_in_light,
+				time_in_light_percentage = z.time_in_light_percentage,
+				time_in_rem = z.time_in_rem,
+				time_in_rem_percentage = z.time_in_rem_percentage,
+				time_in_rem_zq_points = z.time_in_rem_zq_points,
+				time_in_wake = z.time_in_wake,
+				time_in_wake_percentage = z.time_in_wake_percentage,
+				time_in_wake_zq_points = z.time_in_wake_zq_points,
+				time_to_z = z.time_to_z,
+				total_z = z.total_z,
+				total_z_zq_points = z.total_z_zq_points,
+				zq = z.zq,
+				alarm_reason = z.alarm_reason,
+				day_feel = z.day_feel,
+				sleep_graph = z.sleep_graph,
+				sleep_graph_start_time = sleep_graph_start_time,
+				sleep_stealer_score  = z.sleep_stealer_score,
+				wake_window_end_index = z.wake_window_end_index,
+				wake_window_start_index = z.wake_window_start_index
+			)
+
+		if sleep_record.save():
+			print "zeo saved"
+		else:
+			print "not saved"
+		
+		# z = el["zeo"]
+		# print "%s, zeo: %s" % (el["date"], "%s-%s-%s" % (z.start_date.year, 
+		# 		z.start_date.month, z.start_date.day))
 
