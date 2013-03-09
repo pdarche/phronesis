@@ -1633,35 +1633,7 @@ class RemoveUserHandler(tornado.web.RequestHandler):
 		self.write("user deleted\n")
 
 		#add functionality for deleting all records
-
-class RemoveUserFitbitHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		phys = models.fitbit.FitbitPhysicalActivity.objects()
-		sleep = models.fitbit.FitbitSleep.objects()
-
-		phys.delete()
-		sleep.delete()
-
-		self.write(str(len(phys)) + " records")
-
-
-class RemoveUserFoursquareHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		checkins = models.foursquare.CheckIn.objects(username=self.get_secure_cookie("username"))
-		checkins.delete()
-
-		self.write(str(len(checkins)) + " records")
-
-
-class RemoveUserFlickrHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		photos = models.flickr.FlickrPhoto.objects(username=self.get_secure_cookie("username"))
-		photos.delete()
-
-		self.write(str(len(photos)) + " records")
+		
 
 class DocumentationHandler(tornado.web.RequestHandler):
 	def get(self):
@@ -1678,39 +1650,6 @@ class PrintAppSettings(BaseHandler):
 
 		self.write( json.dumps( data ))
 		self.finish()
-
-
-class RemoveLocationHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		locations = models.location.Location.objects(username=self.get_secure_cookie("username"))
-		locations.delete()
-
-		self.write(str(len(locations)) + " records")
-
-class RemovePhysactHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		phys = physact.PhysicalActivity.objects()
-		phys.delete()
-
-		self.write(str(len(phys)) + " records")
-
-class RemoveSleepHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		sleep_records = sleep.SleepRecord.objects(username=self.get_secure_cookie("username"))
-		sleep_records.delete()
-
-		self.write(str(len(sleep_records)) + " records")
-
-class RemoveZeoHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		zeo_records = models.zeo.ZeoSleepRecord.objects()
-		zeo_records.delete()
-
-		self.write(str(len(zeo_records)) + " records")
 
 
 class PresentationHandler(BaseHandler):
@@ -1740,7 +1679,7 @@ class RegexHandler(BaseHandler):
 			"body/nutrition/nutr_info" : nutrition.SR25Abbrev,
 			"body/nutrition/mypyramid" : pyramid.MyPyramidReferenceInfo,
 			"body/location" : loc.Location
-		}	 
+		}
 
 		if order_by != None:
 			objs = paths[path].objects(**kw).order_by(order_by)
@@ -1777,6 +1716,25 @@ class RegexHandler(BaseHandler):
 		return limit
 
 
+class TestRemoveHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self, input):
+		username = self.get_secure_cookie('username')
+		paths = {
+			"physicalActivity" : physact.PhysicalActivity,
+			"sleep" : models.sleep.SleepRecord,
+			"location" : loc.Location,
+			"zeo" : models.zeo.ZeoSleepRecord,
+			"flickr" : models.flickr.FlickrPhoto,
+			"fitbit_activity" : models.fitbit.FitbitPhysicalActivity,
+			"fitbit_sleep" : models.fitbit.FitbitSleep,
+			"foursquare" : models.foursquare.CheckIn,
+			"openpaths" : models.openpaths.OpenPathsLocation
+		}
+
+		objs = paths[input].objects(username=username)
+		objs.delete()
+		self.write(str(len(objs)) + " records")
 
 def keyword_args(kwargs):
 	# kwargs is a dict of the keyword args passed to the function
