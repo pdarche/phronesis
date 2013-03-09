@@ -1,0 +1,130 @@
+body {
+	background-color: #eeeeee;
+	color: #333333;
+	-webkit-font-smoothing: antialiased;
+	font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	margin: 0px;
+}
+
+#chart_container {
+	width:60%;
+	height:700px;
+	float:left;
+}
+
+#query_container {
+	width:40%;
+	height:700px;
+	float:left;
+}
+
+#map, #timeseries {
+	background-color: white;
+	width: 96%;
+	/*height: 48%;*/
+	box-shadow: rgba(0, 0, 0, 0.2) 0 2px 6px 0;
+	border-radius: 5px;
+	margin:2%;
+}
+
+.normal {
+	height: 48%;
+	-webkit-transition: all .25s linear;
+}
+
+.short {
+	height:35%;
+	-webkit-transition: all .25s linear;
+}
+
+.tall {
+	height: 63%;
+	-webkit-transition: all .25s linear;
+}
+
+#attributes_list {
+	list-style-type: none;
+	margin: 0px;
+	text-align: center;
+	float: left;
+	padding: 0px;
+	margin: 2%;
+}
+
+#attributes_list li {
+	background-color: white;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 2px 6px 0;
+	border-radius: 2px;
+	padding:10px;
+	margin: 5px ;
+	width: 100px;
+	float: left;	
+}
+
+#domain_attributes {
+	background-color: white;
+	width: 528px;
+	margin: 2%;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 2px 6px 0;
+	border-radius: 2px;
+	padding:1px;
+	/*height: 300px;*/
+}
+
+#domain_attributes p {
+	margin:10px;
+}
+
+#add_attribute {
+	font-size: 12px;
+	text-decoration: underline;
+}
+
+#button_container{
+	width:528px;
+	height:40px;
+	margin: 0px 10px 10px 10px 
+}
+
+.chart-button{
+	background-color: white;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 2px 6px 0;
+	border-radius: 2px;
+	width:47%;
+	height:100%;
+	float: left;
+	margin-left:10px;
+	text-align:center;
+	line-height: 280%
+}
+
+.active {
+	box-shadow: rgba(0, 0, 0, 0.7) 0 2px 9px 0;
+	border: 1px solid gray;
+}
+
+#go {
+	background-color: white;
+	width: 528px;
+	height:50px;
+	margin: 2%;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 2px 6px 0;
+	border-radius: 2px;
+	font-size: 30px;
+	text-align: center;
+	line-height: 150%
+}
+
+.query-options{
+	margin:10px;
+}
+
+.remove {
+	font-size:12px;
+	text-decoration: underline;
+	display:inline;
+}
+
+#go:hover, #add_attribute:hover, .chart-button:hover, .attribute:hover, .remove:hover{
+	cursor: pointer;
+}

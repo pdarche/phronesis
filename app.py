@@ -79,6 +79,7 @@ class Application(tornado.web.Application):
 			# (r"/settings", h.PrintAppSettings),
 			(r"/v1/data/(.*)", h.RegexHandler),
 			(r"/test", n.FlickrRequest),
+			(r"/presentation", h.PresentationHandler),
 		]
 		settings = dict(
 			template_path=os.path.join(os.path.dirname(__file__), "templates"),

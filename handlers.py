@@ -23,6 +23,7 @@ import models.location as loc
 import models.physact as physact
 import models.sleep as sleep
 import models.mypyramid as pyramid
+import models.nutrition as nutrition
 
 #python mongo hooks
 from pymongo import MongoClient
@@ -1690,7 +1691,7 @@ class RemoveLocationHandler(BaseHandler):
 class RemovePhysactHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		phys = physact.PhysicalActivity.objects(username=self.get_secure_cookie("username"))
+		phys = physact.PhysicalActivity.objects()
 		phys.delete()
 
 		self.write(str(len(phys)) + " records")
@@ -1712,50 +1713,39 @@ class RemoveZeoHandler(BaseHandler):
 		self.write(str(len(zeo_records)) + " records")
 
 
+class PresentationHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self):
+		self.render("presentation.html")
+
+
 class RegexHandler(BaseHandler):
-	callval = "None"
 	@tornado.web.authenticated
 	def get(self, input):
-		input = input.decode('utf-8')
-		args = input.split('/')
-
-		username = args[1]
-		order_by = None
-		limit = None
+		input = input.split('/',1)
+		path = input[1].encode('utf-8')
+		username = input[0].encode('utf-8')
 		params = self.request.arguments
-		if "order_by" in params.keys():
-			split = params["order_by"][0].split("_")
-			if split[1] == "desc":
-				print "descending"
-				order_by = "-%s" % split[0]
-			else:
-				print "acending"
-				order_by = "+%s" % split[0]
-			del params["order_by"]
+		params["username"] = [username]
 
-		if "limit" in params.keys():
-			limit = int(params["limit"][0])
-			del params["limit"]
-
+		order_by = self.order(params)
+		limit = self.limit(params)
 		kw = keyword_args(params)
 
-		test = { 
-			"pdarche" :	{	
-				"body" : {
-					"physicalActivity" : physact.PhysicalActivity,
-					"sleep" : models.sleep.SleepRecord,
-					"nutrition" : models.flickr.FlickrPhoto,
-					"location" : loc.Location,
-					"foods" : pyramid.MyPyramidReferenceInfo
-				}
-			}
-		}
+		paths = { 
+			"body/physicalActivity" : physact.PhysicalActivity,
+			"body/sleep" : models.sleep.SleepRecord,
+			"body/nutrition" : models.flickr.FlickrPhoto,
+			"body/nutrition/des" : nutrition.SR25FoodDescription,
+			"body/nutrition/nutr_info" : nutrition.SR25Abbrev,
+			"body/nutrition/mypyramid" : pyramid.MyPyramidReferenceInfo,
+			"body/location" : loc.Location
+		}	 
 
-		self.walk(test, args)
 		if order_by != None:
-			objs = self.callval.objects(**kw).order_by(order_by)
+			objs = paths[path].objects(**kw).order_by(order_by)
 		else:
-			objs = self.callval.objects(**kw)
+			objs = paths[path].objects(**kw)
 
 		if limit != None:
 			objs = objs[:limit]
@@ -1763,17 +1753,30 @@ class RegexHandler(BaseHandler):
 		data = json.dumps(objs, default=encode_model)
 		self.write( data )
 
-	def walk(self, d, args):
-		for arg in args:			
-			if arg in d:
-				if type(d[arg]) != type({}):
-					self.callval = d[arg]						
-				else:
-					newd = d[arg]
-					newargs = args[1:]
-					self.walk(newd, newargs)
+	def order(self, params):
+		order_by = None		
+		if "order_by" in params.keys():
+			split = params["order_by"][0]
+			if split == "desc":
+				print "descending"
+				order_by = "-%s" % split[0]
 			else:
-				break
+				print "acending"
+				order_by = "+%s" % split[0]
+
+			del params["order_by"]
+
+		return order_by
+			
+	def limit(self, params):
+		limit = None
+		if "limit" in params.keys():
+			limit = int(params["limit"][0])
+			del params["limit"]
+
+		return limit
+
+
 
 def keyword_args(kwargs):
 	# kwargs is a dict of the keyword args passed to the function
@@ -1782,3 +1785,14 @@ def keyword_args(kwargs):
 		new_dict[key] = value[0]
 	return new_dict 
 
+def walk(self, d, args):
+	for arg in args:			
+		if arg in d:
+			if type(d[arg]) != type({}):
+				self.callval = d[arg]						
+			else:
+				newd = d[arg]
+				newargs = args[1:]
+				self.walk(newd, newargs)
+		else:
+			break

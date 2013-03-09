@@ -1,0 +1,35 @@
+<script id="query_template" type="text/x-handlebars-template">
+<div class="query-options">
+	<select>
+		{{#each attribute}}
+			<option class="obj_attr" value="{{this}}">{{this}}</option>
+		{{/each}}
+	</select>
+	<select>
+		<option class="query_filter" value="ne">not equal to</option>
+		<option class="query_filter" value="lt">less than</option>
+		<option class="query_filter" value="lte">less than or equal to</option>
+		<option class="query_filter" value="gt">greater than</option>
+		<option class="query_filter" value="gte">greater than or equal to</option>
+		<option class="query_filter" value="not"> negate</option>
+		<option class="query_filter" value="in">value is in list</option>
+		<option class="query_filter" value="nin">value not in list</option>
+		<option class="query_filter" value="mod">modulo</option>
+		<option class="query_filter" value="all">item in list of values is in arr</option>
+		<option class="query_filter" value="size">the size of an array is</option>
+		<option class="query_filter" value="exists">check for field exists</option>
+		<option class="query_filter" value="exact">string exactly matches</option>
+		<option class="query_filter" value="iexact">string exactly matches (ins)</option>
+		<option class="query_filter" value="contains">string contains value</option>
+		<option class="query_filter" value="icontains">sring constains value (ins)</option>
+		<option class="query_filter" value="startswith">string starts with</option>
+		<option class="query_filter" value="istartswith">string starts with (ins)</option>
+		<option class="query_filter" value="endswith">ends with</option>
+		<option class="query_filter" value="iendswith">ends with (ins)</option>
+		<option class="query_filter" value="match">match</option>
+	</select>
+	<input type="text" name="query_text" id="query_text"/>
+	</select>
+	<div class="remove">remove</div>
+</div>
+</script>
