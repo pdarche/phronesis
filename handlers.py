@@ -1562,61 +1562,6 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 		self.finish()
 
 
-class FitbitDumpsHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		db_activity_records = models.fitbit.FitbitPhysicalActivity.objects()
-		db_sleep_records = models.fitbit.FitbitSleep.objects
-		db_body_records = models.fitbit.FitbitBodyData.objects()
-
-		activities = json.dumps(db_activity_records, default=encode_model)
-		sleep = json.dumps(db_sleep_records, default=encode_model)
-		body = json.dumps(db_body_records, default=encode_model)
-
-		data = { "phys" : activities, "sleeps" : sleep, "body" : body }
-
-		self.write( json.dumps(data) )
-
-
-class FoursquareDumpsHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		checkins_documents = models.foursquare.CheckIn.objects(username=self.get_secure_cookie("username"))
-
-		checkins = json.dumps(checkins_documents, default=encode_model)
-
-		self.write( checkins )
-
-
-class OpenPathsDumpsHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		location_documents = models.openpaths.OpenPathsLocation.objects(username=self.get_secure_cookie("username"))
-		locations = json.dumps(location_documents, default=encode_model)
-		self.write( locations )
-
-
-class FlickrDumpsHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		photo_documents = models.flickr.FlickrPhoto.objects(username=self.get_secure_cookie("username"))
-		photos = json.dumps(photo_documents, default=encode_model)
-		self.write( photos )
-
-class ZeoDumpsHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		zeo_documents = models.zeo.ZeoSleepRecord.objects(user_id=self.get_secure_cookie("username"))
-		nights = json.dumps(zeo_documents, default=encode_model)
-		self.write( nights )
-
-class FoodDumpsHandler(BaseHandler):
-	@tornado.web.authenticated
-	def get(self):
-		foods = pyramid.MyPyramidReferenceInfo.objects()
-		foods = json.dumps(foods, default=encode_model)
-		self.write( foods )		
-
 class LogoutHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.clear_all_cookies()
@@ -1633,7 +1578,7 @@ class RemoveUserHandler(tornado.web.RequestHandler):
 		self.write("user deleted\n")
 
 		#add functionality for deleting all records
-		
+
 
 class DocumentationHandler(tornado.web.RequestHandler):
 	def get(self):
@@ -1716,7 +1661,29 @@ class RegexHandler(BaseHandler):
 		return limit
 
 
-class TestRemoveHandler(BaseHandler):
+class DumpHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self, input):
+		username = self.get_secure_cookie('username')
+		paths = {
+			"physicalActivity" : physact.PhysicalActivity,
+			"sleep" : models.sleep.SleepRecord,
+			"location" : loc.Location,
+			"zeo" : models.zeo.ZeoSleepRecord,
+			"flickr" : models.flickr.FlickrPhoto,
+			"fitbit_activity" : models.fitbit.FitbitPhysicalActivity,
+			"fitbit_sleep" : models.fitbit.FitbitSleep,
+			"foursquare" : models.foursquare.CheckIn,
+			"openpaths" : models.openpaths.OpenPathsLocation
+		}
+
+		objs = paths[input].objects()
+		objs = json.dumps(objs, default=encode_model)
+		self.write(objs)		
+
+
+
+class RemoveHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self, input):
 		username = self.get_secure_cookie('username')
