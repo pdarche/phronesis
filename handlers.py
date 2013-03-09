@@ -1629,7 +1629,7 @@ class RegexHandler(BaseHandler):
 		if order_by != None:
 			objs = paths[path].objects(**kw).order_by(order_by)
 		else:
-			objs = paths[path].objects(**kw)
+			objs = paths[path].objects(**kw) 
 
 		if limit != None:
 			objs = objs[:limit]
