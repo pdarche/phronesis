@@ -1620,16 +1620,13 @@ class RegexHandler(BaseHandler):
 			"body/physicalActivity" : physact.PhysicalActivity,
 			"body/sleep" : models.sleep.SleepRecord,
 			"body/nutrition" : models.flickr.FlickrPhoto,
-			"body/nutrition/des" : nutrition.SR25FoodDescription,
-			"body/nutrition/nutr_info" : nutrition.SR25Abbrev,
-			"body/nutrition/mypyramid" : pyramid.MyPyramidReferenceInfo,
 			"body/location" : loc.Location
 		}
 
 		if order_by != None:
 			objs = paths[path].objects(**kw).order_by(order_by)
 		else:
-			objs = paths[path].objects(**kw) 
+			objs = paths[path].objects(**kw)
 
 		if limit != None:
 			objs = objs[:limit]
@@ -1721,3 +1718,7 @@ def walk(self, d, args):
 				self.walk(newd, newargs)
 		else:
 			break
+
+			# "body/nutrition/des" : nutrition.SR25FoodDescription,
+			# "body/nutrition/nutr_info" : nutrition.SR25Abbrev,
+			# "body/nutrition/mypyramid" : pyramid.MyPyramidReferenceInfo,
