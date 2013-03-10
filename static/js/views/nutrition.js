@@ -36,8 +36,16 @@ NutritionView = Backbone.View.extend({
                     if ( toUTC( curr ) > toUTC( prev ) ){
                         
                         var date = $.datepicker.formatDate('MM dd, yy', new Date(prev));
-
                         var newDay = nutritionData.slice(lastDay,i+1)
+
+                        newDay.sort(function(a,b){
+
+                            a = Number(a.info.dates.posted)
+                            b = Number(b.info.dates.posted)
+                            return a < b ? - 1 : a > b ? 1 : 0;
+
+                        });
+
                         splitByDate.push({ "date" : date , "meal" : newDay } )
                         lastDay = i + 1
 
@@ -56,7 +64,9 @@ NutritionView = Backbone.View.extend({
     
     events : {
 
-        "click .meal-container" : "toggleMeal"
+        "click .meal-container" : "blank",
+        "click .meal-info-container h2" : "editMealName",
+        "click .new-meal-name-submit" : "submitNewMealName"
 
     },
 
@@ -73,7 +83,28 @@ NutritionView = Backbone.View.extend({
     },
 
     blank : function() {
-        
+
+    },
+
+    editMealName : function(ev) {
+        var currName = { "placeholder" : $(ev.target).html() }
+
+        $.when( 
+            $.get('/static/js/templates/mealNamePartial.handlebars') 
+        )
+        .done(
+            function(data){
+                var source = $(data).html()
+                var template = Handlebars.compile( source )
+                $(ev.target).replaceWith( template(currName) )
+            }
+        )
+    },
+
+    submitNewMealName : function(ev){
+        var newMealName = $(ev.target).prev().val()
+
+        $(ev.target).parent().replaceWith('<h2>' + newMealName + '</h2>')
     }
 
 });
