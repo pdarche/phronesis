@@ -1603,7 +1603,7 @@ class PresentationHandler(BaseHandler):
 		self.render("presentation.html")
 
 
-class RegexHandler(BaseHandler):
+class DataHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self, input):
 		input = input.split('/',1)
@@ -1657,6 +1657,59 @@ class RegexHandler(BaseHandler):
 
 		return limit
 
+
+class RefHandler(BaseHandler):
+	@tornado.web.authenticated
+	def get(self, input):
+		path = input
+		params = self.request.arguments
+
+		order_by = self.order(params)
+		limit = self.limit(params)
+		kw = keyword_args(params)
+
+		paths = { 
+			"nutrition/des" : nutrition.SR25FoodDescription,
+			"nutrition/sr25" : nutrition.SR25Abbrev,
+			"nutrition/mypyramid" : pyramid.MyPyramidReferenceInfo,
+			"nutrition/standard_label" : nutrition.StandardNutritionLabelMealItem
+		}
+
+		if order_by != None:
+			objs = paths[path].objects(**kw).order_by(order_by)
+		else:
+			objs = paths[path].objects(**kw)
+
+		if limit != None:
+			objs = objs[:limit]
+
+		print "there are %s objects" % len(objs)
+
+		data = json.dumps(objs, default=encode_model)
+		self.write(data)
+
+	def order(self, params):
+		order_by = None		
+		if "order_by" in params.keys():
+			split = params["order_by"][0]
+			if split == "desc":
+				print "descending"
+				order_by = "-%s" % split[0]
+			else:
+				print "acending"
+				order_by = "+%s" % split[0]
+
+			del params["order_by"]
+
+		return order_by
+			
+	def limit(self, params):
+		limit = None
+		if "limit" in params.keys():
+			limit = int(params["limit"][0])
+			del params["limit"]
+
+		return limit
 
 class DumpHandler(BaseHandler):
 	@tornado.web.authenticated
@@ -1718,7 +1771,3 @@ def walk(self, d, args):
 				self.walk(newd, newargs)
 		else:
 			break
-
-			# "body/nutrition/des" : nutrition.SR25FoodDescription,
-			# "body/nutrition/nutr_info" : nutrition.SR25Abbrev,
-			# "body/nutrition/mypyramid" : pyramid.MyPyramidReferenceInfo,

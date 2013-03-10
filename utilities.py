@@ -9,6 +9,10 @@ import mongoengine
 import simplejson
 from bson.objectid import ObjectId
 
+#for scraping, eg chipotle
+import urllib2
+from BeautifulSoup import BeautifulSoup
+
 from xml.dom.minidom import parse, parseString
 import models.mypyramid as pyramid
 import models.nutrition as nutrition
@@ -260,5 +264,69 @@ class Parse_SR25():
 # p = nutrition.SR25Abbrev.objects()
 # p.delete()
 
+def scrape_chipotle():
+    soup = BeautifulSoup(urllib2.urlopen('http://www.chipotle.com/en-us/menu/nutritional_information/nutritional_information.aspx').read())
 
+    headings = soup('table')
 
+    unit = [
+        "", "", "g", "g", 
+        "g", "mg", "mg", 
+        "g", "g", "g", "g", 
+        "% daily value", 
+        "% daily value", 
+        "% daily value",
+        "% daily value" 
+    ]
+
+    for idx, tr in enumerate(headings[3]('tr')):
+        if idx != 0:
+            ingredient = tr('span')[0].string
+            serving_size = tr('span')[1].string
+            cals = tr('span')[2].string
+            fat_cals = tr('span')[3].string
+            total_fat = tr('span')[4].string
+            sat_fat = tr('span')[5].string
+            trans_fat = tr('span')[6].string
+            cholesterol = tr('span')[7].string.replace("<", "")
+            sodium = tr('span')[8].string
+            carbs = tr('span')[9].string.replace("<", "")
+            dietary_fiber = tr('span')[10].string.replace("<", "")
+            sugars = tr('span')[11].string.replace("<", "")
+            protein = tr('span')[12].string.replace("<", "")
+            vit_a = tr('span')[13].string.string.replace("%","")
+            vit_c = tr('span')[14].string.string.replace("%","")
+            calcium = tr('span')[15].string.string.replace("%","")
+            iron = tr('span')[16].string.string.replace("%","")
+
+            food_item = nutrition.StandardNutritionLabelMealItem(
+                    name = ingredient,
+                    unit = serving_size,
+                    calories = int(cals),
+                    calories_from_fat = int(fat_cals),
+                    total_fat = float(total_fat),
+                    saturated_fat = float(sat_fat),
+                    trans_fat = float(trans_fat),
+                    cholesterol = float(cholesterol),
+                    sodium = float(sodium),
+                    total_carbs = float(carbs),
+                    dietary_fiber = float(dietary_fiber),
+                    sugar = float(sugars),
+                    protein = float(protein),
+                    vit_a = int(vit_a),
+                    vit_c = int(vit_c),
+                    calcium = int(calcium),
+                    iron = int(iron),
+                    source = "Chipotle Mexican Grill"
+                )
+
+            if food_item.save():
+                print "saved"
+            else:
+                print "didn't save"
+
+# scrape_chipotle()
+
+# objs = nutrition.StandardNutritionLabelMealItem.objects()
+# objs.delete()
+# print len(objs)

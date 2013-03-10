@@ -66,7 +66,8 @@ class Application(tornado.web.Application):
 			(r"/v1/import/flickr", h.FlickrImportHandler),
 			(r"/v1/dump/(.*)", h.DumpHandler),
 			(r"/v1/remove/(\w+)", h.RemoveHandler),
-			(r"/v1/data/(.*)", h.RegexHandler),
+			(r"/v1/data/(.*)", h.DataHandler),
+			(r"/v1/ref/(.*)", h.RefHandler),
 			(r"/test", n.FlickrRequest),
 			# (r"/settings", h.PrintAppSettings),
 		]

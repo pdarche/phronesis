@@ -6,9 +6,11 @@ from mongoengine_extras.fields import SlugField
 
 from datetime import datetime
 
-class StandardLabelNutritionInfo(EmbeddedDocument):
-	calories = FloatField()
-	calories_from_fat = FloatField()
+class StandardNutritionLabelMealItem(Document):
+	name = StringField()
+	unit = StringField()
+	calories = IntField()
+	calories_from_fat = IntField()
 	total_fat = FloatField()
 	saturated_fat = FloatField()
 	trans_fat = FloatField()
@@ -22,6 +24,48 @@ class StandardLabelNutritionInfo(EmbeddedDocument):
 	vit_c = IntField()
 	calcium = IntField()
 	iron = IntField()
+	source = StringField()
+
+class StandardNutritionLabelMealIngredient(EmbeddedDocument):
+	name = StringField()
+	unit = StringField()
+	calories = IntField()
+	calories_from_fat = IntField()
+	total_fat = FloatField()
+	saturated_fat = FloatField()
+	trans_fat = FloatField()
+	cholesterol = FloatField()
+	sodium = FloatField()
+	total_carbs = FloatField()
+	dietary_fiber = FloatField()
+	sugar = FloatField()
+	protein = FloatField()
+	vit_a = IntField()
+	vit_c = IntField()
+	calcium = IntField()
+	iron = IntField()
+	source = StringField()
+
+class StandardNutritionLabelMeal(EmbeddedDocument):
+	name = StringField()
+	unit = StringField()
+	calories = IntField()
+	calories_from_fat = IntField()
+	total_fat = FloatField()
+	saturated_fat = FloatField()
+	trans_fat = FloatField()
+	cholesterol = FloatField()
+	sodium = FloatField()
+	total_carbs = FloatField()
+	dietary_fiber = FloatField()
+	sugar = FloatField()
+	protein = FloatField()
+	vit_a = IntField()
+	vit_c = IntField()
+	calcium = IntField()
+	iron = IntField()
+	source = StringField()
+	ingredients = ListField(EmbeddedDocumentField(StandardNutritionLabelMealIngredient))
 
 
 class MyPyramidNutritionInfo(EmbeddedDocument):
@@ -54,7 +98,7 @@ class MyPyramidNutritionInfo(EmbeddedDocument):
 
 
 class NutritionRecord(Document):
-	phro_create_at = IntField()
+	phro_created_at = IntField()
 	username = StringField()
 	create_at = IntField()
 	img_url = URLField()
@@ -64,7 +108,7 @@ class NutritionRecord(Document):
 	venue_category = StringField()
 	loc = GeoPointField()
 	# my_pyramid = EmbeddedDocumentField(MyPyramidNutritionInfo())
-	# standard_label = EmbeddedDocumentField(StandardLabelNutritionInfo())
+	standard_label = EmbeddedDocumentField(StandardNutritionLabelMeal)
 	# sr_25 = EmbeddedDocumentField(SR25NutritionInfo())
 
 
@@ -229,7 +273,6 @@ class SR25Abbrev(Document):
 	GmWt_2 = FloatField()
 	GmWt_Desc2 = StringField()
 	Refuse_Pct = FloatField()
-
 
 
 
