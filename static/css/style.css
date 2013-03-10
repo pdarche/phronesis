@@ -1,3 +1,65 @@
 p {
 	font-size: 20px;
 }
+
+#meals_container {
+	position: relative;
+	width: 1210px;
+	height:100%;
+	padding:30px;
+	overflow-y: auto;	
+	margin: 0px auto;
+}
+
+.meal-container {
+	overflow-y: auto; 
+	margin:10px;
+	padding:10px;
+	float:left;
+	background-color:rgba(255,255,255,.6);
+	box-shadow: rgba(0, 0, 0, 0.2) 0 2px 6px 0;
+	border:1px solid white;
+	-webkit-transition: all .5s linear;
+	min-width:360px;
+	min-height:150px;
+}
+
+.meal-container h2 {
+	margin: 5px 0px 0px 0px;
+	font-size:25px;
+	width: 170px;
+}
+
+.meal-container h3 {
+	margin: 0px 0px 10px 0px;
+	font-size: 12px;
+	color: gray;
+	display: inline-block;
+	overflow-y: auto; 
+}
+
+.day{
+	width: 100%;
+	overflow-y: auto;
+	margin: 0px 0px 40px 0px;
+}
+
+.eaten-date{
+	margin: 10px 0px 5px 20px;
+}
+
+.image-container{
+	float:left;
+	margin:10px;
+}
+
+.meal-info-container{
+	float:left;
+	margin:10px;
+}
+
+.clicked {
+	width:400px;
+	height:400px;
+	-webkit-transition: all .5s linear;
+}

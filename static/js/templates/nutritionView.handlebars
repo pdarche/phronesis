@@ -1,0 +1,20 @@
+<script id="query_view" type="text/x-handlebars-template">
+<div id="meals_container">
+	{{#each day}}
+	<div class="day">
+	<h1 class="eaten-date">{{date}}</h1>
+		{{#each meal}}
+		<div class="meal-container">
+			<div class="image-container"> 
+				<img src="http://farm{{info.farm}}.staticflickr.com/{{server}}/{{photo_id}}_{{secret}}_q.jpg"/>
+			</div>
+			<div class="meal-info-container">
+				<h2>{{title}}</h2>
+				<h3>{{#formatTime}}{{info.dates.taken}}{{/formatTime}}</h3>
+			</div>
+		</div>
+		{{/each}}
+	</div>
+	{{/each}}
+</div>
+</script>
