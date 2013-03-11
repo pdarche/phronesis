@@ -401,10 +401,10 @@ class NutritionEtl():
                     ingredients = None
                 )
 
-            if meal.save():
-                print "meal saved"
-            else:
-                print "meal didn't save"
+                if meal.save():
+                    print "meal saved"
+                else:
+                    print "meal didn't save"
 
             
 # m = NutritionEtl()

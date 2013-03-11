@@ -1741,6 +1741,7 @@ class RemoveHandler(BaseHandler):
 			"physicalActivity" : physact.PhysicalActivity,
 			"sleep" : models.sleep.SleepRecord,
 			"location" : loc.Location,
+			"nutrition" : nutrition.NutritionRecord,
 			"zeo" : models.zeo.ZeoSleepRecord,
 			"flickr" : models.flickr.FlickrPhoto,
 			"fitbit_activity" : models.fitbit.FitbitPhysicalActivity,
