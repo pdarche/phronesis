@@ -6,7 +6,7 @@ from mongoengine_extras.fields import SlugField
 
 from datetime import datetime
 
-class StandardNutritionLabelMealItem(Document):
+class MealIngredient(EmbeddedDocument):
 	name = StringField()
 	unit = StringField()
 	calories = IntField()
@@ -26,8 +26,31 @@ class StandardNutritionLabelMealItem(Document):
 	iron = IntField()
 	source = StringField()
 
-class StandardNutritionLabelMealIngredient(EmbeddedDocument):
-	name = StringField()
+class FlickrRefInfo(EmbeddedDocument):
+	photo_id = StringField()
+	farm = IntField()
+	server = StringField()
+	secret = StringField()
+
+class FlickrDates(EmbeddedDocument):
+	taken = StringField()
+	last_update = StringField()
+	taken_granularity = IntField()
+	posted = StringField()
+
+class NutritionRecord(Document):
+	phro_created_at = IntField()
+	username = StringField()
+	created_at = IntField()
+	flkr_ref_info = EmbeddedDocumentField(FlickrRefInfo)
+	flikr_dates = EmbeddedDocumentField(FlickrDates)
+	meal_item_name = StringField()
+	img_url = StringField()
+	meal = StringField()
+	venue = StringField()
+	venue_category = StringField()
+	from_loc = GeoPointField()
+	eaten_loc = GeoPointField()
 	unit = StringField()
 	calories = IntField()
 	calories_from_fat = IntField()
@@ -45,28 +68,7 @@ class StandardNutritionLabelMealIngredient(EmbeddedDocument):
 	calcium = IntField()
 	iron = IntField()
 	source = StringField()
-
-class StandardNutritionLabelMeal(EmbeddedDocument):
-	name = StringField()
-	unit = StringField()
-	calories = IntField()
-	calories_from_fat = IntField()
-	total_fat = FloatField()
-	saturated_fat = FloatField()
-	trans_fat = FloatField()
-	cholesterol = FloatField()
-	sodium = FloatField()
-	total_carbs = FloatField()
-	dietary_fiber = FloatField()
-	sugar = FloatField()
-	protein = FloatField()
-	vit_a = IntField()
-	vit_c = IntField()
-	calcium = IntField()
-	iron = IntField()
-	source = StringField()
-	ingredients = ListField(EmbeddedDocumentField(StandardNutritionLabelMealIngredient))
-
+	ingredients = ListField(EmbeddedDocumentField(MealIngredient))
 
 class MyPyramidNutritionInfo(EmbeddedDocument):
 	food_code = IntField()
@@ -95,21 +97,6 @@ class MyPyramidNutritionInfo(EmbeddedDocument):
 	alcohol = FloatField()
 	calories = FloatField()
 	saturated_fats = FloatField()
-
-
-class NutritionRecord(Document):
-	phro_created_at = IntField()
-	username = StringField()
-	create_at = IntField()
-	img_url = URLField()
-	name = StringField()
-	pyramid_name = StringField()
-	venue = StringField()
-	venue_category = StringField()
-	loc = GeoPointField()
-	# my_pyramid = EmbeddedDocumentField(MyPyramidNutritionInfo())
-	standard_label = EmbeddedDocumentField(StandardNutritionLabelMeal)
-	# sr_25 = EmbeddedDocumentField(SR25NutritionInfo())
 
 
 class SR25FoodDescription(Document):

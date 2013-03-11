@@ -1619,7 +1619,7 @@ class DataHandler(BaseHandler):
 		paths = { 
 			"body/physicalActivity" : physact.PhysicalActivity,
 			"body/sleep" : models.sleep.SleepRecord,
-			"body/nutrition" : models.flickr.FlickrPhoto,
+			"body/nutrition" : nutrition.NutritionRecord,
 			"body/location" : loc.Location
 		}
 
