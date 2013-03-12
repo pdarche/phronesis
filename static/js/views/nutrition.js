@@ -1,65 +1,43 @@
+MealView = new Backbone.View.extend({
+    tagName: 'div',
+    className: 'meal',
+    template: _.template( '<div><%=meal_item_name%></div>' ),
+
+    render: function() {
+
+        //tmpl is a function that takes a JSON object and returns html
+        var tmpl = this.template
+
+        //this.el is what we defined in tagName. use $el to get access to jQuery html() function
+        this.$el.html( tmpl( this.model.toJSON() ) );
+
+        return this;
+    }
+})
+
 NutritionView = Backbone.View.extend({
     
     initialize: function(){
-        
-        this.render();
+
+        this.collection = new Meals()
+        this.collection.fetch()
+        var self = this;
+        this.collection.bind("reset", function() {self.render();});
 
     },
 
     render: function(){
+         _.each( this.collection.models, function( item ) {
+            this.renderMeal( item );
+        }, this );
+    },
 
-        $.when( 
-            $.get('/static/js/templates/nutritionView.handlebars'),
-            $.get('/v1/data/pdarche/body/nutrition?order_by=desc')
-        )
-        .done( 
-            function( nutritionView, nutritionData ){ 
+    renderMeal : function( item ) {
 
-                nutritionData = $.parseJSON(nutritionData[0])
-                nutritionView = nutritionView[0]
-
-                nutritionData.sort(function(a,b){
-
-                    a = toUTC( a.info.dates.taken )
-                    b = toUTC( b.info.dates.taken )
-                    return a < b ? - 1 : a > b ? 1 : 0;
-
-                });
-
-                var splitByDate = [],
-                    lastDay = 0
-
-                for (var i = 0; i < nutritionData.length - 1; ++i ) {
-                    var curr = nutritionData[i+1].info.dates.taken,
-                        prev = nutritionData[i].info.dates.taken
-                     
-                    if ( toUTC( curr ) > toUTC( prev ) ){
-                        
-                        var date = $.datepicker.formatDate('MM dd, yy', new Date(prev));
-                        var newDay = nutritionData.slice(lastDay,i+1)
-
-                        newDay.sort(function(a,b){
-
-                            a = Number(a.info.dates.posted)
-                            b = Number(b.info.dates.posted)
-                            return a < b ? - 1 : a > b ? 1 : 0;
-
-                        });
-
-                        splitByDate.push({ "date" : date , "meal" : newDay } )
-                        lastDay = i + 1
-
-                    } 
-                }
-
-                //render templates
-                var source = $(nutritionView).html()
-                var template = Handlebars.compile( source )
-                $('body').append( template( { "day" : splitByDate.reverse() } ) )
-
-            }
-        )
-
+        var mealView = new MealView({
+            model: item
+        });
+        // this.$el.append( mealView.render().el );
     },
     
     events : {
@@ -108,6 +86,8 @@ NutritionView = Backbone.View.extend({
     }
 
 });
+
+
 
 var toUTC = function( dateString ){
     var dateComponents = dateString.split(" ")[0].split("-"),

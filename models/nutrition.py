@@ -43,7 +43,7 @@ class NutritionRecord(Document):
 	username = StringField()
 	created_at = IntField()
 	flkr_ref_info = EmbeddedDocumentField(FlickrRefInfo)
-	flikr_dates = EmbeddedDocumentField(FlickrDates)
+	flkr_dates = EmbeddedDocumentField(FlickrDates)
 	meal_item_name = StringField()
 	img_url = StringField()
 	meal = StringField()

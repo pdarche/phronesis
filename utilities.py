@@ -373,7 +373,8 @@ class NutritionEtl():
                 meal = nutrition.NutritionRecord(
                     phro_created_at = int(time.time()),
                     username = "pdarche",
-                    flickr_ref_info = ref_info,
+                    flkr_ref_info = ref_info,
+                    flkr_dates = dates,
                     meal_item_name = pic.title,
                     img_url = "http://farm%s.staticflickr.com/%s/%s_%s_q.jpg" % (pic.info.farm, pic.server, pic.photo_id, pic.secret),
                     meal = None, #there will be some analysis of the title to extract a meal
@@ -405,7 +406,6 @@ class NutritionEtl():
                     print "meal saved"
                 else:
                     print "meal didn't save"
-
             
 # m = NutritionEtl()
 # m.create_new_meals()
