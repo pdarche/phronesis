@@ -373,6 +373,7 @@ class NutritionEtl():
                 meal = nutrition.NutritionRecord(
                     phro_created_at = int(time.time()),
                     username = "pdarche",
+                    created_at = int(time.mktime(time.strptime(pic.info.dates.taken,'%Y-%m-%d %H:%M:%S'))),
                     flkr_ref_info = ref_info,
                     flkr_dates = dates,
                     meal_item_name = pic.title,

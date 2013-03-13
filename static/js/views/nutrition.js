@@ -1,4 +1,6 @@
-MealView = new Backbone.View.extend({
+var app = app || {};
+
+app.MealView = new Backbone.View.extend({
     tagName: 'div',
     className: 'meal',
     template: _.template( '<div><%=meal_item_name%></div>' ),
@@ -15,14 +17,14 @@ MealView = new Backbone.View.extend({
     }
 })
 
-NutritionView = Backbone.View.extend({
+app.NutritionView = Backbone.View.extend({
     
     initialize: function(){
 
         this.collection = new Meals()
         this.collection.fetch()
         var self = this;
-        this.collection.bind("reset", function() {self.render();});
+        this.collection.bind("reset", function() { self.render(); });
 
     },
 
@@ -34,9 +36,18 @@ NutritionView = Backbone.View.extend({
 
     renderMeal : function( item ) {
 
-        var mealView = new MealView({
-            model: item
-        });
+        $.when( $.get('/static/js/templates/meal.handlebars') )
+        .done(
+            function(data){
+                var source = $(data).html()
+                var template = Handlebars.compile( source )
+                var d = { "id" : item.cid, "data" : item.toJSON() }
+                $('#meals_container').append( template( d ) )
+            }
+        )
+        // var mealView = new app.MealView({
+        //     model : item
+        // });
         // this.$el.append( mealView.render().el );
     },
     
@@ -44,7 +55,9 @@ NutritionView = Backbone.View.extend({
 
         "click .meal-container" : "blank",
         "click .meal-info-container h2" : "editMealName",
-        "click .new-meal-name-submit" : "submitNewMealName"
+        "click .new-meal-name-submit" : "setNewMealName",
+        "click .from" : "editFromLocation",
+        "keypress :input" : "searchFromLocation"
 
     },
 
@@ -79,14 +92,53 @@ NutritionView = Backbone.View.extend({
         )
     },
 
-    submitNewMealName : function(ev){
-        var newMealName = $(ev.target).prev().val()
+    setNewMealName : function(ev){
+        var newMealName = $(ev.target).prev().val(),
+            cid = $(ev.target).parent().parent().parent().attr('id'),
+            model = this.collection.getByCid(cid)
+
+        model.set('meal_item_name', newMealName)
 
         $(ev.target).parent().replaceWith('<h2>' + newMealName + '</h2>')
+
+    },
+
+    editFromLocation : function(ev){
+
+        var cid = $(ev.target).parent().parent().attr('id'),
+            model = this.collection.getByCid(cid),
+            targetTime = model.get('created_at'),
+            startTime = targetTime - 3000,
+            endTime = targetTime + 3000,
+            url = '/v1/data/pdarche/body/location?created_at__gte=' + startTime
+            url += '&created_at__lte=' + endTime + '&source=Foursquare'  
+
+        console.log(model.attributes)
+
+        $.when( 
+            $.get('/static/js/templates/from.handlebars'),
+            $.get( url )
+        )
+        .done(
+            function(template, data){
+                var tmpl = template[0],
+                    data = $.parseJSON(data[0])
+
+                var source = $(tmpl).html()
+                var template = Handlebars.compile( source )
+                $(ev.target).replaceWith( template( { "location" : data } ) )
+            }
+        )
+
+    },
+
+    searchFromLocation : function(ev){
+
+        
+
     }
 
 });
-
 
 
 var toUTC = function( dateString ){

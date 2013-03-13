@@ -1,0 +1,13 @@
+<script id="meal_partial" type="text/x-handlebars-template">
+<div class="meal-container" id="{{id}}">
+	<div class="image-container"> 
+		<img src="{{data.img_url}}"/>
+	</div>
+	<div class="meal-info-container">
+		<h2>{{data.meal_item_name}}</h2>
+		<h3>{{#formatTime}}{{data.flkr_dates.taken}}{{/formatTime}}</h3>
+		<div class="from"> From: <br/>{{data.venue}}</div>
+		<div class="consumed">Eaten: <br/>{{data.from_loc}}</div>
+	</div>
+</div>
+</script>

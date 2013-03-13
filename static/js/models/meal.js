@@ -1,7 +1,10 @@
+ var app = app || {};
+
  var Meal = Backbone.Model.extend({
         defaults: {
             phro_created_at : undefined,
             username : "pdarche",
+            created_at : undefined,
             flkr_ref_info : {
                 photo_id : undefined,
                 farm : undefined,
