@@ -52,57 +52,7 @@
 
 var Meals = Backbone.Collection.extend({
     model: Meal,
-    url : '/v1/data/pdarche/body/nutrition?order_by=desc'
+    url : '/v1/data/pdarche/body/nutrition?limit=10&order_by=desc'
 });
 
-
-       // $.when( 
-        //     $.get('/static/js/templates/nutritionView.handlebars')
-        // )
-        // .done( 
-        //     function( nutritionView ){ 
-                
-        //         nutritionView = nutritionView[0]
-
-        //         collection.models.sort(function(a,b){
-
-        //             a = toUTC( a.attributes.flkr_dates.taken )
-        //             b = toUTC( b.attributes.flkr_dates.taken )
-        //             return a < b ? - 1 : a > b ? 1 : 0;
-
-        //         });
-
-                // var splitByDate = [],
-                //     lastDay = 0
-
-                // for (var i = 0; i < collection.length - 1; ++i ) {
-                //     var curr = collection.models[i+1].flkr_dates.taken,
-                //         prev = collection.models[i].flkr_dates.taken
-                     
-                //     if ( toUTC( curr ) > toUTC( prev ) ){
-                        
-                //         var date = $.datepicker.formatDate('MM dd, yy', new Date(prev));
-                //         var newDay = nutritionData.slice(lastDay,i+1)
-
-                //         newDay.sort(function(a,b){
-
-                //             a = Number(a.attributes.flkr_dates.posted)
-                //             b = Number(b.attributes.flkr_dates.posted)
-                //             return a < b ? - 1 : a > b ? 1 : 0;
-
-                //         });
-
-                //         splitByDate.push({ "date" : date , "meal" : newDay } )
-                //         lastDay = i + 1
-
-                //     } 
-                // }
-
-                //render templates
-                // var source = $(nutritionView).html()
-                // var template = Handlebars.compile( source )
-                // $('body').append( template( { "day" : collection.models } ) )
-
-        //     }
-        // )
 

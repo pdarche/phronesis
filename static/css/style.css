@@ -82,7 +82,7 @@ p {
 }
 
 #to_edit_meal {
-	width: 400px;
+	width: 500px;
 	margin: 50px auto;
 	background-color: white;
 	padding: 10px;
@@ -128,6 +128,19 @@ p {
 
 #ingredients {
 	float: left;
+	width: 300px;
+}
+
+#ingredients input {
+	width: 200px;
+}
+
+#ingredients button {
+	width : 50px;
+}
+
+#ingredients select {
+	width: 200px;
 }
 
 #nutrition_facts h3, h5, table{

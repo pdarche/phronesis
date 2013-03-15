@@ -39,18 +39,16 @@ app.MealEditView = Backbone.View.extend({
     render: function() {
 
         var model = this.model.toJSON()
-
-        console.log(model)
-
         var source = $(this.template).html()
         var template = Handlebars.compile( source );
-        $('body').prepend( template(model) )
+        $('body').prepend( template( { "cid" : this.model.cid, "data" : model } ) )
 
     },
 
     events : {
 
-        "keyup :input" : "searchIngredient"
+        "click #search_submit" : "searchIngredient",
+        "click #add_ingredient" : "addIngredient"
 
     },
 
@@ -65,13 +63,42 @@ app.MealEditView = Backbone.View.extend({
                 url += qString + '?'
                 url += 'appId=' + appId + '&appKey=' + appKey
             
+            //remove old foods
+            $('#ingredients option').remove()
+
             $.get(url, function(data){
-                console.log(data)
+
+                $.each(data.hits, function(i){ 
+                    
+                    var html = '<option value="' + this.fields.item_id + '">'
+                        html += this.fields.brand_name + ' '
+                        html += this.fields.item_name + '</option>'
+                    
+                    $('#ingredients select').append(html)
+
+                })
+
             })    
 
         }
+    },
 
-        
+    addIngredient : function(ev){
+        var self = this
+
+        console.log(self.model)
+
+        var appId = '77751166',
+            appKey = '89a33cd92074a64e0cf83f34952d9bf1',
+            qString = $(':selected').val()
+
+        var url = 'http://api.nutritionix.com/v1/item/'
+            url += qString + '?'
+            url += 'appId=' + appId + '&appKey=' + appKey
+
+        $.get(url, function(data){
+            console.log(self.model)
+        })
 
     }
 
@@ -177,8 +204,6 @@ app.NutritionView = Backbone.View.extend({
             endTime = targetTime + 3000,
             url = '/v1/data/pdarche/body/location?created_at__gte=' + startTime
             url += '&created_at__lte=' + endTime + '&source=Foursquare'  
-
-        console.log(model.attributes)
 
         $.when( 
             $.get('/static/js/templates/from.handlebars'),
