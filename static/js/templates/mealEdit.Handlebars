@@ -1,0 +1,79 @@
+<script id="meal_edit" type="text/x-handlebars-template">
+	<div id="backdrop">
+		<div id="to_edit_meal">
+			<div id="meal_heading">
+				<img src="{{img_url}}">
+				<div id="meal_heading_info">
+					<h2>{{meal_item_name}}</h2>
+					<h3>{{meal}}</h3>
+					<h3>{{#formatTime}}{{flkr_dates.taken}}{{/formatTime}}</h3>
+				</div>
+			</div>
+			<div id="location_container">
+				<div>from{{from_loc}}</div>
+				<div>eaten</div>
+			</div>
+			<div id="nutrition_facts">
+				<h3>Nutrition Facts</h3>
+				<h5>Serving size</h5>
+				<table>
+					<tr>
+						<td class="nutrient primary">Total Fat</td>
+						<td class="amount">{{total_fat}}g</td>
+						<td class="percent"></td>
+					</tr>
+					<tr>
+						<td class="nutrient secondary">Saturated Fat</td>
+						<td class="amount">{{saturated_fat}}g</td>
+						<td class="percent"></td>
+					</tr>
+					<tr>
+						<td class="nutrient secondary">Trans Fat</td>
+						<td class="amount">{{trans_fat}}g</td>
+						<td class="percent"></td>
+					</tr>
+					<tr>
+						<td class="nutrient primary">Cholesterol</td>
+						<td class="amount">{{cholesterol}}mg</td>
+						<td class="percent"></td>
+					</tr>
+					<tr>
+						<td class="nutrient primary">Sodium</td>
+						<td class="amount">{{sodium}}mg</td>
+						<td class="percent"></td>
+					</tr>
+					<tr>
+						<td class="nutrient primary">Total Carbohydrate</td>
+						<td class="amount">{{total_carbs}}g</td>
+						<td class="percent"></td>
+					</tr>
+					<tr>
+						<td class="nutrient secondary">Dietary Fiber</td>
+						<td class="amount">{{dietary_fiber}}g</td>
+						<td class="percent"></td>
+					</tr>
+					<tr>
+						<td class="nutrient secondary">Sugars</td>
+						<td class="amount">{{sugar}}g</td>
+						<td class="percent"></td>
+					</tr>
+					<tr>
+						<td class="nutrient primary">Protein</td>
+						<td class="amount">{{protein}}g</td>
+						<td class="percent"></td>
+					</tr>
+				</table>
+			</div>
+			<div id="ingredients">
+				<div id="add_ingredients">
+					<input type=text name="add-ingredients"/>
+					<select></select>
+				</div>
+				{{#each ingredients}}
+					<div></div>
+				{{/each}}
+			</div>
+			<div style="clear: both;"></div>
+		</div>
+	</div>
+</script>

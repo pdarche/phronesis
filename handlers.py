@@ -1255,12 +1255,26 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 		user_id = user_info["user_id"]
 		access_token = user_info["access_token"]
 
-		self.foursquare_request(
+		# self.foursquare_request(
+		#     path="/users/self/checkins",
+		#     args= { "limit" : 250 },
+		#     callback=self.async_callback(self._on_imported),
+		#     access_token=access_token
+		# )
+
+		response = yield tornado.gen.Task(
+			self.foursquare_request,
 		    path="/users/self/checkins",
 		    args= { "limit" : 250 },
-		    callback=self.async_callback(self._on_imported),
 		    access_token=access_token
 		)
+
+		print response
+		self.finish()
+		
+	def _on_test(self, checkins):
+		self.write(json.dumps(checkins))
+		self.finish()
 
 	def _on_imported(self, checkins):
 		user_info = self.get_fs_user_info()
