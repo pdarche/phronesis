@@ -1,12 +1,12 @@
 <script id="meal_edit" type="text/x-handlebars-template">
 	<div id="backdrop">
 		<div id="to_edit_meal" class="{{cid}}">
-			<div id="meal_heading">
+			<div id="meal_heading_edit">		
 				<img src="{{data.img_url}}">
-				<div id="meal_heading_info">
+				<div id="meal_heading_info_edit">
 					<h2>{{data.meal_item_name}}</h2>
-					<h3>{{data.meal}}</h3>
 					<h3>{{#formatTime}}{{data.flkr_dates.taken}}{{/formatTime}}</h3>
+					<h3 id="meal">{{data.meal}}</h3>
 				</div>
 			</div>
 			<div id="location_container">

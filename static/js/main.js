@@ -2,7 +2,7 @@
 $(document).ready(function(){
 
     // var query_view = new QueryView({ el: $("body") });
-    var nutrition_view = new app.NutritionView({ el: $("body") });
+    var nutrition_view = new app.NutritionView({ el: $("#meals_container") });
 
 })
 

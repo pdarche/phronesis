@@ -87,6 +87,7 @@ p {
 	background-color: white;
 	padding: 10px;
 	overflow-y: auto;
+	z-index: 2;
 }
 
 #meal_heading {
@@ -112,6 +113,46 @@ p {
 
 #meal_heading_info h3{
 	margin: 0px 0px 10px 0px;
+	font-size: 12px;
+	color: gray;
+	display: inline-block;
+	overflow-y: auto; 	
+}
+
+#meal_heading_edit {
+	display: -webkit-box;
+	display: -moz-box;
+	-webkit-box-pack: start;
+	-mox-box-pack: start;
+	-webkit-box-align: start;
+	-moz-box-align: start;
+	padding: 5px;
+}
+
+#meal_heading_info_edit {
+/*	display: -webkit-box;
+	display: -moz-box;
+	-webkit-box-pack: start;
+	-mox-box-pack: start;
+	-webkit-box-align: center;
+	-moz-box-align: center;	*/
+}
+
+.new-meal-name-container {
+	margin-left : 10px;
+}
+
+#meal_heading_edit img {
+	width: 175px;
+}
+
+#meal_heading_info_edit h2{
+	margin: 0px 0px 0px 10px;
+	overflow-y: auto; 	
+}
+
+#meal_heading_info_edit h3, #new_meal_meal_container {
+	margin: 0px 0px 0px 10px;
 	font-size: 12px;
 	color: gray;
 	display: inline-block;

@@ -1671,6 +1671,10 @@ class DataHandler(BaseHandler):
 
 		return limit
 
+	def put(self, input):
+		print input
+
+
 
 class RefHandler(BaseHandler):
 	@tornado.web.authenticated
