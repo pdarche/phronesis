@@ -81,6 +81,19 @@ app.MealEditView = Backbone.View.extend({
 
     },
 
+    close : function(){
+
+        $(this.el).undelegate('#meal_heading_info_edit', 'click');
+        $(this.el).undelegate('.new-meal-name-submit', 'click');
+        $(this.el).undelegate('#search_submit', 'click');
+        $(this.el).undelegate('#new_meal_meal_submit', 'click');
+        $(this.el).undelegate('#add_ingredient', 'click');
+        $(this.el).undelegate('#meal', 'click');
+        $(this.el).undelegate('#backdrop', 'click');
+        $(this.el).undelegate('.new-meal-name-submit', 'click');
+
+    },
+
     checkMeal : function(){
 
         if ( $('#meal').html().length === 0)
@@ -180,8 +193,6 @@ app.MealEditView = Backbone.View.extend({
 
         var self = this
 
-        console.log(self.model)
-
         var appId = '77751166',
             appKey = '89a33cd92074a64e0cf83f34952d9bf1',
             qString = $(':selected').val()
@@ -190,9 +201,110 @@ app.MealEditView = Backbone.View.extend({
             url += qString + '?'
             url += 'appId=' + appId + '&appKey=' + appKey
 
-        $.get(url, function(data){
-            console.log(self.model)
-        })
+        $.when( $.get(url ) )
+        .done(
+            function(data){
+
+                var ingredients = self.model.attributes.ingredients
+
+                ingredients.push( self.createIngredientObj( data ) )
+                
+                self.updateModelNutritionInfo( data )
+
+            }
+        )
+
+    },
+
+    updateModelNutritionInfo : function( nutIxObj ) {
+
+        var calcium = Number(this.model.get('calcium')) + nutIxObj.nf_calcium_dv,
+            calories = Number(this.model.get('calories')) + nutIxObj.nf_calories
+            calories_from_fat = Number(this.model.get('calories_from_fat')) + nutIxObj.nf_calories_from_fat,
+            cholesterol = Number(this.model.get('cholesterol')) + nutIxObj.nf_cholesterol,
+            dietary_fiber = Number(this.model.get('dietary_fiber')) + nutIxObj.nf_dietary_fiber,
+            protein = Number(this.model.get('protein')) + nutIxObj.nf_protein,
+            saturated_fat = Number(this.model.get('saturated_fat')) + nutIxObj.nf_saturated_fat,
+            sodium = Number(this.model.get('sodium')) + nutIxObj.nf_sodium,
+            sugar = Number(this.model.get('sugar')) + nutIxObj.nf_sugars,
+            total_carbs = Number(this.model.get('total_carbs')) + nutIxObj.nf_total_cabohydrates,
+            total_fat = Number(this.model.get('total_fat')) + nutIxObj.nf_total_fat,
+            trans_fat = Number(this.model.get('trans_fat')) + nutIxObj.nf_trans_fat,
+            vit_a = Number(this.model.get('vit_a')) + nutIxObj.nf_vitamin_a_dv,
+            vit_c = Number(this.model.get('vit_c')) + nutIxObj.nf_vitamin_c_dv
+
+        this.model.set('calcium', calcium)
+        this.model.set('calories', calories)
+        this.model.set('calories_from_fat', calories_from_fat)
+        this.model.set('cholesterol', cholesterol)
+        this.model.set('dietary_fiber', dietary_fiber)
+        this.model.set('protein', protein)
+        this.model.set('saturated_fat', saturated_fat)
+        this.model.set('sodium', sodium)
+        this.model.set('sugar', sugar)
+        this.model.set('total_carbs', total_carbs)
+        this.model.set('total_fat', total_fat)
+        this.model.set('trans_fat', trans_fat)
+        this.model.set('vit_a', vit_a)
+        this.model.set('vit_c', vit_c)
+
+        console.log( "the values should now be non-zero ", this.model.attributes )
+
+        this.updateNutritionInfo()
+
+    },
+
+    updateNutritionInfo : function() {
+
+        console.log("doin dis")
+        $('#cals').html(this.model.get('calories'))
+        $('#fat').html(this.model.get('total_fat'))
+        $('#sat_fat').html(this.model.get('saturated_fat'))
+        $('#trans_fat').html(this.model.get('trans_fat'))
+        $('#cholesterol').html(this.model.get('cholesterol'))
+        $('#sodium').html(this.model.get('sodium'))
+        $('#carbs').html(this.model.get('total_carbs'))
+        $('#fiber').html(this.model.get('dietary_fiber'))
+        $('#sugar').html(this.model.get('sugar'))
+        $('#protein').html(this.model.get('protein'))
+
+    },
+
+    createIngredientObj : function( nutIxObj ) {
+
+        var newObj = {
+            name : nutIxObj.item_name,
+            brand : nutIxObj.brand_name,
+            item_description : nutIxObj.item_description,
+            ingredient_statement : nutIxObj.nf_ingredient_statement,
+            calories : nutIxObj.nf_calories,
+            calories_from_fat : nutIxObj.nf_calories_from_fat,
+            total_fat : nutIxObj.nf_total_fat,
+            monounsaturated_fat : nutIxObj.nf_monounsaturated_fat,
+            polyunsaturated_fat : nutIxObj.nf_polyunsaturated_fat,
+            saturated_fat : nutIxObj.nf_saturated_fat,
+            cholesterol : nutIxObj.nf_cholesterol,
+            sodium : nutIxObj.nf_sodium,
+            total_carbs : nutIxObj.nf_total_cabohydrates,
+            dietary_fiber : nutIxObj.nf_dietary_fiber,
+            sugar : nutIxObj.nf_sugars,
+            protein : nutIxObj.nf_protein,
+            vit_a_dv : nutIxObj.nf_vitamin_a_dv,
+            vit_c_dv : nutIxObj.nf_vitamin_c_dv,
+            calcium_dv : nutIxObj.nf_calcium_dv,
+            iron_dv : nutIxObj.nf_iron_dv,
+            source : "nutritionix",
+            refuse_pct : nutIxObj.nf_refuse_pct,
+            serving_size_qty : nutIxObj.nf_serving_size_qty,
+            serving_size_unit : nutIxObj.nf_serving_size_unit,
+            serving_weight_grams : nutIxObj.nf_serving_weight_grams,
+            water_grams : nutIxObj.nf_water_grams,
+            upc : nutIxObj.upc,
+            updated_at : nutIxObj.updated_at
+
+        }
+
+        return newObj
 
     },
 
@@ -206,7 +318,9 @@ app.MealEditView = Backbone.View.extend({
 
             $('#backdrop').remove()
             console.log(ev.target)
-            $(this.el).undelegate('.meal', 'click')
+            /*$(this.el).undelegate('.meal', 'click')*/
+
+            this.close()
         }
 
     }    
@@ -246,7 +360,7 @@ app.NutritionView = Backbone.View.extend({
         
         "click .from" : "editFromLocation",
         "keypress :input" : "searchFromLocation",
-        "click .meal-container" : "editMeal",
+        "click .meal-container" : "editMeal"
 
     },
 

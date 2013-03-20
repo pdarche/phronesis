@@ -26,6 +26,7 @@ import models.mypyramid as pyramid
 import models.nutrition as nutrition
 
 #python mongo hooks
+from pymongo import *
 from pymongo import MongoClient
 import bson
 
@@ -1671,8 +1672,29 @@ class DataHandler(BaseHandler):
 
 		return limit
 
-	def put(self, input):
-		print input
+	def post(self, input):
+		path = input.encode('utf-8')
+
+		paths = { 
+			"body/physicalActivity" : physact.PhysicalActivity,
+			"body/sleep" : models.sleep.SleepRecord,
+			"body/nutrition" : nutrition.NutritionRecord,
+			"body/location" : loc.Location
+		}
+
+		objDict = json.loads(self.request.body)
+		id_str = objDict["null"]
+		doc = nutrition.NutritionRecord.objects( #GENERALIZE
+					id=objectid.ObjectId(id_str))[0]
+
+		docDict = json.loads(json.dumps(doc, default=encode_model)) # this is a hack
+
+		diff = DictDiffer(objDict, docDict)
+		changedKey = list(diff.changed())[0]
+		updateString = 'set__%s' % changedKey
+		kw = { updateString : objDict[changedKey] }
+
+		doc.update(**kw)
 
 
 
@@ -1705,6 +1727,7 @@ class RefHandler(BaseHandler):
 
 		data = json.dumps(objs, default=encode_model)
 		self.write(data)
+
 
 	def order(self, params):
 		order_by = None		
@@ -1790,3 +1813,25 @@ def walk(self, d, args):
 				self.walk(newd, newargs)
 		else:
 			break
+
+
+class DictDiffer(object):
+    """
+    Calculate the difference between two dictionaries as:
+    (1) items added
+    (2) items removed
+    (3) keys same in both but changed values
+    (4) keys same in both and unchanged values
+    """
+    def __init__(self, current_dict, past_dict):
+        self.current_dict, self.past_dict = current_dict, past_dict
+        self.set_current, self.set_past = set(current_dict.keys()), set(past_dict.keys())
+        self.intersect = self.set_current.intersection(self.set_past)
+    def added(self):
+        return self.set_current - self.intersect 
+    def removed(self):
+        return self.set_past - self.intersect 
+    def changed(self):
+        return set(o for o in self.intersect if self.past_dict[o] != self.current_dict[o])
+    def unchanged(self):
+        return set(o for o in self.intersect if self.past_dict[o] == self.current_dict[o])

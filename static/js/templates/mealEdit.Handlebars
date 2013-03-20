@@ -18,48 +18,53 @@
 				<h5>Serving size</h5>
 				<table>
 					<tr>
+						<td class="nutrient primary">Calories</td>
+						<td class="amount" id="cals">{{data.calories}}g</td>
+						<td class="percent"></td>
+					</tr>
+					<tr>
 						<td class="nutrient primary">Total Fat</td>
-						<td class="amount">{{data.total_fat}}g</td>
+						<td class="amount" id="fat">{{data.total_fat}}g</td>
 						<td class="percent"></td>
 					</tr>
 					<tr>
 						<td class="nutrient secondary">Saturated Fat</td>
-						<td class="amount">{{data.saturated_fat}}g</td>
+						<td class="amount" id="sat_fat">{{data.saturated_fat}}g</td>
 						<td class="percent"></td>
 					</tr>
 					<tr>
 						<td class="nutrient secondary">Trans Fat</td>
-						<td class="amount">{{data.trans_fat}}g</td>
+						<td class="amount" "trans_fat">{{data.trans_fat}}g</td>
 						<td class="percent"></td>
 					</tr>
 					<tr>
 						<td class="nutrient primary">Cholesterol</td>
-						<td class="amount">{{data.cholesterol}}mg</td>
+						<td class="amount" id="cholesterol">{{data.cholesterol}}mg</td>
 						<td class="percent"></td>
 					</tr>
 					<tr>
 						<td class="nutrient primary">Sodium</td>
-						<td class="amount">{{data.sodium}}mg</td>
+						<td class="amount" id="sodium">{{data.sodium}}mg</td>
 						<td class="percent"></td>
 					</tr>
 					<tr>
 						<td class="nutrient primary">Total Carbohydrate</td>
-						<td class="amount">{{data.total_carbs}}g</td>
+						<td class="amount" id="carbs">{{data.total_carbs}}g</td>
 						<td class="percent"></td>
 					</tr>
 					<tr>
 						<td class="nutrient secondary">Dietary Fiber</td>
-						<td class="amount">{{data.dietary_fiber}}g</td>
+						<td class="amount" id="fiber">{{data.dietary_fiber}}g</td>
 						<td class="percent"></td>
 					</tr>
 					<tr>
 						<td class="nutrient secondary">Sugars</td>
-						<td class="amount">{{data.sugar}}g</td>
+						<td class="amount" id="sugar">{{data.sugar}}g</td>
 						<td class="percent"></td>
 					</tr>
 					<tr>
 						<td class="nutrient primary">Protein</td>
-						<td class="amount">{{data.protein}}g</td>
+						<td class="amount" id="protein">{{data.protein}}g</td>
 						<td class="percent"></td>
 					</tr>
 				</table>

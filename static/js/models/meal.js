@@ -44,15 +44,22 @@
         },
         initialize: function(){
             this.on("change:meal_item_name", function(model){
-                var name = model.get("meal_item_name"); // 'Stewie Griffin'
+                var name = model.get("meal_item_name");
                 console.log("Changed my name to " + name );
+                model.save()
+            });
+
+            this.on("change:meal", function(model){
+                var name = model.get("meal");
+                console.log("Changed my meal to " + name );
+                model.save()
             });
         }
 });
 
 var Meals = Backbone.Collection.extend({
     model: Meal,
-    url : '/v1/data/pdarche/body/nutrition?&order_by=desc'
+    url : '/v1/data/pdarche/body/nutrition'
 });
 
 

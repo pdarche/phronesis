@@ -9,6 +9,7 @@ from datetime import datetime
 class MealIngredient(EmbeddedDocument):
 	name = StringField()
 	brand = StringField()
+	item_description = StringField()
 	ingredient_statement = StringField()
 	unit = StringField()
 	calories = IntField()

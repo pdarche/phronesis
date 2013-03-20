@@ -70,7 +70,7 @@ p {
 }
 
 #backdrop{
-	position: absolute;
+	position: fixed;
 	height:800px;
 	width:100%;
 	background-color: rgba(0,0,0,.7);
@@ -165,15 +165,16 @@ p {
 
 #nutrition_facts {
 	float: left;
+	width: 235px;
 }
 
 #ingredients {
 	float: left;
-	width: 300px;
+	width: 256px;
 }
 
 #ingredients input {
-	width: 200px;
+	width: 196px;
 }
 
 #ingredients button {
