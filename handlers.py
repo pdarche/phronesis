@@ -1690,12 +1690,65 @@ class DataHandler(BaseHandler):
 		docDict = json.loads(json.dumps(doc, default=encode_model)) # this is a hack
 
 		diff = DictDiffer(objDict, docDict)
-		changedKey = list(diff.changed())[0]
-		updateString = 'set__%s' % changedKey
-		kw = { updateString : objDict[changedKey] }
+		changedKeys = list(diff.changed())
 
-		doc.update(**kw)
+		for change in changedKeys:
+			if change != 'ingredients':
+				updateString = 'set__%s' % change
+				kw = { updateString : objDict[change] }
+				doc.update(**kw)
+			else:
+				a = [ json.loads(json.dumps(x, default=encode_model)) 
+							for x in doc.ingredients ]
+				b = objDict["ingredients"]
+				
+				objNames = [ ( i, objDict["name"] ) for i, objDict in enumerate(a) ]
+				docNames = [ ( i, docDict["name"] ) for i, docDict in enumerate(b) ]
+				
+				s = set(objNames)
+				new_ingredients = [x for x in docNames if x not in s]
 
+				for new_ingredient in new_ingredients:					
+					ingredient = b[new_ingredient[0]]
+
+					mealIngredient = nutrition.MealIngredient(
+							name = ingredient['name'],
+							brand = ingredient['brand'],
+							item_description = ingredient['item_description'],
+							ingredient_statement = ingredient['ingredient_statement'],
+							calories = ingredient['calories'],
+							calories_from_fat = ingredient['calories_from_fat'],
+							total_fat = ingredient['total_fat'],
+							monounsaturated_fat = ingredient['monounsaturated_fat'],
+							polyunsaturated_fat = ingredient['polyunsaturated_fat'],
+							saturated_fat = ingredient['saturated_fat'],
+							trans_fat = ingredient['trans_fat'],
+							cholesterol = ingredient['cholesterol'],
+							sodium = ingredient['sodium'],
+							total_carbs = ingredient['total_carbs'],
+							dietary_fiber = ingredient['dietary_fiber'],
+							sugar = ingredient['sugar'],
+							protein = ingredient['protein'],
+							vit_a_dv = ingredient['vit_a_dv'],
+							vit_c_dv = ingredient['vit_c_dv'],
+							calcium_dv = ingredient['calcium_dv'],
+							iron_dv = ingredient['iron_dv'],
+							source = ingredient['source'],
+							refuse_pct = ingredient['refuse_pct'],
+							serving_size_qty = ingredient['serving_size_qty'],
+							serving_size_unit = ingredient['serving_size_unit'],
+							serving_weight_grams = ingredient['serving_weight_grams'],
+							servings_per_container = ingredient['servings_per_container'],
+							water_grams = ingredient['water_grams'],
+							upc = ingredient['upc'],
+							updated_at = ingredient['updated_at']
+						)
+
+					updateString = 'push__%s' % change
+					kw = { updateString : mealIngredient}
+					updated = doc.update(**kw)
+
+					print "updated ingredient"
 
 
 class RefHandler(BaseHandler):

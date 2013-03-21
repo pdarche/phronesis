@@ -227,28 +227,28 @@ app.MealEditView = Backbone.View.extend({
             saturated_fat = Number(this.model.get('saturated_fat')) + nutIxObj.nf_saturated_fat,
             sodium = Number(this.model.get('sodium')) + nutIxObj.nf_sodium,
             sugar = Number(this.model.get('sugar')) + nutIxObj.nf_sugars,
-            total_carbs = Number(this.model.get('total_carbs')) + nutIxObj.nf_total_cabohydrates,
+            total_carbs = Number(this.model.get('total_carbs')) + nutIxObj.nf_total_carbohydrate,
             total_fat = Number(this.model.get('total_fat')) + nutIxObj.nf_total_fat,
-            trans_fat = Number(this.model.get('trans_fat')) + nutIxObj.nf_trans_fat,
+            trans_fat = Number(this.model.get('trans_fat')) + nutIxObj.nf_trans_fatty_acid,
             vit_a = Number(this.model.get('vit_a')) + nutIxObj.nf_vitamin_a_dv,
             vit_c = Number(this.model.get('vit_c')) + nutIxObj.nf_vitamin_c_dv
 
-        this.model.set('calcium', calcium)
-        this.model.set('calories', calories)
-        this.model.set('calories_from_fat', calories_from_fat)
-        this.model.set('cholesterol', cholesterol)
-        this.model.set('dietary_fiber', dietary_fiber)
-        this.model.set('protein', protein)
-        this.model.set('saturated_fat', saturated_fat)
-        this.model.set('sodium', sodium)
-        this.model.set('sugar', sugar)
-        this.model.set('total_carbs', total_carbs)
-        this.model.set('total_fat', total_fat)
-        this.model.set('trans_fat', trans_fat)
-        this.model.set('vit_a', vit_a)
-        this.model.set('vit_c', vit_c)
-
-        console.log( "the values should now be non-zero ", this.model.attributes )
+        this.model.set({
+            'calcium' : calcium,
+            'calories' : calories,
+            'calories_from_fat' : calories_from_fat,
+            'cholesterol' : cholesterol,
+            'dietary_fiber' : dietary_fiber,
+            'protein' : protein,
+            'saturated_fat' : saturated_fat,
+            'sodium' : sodium,
+            'sugar' : sugar,
+            'total_carbs' : total_carbs,
+            'total_fat' : total_fat,
+            'trans_fat' : trans_fat,
+            'vit_a' : vit_a,
+            'vit_c' : vit_c
+        })
 
         this.updateNutritionInfo()
 
@@ -256,7 +256,6 @@ app.MealEditView = Backbone.View.extend({
 
     updateNutritionInfo : function() {
 
-        console.log("doin dis")
         $('#cals').html(this.model.get('calories'))
         $('#fat').html(this.model.get('total_fat'))
         $('#sat_fat').html(this.model.get('saturated_fat'))
@@ -283,9 +282,10 @@ app.MealEditView = Backbone.View.extend({
             monounsaturated_fat : nutIxObj.nf_monounsaturated_fat,
             polyunsaturated_fat : nutIxObj.nf_polyunsaturated_fat,
             saturated_fat : nutIxObj.nf_saturated_fat,
+            trans_fat : nutIxObj.nf_trans_fatty_acid,
             cholesterol : nutIxObj.nf_cholesterol,
             sodium : nutIxObj.nf_sodium,
-            total_carbs : nutIxObj.nf_total_cabohydrates,
+            total_carbs : nutIxObj.nf_total_carbohydrate,
             dietary_fiber : nutIxObj.nf_dietary_fiber,
             sugar : nutIxObj.nf_sugars,
             protein : nutIxObj.nf_protein,
@@ -298,6 +298,7 @@ app.MealEditView = Backbone.View.extend({
             serving_size_qty : nutIxObj.nf_serving_size_qty,
             serving_size_unit : nutIxObj.nf_serving_size_unit,
             serving_weight_grams : nutIxObj.nf_serving_weight_grams,
+            servings_per_container : nutIxObj.nf_servings_per_container,
             water_grams : nutIxObj.nf_water_grams,
             upc : nutIxObj.upc,
             updated_at : nutIxObj.updated_at
