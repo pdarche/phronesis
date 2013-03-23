@@ -1,0 +1,52 @@
+<script id="nutrition_facts" type="text/x-handlebars-template">	
+	<h3>Nutrition Facts</h3>
+
+	<table>
+		<tr>
+			<td class="nf-primary bold">Serving size <span class="not-bold">8 grams</span></td>
+		</tr>
+		<tr class="tenpx-border">
+			<td colspan="2" class="nf-primary bold">Servings per container <span class="not-bold">8 grams</span></td>
+		</tr>
+		<tr class="onepx-border">
+			<td class="nf-tertiary bold">amount per serving</td>
+		</tr>
+		<tr class="fivepx-border">
+			<td class="nutrient">
+				<div id="cals" class="nf-primary bold">Calories {{calories}}</div>
+				<div id="cals_from_fat" class="nf-primary">Calories from Fat {{calories_from_fat}}</div>
+			</td>
+		</tr>
+		<tr class="onepx-border">
+			<td class="nf-tertiary bold"><span id="perc_dv">% Daily Value</span></td>
+		</tr>
+		<tr class="onepx-border">
+			<td id="fat" class="nutrient nf-primary">Total Fat {{total_fat}}g <span class="dv">%</span></td>
+		</tr>
+		<tr class="onepx-border">
+			<td id="sat_fat" class="nutrient nf-secondary">Saturated Fat {{saturated_fat}}g <span class="dv">%</span></td>
+			
+		</tr>
+		<tr class="onepx-border">
+			<td id="trans_fat" class="nutrient nf-secondary">Trans Fat {{trans_fat}}g <span class="dv">%</span></td>
+		</tr>
+		<tr class="onepx-border">
+			<td id="cholesterol" class="nutrient nf-primary">Cholesterol {{cholesterol}}mg <span class="dv">%</span></td>
+		</tr>
+		<tr class="onepx-border">
+			<td id="sodium" class="nutrient nf-primary">Sodium {{sodium}}mg <span class="dv">%</span></td>
+		</tr>
+		<tr class="onepx-border">
+			<td id="carbs" class="nutrient nf-primary">Total Carbohydrate {{total_carbs}}g <span class="dv">%</span></td>
+		</tr>
+		<tr class="onepx-border">
+			<td id="fiber" class="nutrient nf-secondary">Dietary Fiber {{dietary_fiber}}g <span class="dv">%</span></td>
+		</tr>
+		<tr class="onepx-border">
+			<td id="sugar" class="nutrient nf-secondary">Sugars {{sugar}}g <span class="dv">%</span></td>
+		</tr>
+		<tr>
+			<td id="protein" class="nutrient nf-primary">Protein {{protein}}g <span class="dv">%</span></td><td></td>
+		</tr>
+	</table>
+</script>

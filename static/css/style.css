@@ -167,6 +167,57 @@ p {
 #nutrition_facts {
 	float: left;
 	width: 235px;
+	border: 1px solid black;
+	margin-right: 7px;
+}
+
+#nutrition_facts table td {
+	width: 100%;
+}
+
+.nf-primary {
+	font-size: 12px;
+}
+
+.nf-secondary {
+	font-size: 11px;
+	padding-left: 10px;
+}
+
+.nf-tertiary {
+	font-size: 10px
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.not-bold {
+	font-weight: normal;
+}
+
+.dv {
+	float: right;
+}
+
+.tenpx-border td {
+	border-bottom:10px solid black;
+}
+
+.fivepx-border td {
+	border-bottom:5px solid black;
+}
+
+.onepx-border td {
+	border-bottom: 1px solid black;
+}
+
+#perc_dv, #cals_from_fat {
+	float: right;
+}
+
+#cals {
+	float: left;
 }
 
 #ingredients {
@@ -187,7 +238,7 @@ p {
 }
 
 #nutrition_facts h3, h5, table{
-	margin: 0px 10px;
+	margin: 0px 5px;
 }
 
 

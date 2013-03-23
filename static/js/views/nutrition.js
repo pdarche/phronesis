@@ -2,16 +2,64 @@ var app = app || {};
 
 app.MealView = Backbone.View.extend({
     tagName : 'div',
-    className : 'mealContainer',
+    className : 'meal-container',
 
-    initialize : function() {        
+    initialize : function() {
 
         if ( !($.isFunction(this.template)) ){
 
-            var self = this
+            var self = this;    
             $.get('/static/js/templates/meal.handlebars', function(tmpl){
+                self.template = tmpl;
+                self.render(self.model);
+            })
+
+        } else {
+
+            console.log("gots the template");
+
+        }
+
+        this.model.bind('change', _.bind(this.render, this));
+
+    },
+
+    render: function() {
+
+        var model = this.model.toJSON();
+        var source = $(this.template).html();
+        var template = Handlebars.compile(source);
+        this.$el.html(template({ "cid" : this.model.cid, "data" : model }))
+
+        return this
+    },
+
+    events : {
+
+        "click h2" : "editMeal"
+
+    },
+
+    editMeal : function( ev ) {
+
+        var model = this.model
+        var edit = new app.MealEditView({ el : $('body'), model : model })
+
+    }
+
+})
+
+app.NutritionFacts = Backbone.View.extend({
+
+    initialize : function() {
+
+        var self = this
+
+        if ( !($.isFunction(this.template)) ){
+
+            $.get('/static/js/templates/NutritionFacts.handlebars', function(tmpl){
                 self.template = tmpl
-                self.render( self.model )
+                self.render()
             })
 
         } else {
@@ -20,24 +68,48 @@ app.MealView = Backbone.View.extend({
 
         }
 
+        this.model.bind('change', _.bind(this.render, this));
+
     },
 
-    render: function() {
+    render : function() {
 
         var model = this.model.toJSON()
         var source = $(this.template).html()
         var template = Handlebars.compile( source );
-        $('#meals_container').prepend( template( { "cid" : this.model.cid, "data" : model } ) )
+        this.$el.html( template( model ) )
 
-        return this
     }
 
 })
 
+app.IngredientView = Backbone.View.extend({
+
+    initialize : function() {
+
+        var self = this
+
+        if ( !($.isFunction(this.template)) ){
+
+            $.get('/static/js/templates/NutritionFacts.handlebars', function(tmpl){
+                self.template = tmpl
+                self.render()
+            })
+
+        } else {
+
+            console.log("gots the template")
+
+        }
+
+        this.model.bind('change', _.bind(this.render, this));
+
+    },
+  
+})
+
 
 app.MealEditView = Backbone.View.extend({
-    tagName: 'div',
-    className: 'meal',
 
     initialize : function() {
 
@@ -66,6 +138,7 @@ app.MealEditView = Backbone.View.extend({
         $('body').prepend( template( { "cid" : this.model.cid, "data" : model } ) )
 
         this.checkMeal()
+        this.addFacts()
 
     },
 
@@ -98,6 +171,16 @@ app.MealEditView = Backbone.View.extend({
 
         if ( $('#meal').html().length === 0)
             $('#meal').html('no meal indicated').css("font-style", "italic")
+
+    },
+
+    addFacts : function() {
+
+        var self = this
+        var facts = new app.NutritionFacts({
+            model : self.model,
+            el : $('#nutrition_facts')
+        })
 
     },
 
@@ -250,7 +333,7 @@ app.MealEditView = Backbone.View.extend({
             'vit_c' : vit_c
         })
 
-        this.updateNutritionInfo()
+        // this.updateNutritionInfo()
 
     },
 
@@ -318,9 +401,6 @@ app.MealEditView = Backbone.View.extend({
         } else {
 
             $('#backdrop').remove()
-            console.log(ev.target)
-            /*$(this.el).undelegate('.meal', 'click')*/
-
             this.close()
         }
 
@@ -343,25 +423,25 @@ app.NutritionView = Backbone.View.extend({
 
     render: function(){
 
-        this.collection.each( function( item ) {
-            this.renderMeal(item)
+        this.collection.each( function( meal ) {
+            this.renderMeal(meal)
         }, this )
 
     },
 
-    renderMeal : function( item ) {
+    renderMeal : function( meal ) {
 
         var mealView = new app.MealView({
-            model : item
+            model : meal
         });
+
+        this.$el.append( mealView.el )
 
     },
     
     events : {
         
-        "click .from" : "editFromLocation",
-        "keypress :input" : "searchFromLocation",
-        "click .meal-container" : "editMeal"
+        "click .from" : "editFromLocation"
 
     },
 
@@ -390,21 +470,7 @@ app.NutritionView = Backbone.View.extend({
             }
         )
 
-    },
-
-    searchFromLocation : function(ev){
-
-        
-
-    },
-
-    editMeal : function( ev ) {
-
-        var cid = $(ev.target).parent().parent().attr('id')
-        var model = this.collection.getByCid(cid)
-        var edit = new app.MealEditView({ el : $('body'), model : model })
-
-    },
+    }
 
 });
 

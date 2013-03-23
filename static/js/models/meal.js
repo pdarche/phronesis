@@ -43,17 +43,6 @@
             ingredients : []
         },
         initialize: function(){
-            // this.on("change:meal_item_name", function(model){
-            //     var name = model.get("meal_item_name");
-            //     console.log("Changed my name to " + name );
-            //     model.save()
-            // });
-
-            // this.on("change:meal", function(model){
-            //     var name = model.get("meal");
-            //     console.log("Changed my meal to " + name );
-            //     model.save()
-            // });
 
             this.on("change", function(model){
                 console.log("things have changed")
