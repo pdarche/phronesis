@@ -25,8 +25,6 @@ QueryView = Backbone.View.extend({
 
     clicky : function(){
 
-        
-
     }
 
 });

@@ -1,201 +1,219 @@
 
 $(document).ready(function(){
 
-			var nutrition_view = new app.NutritionView({ el: $("#meals_container") });
-
-			var camera, scene, renderer;
-			var controls;
-
-			var objects = [];
-			var targets = { table: [], sphere: [], helix: [], grid: [] };
-
-			setTimeout(init, 4000)
-			setTimeout(animate, 4100)
-
-			function init() {
-
-				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
-				camera.position.z = 1800;
-
-				scene = new THREE.Scene();
-
-				var meals = document.getElementsByClassName('meal-container')
-
-				for ( var i = 0; i < meals.length; i ++ ) {
-
-					var element = meals[i]
-
-					element.className = 'element'
-
-					var object = new THREE.CSS3DObject( element );
-					object.position.x = Math.random() * 4000 - 2000;
-					object.position.y = Math.random() * 4000 - 2000;
-					object.position.z = Math.random() * 4000 - 2000;
-					scene.add( object );
-
-					objects.push( object );
-
+			var AppRouter = Backbone.Router.extend({
+				routes: {
+					"#": "index"
 				}
+			});
 
-				var vector = new THREE.Vector3();
+    		// Initiate the router
+		    var app_router = new AppRouter;
 
-				for ( var i = 0, l = objects.length; i < l; i ++ ) {
+		    app_router.on('route:index', function() {
+		        
+				var landingPage = new app.LandingPage({ el : $('body') })
 
-					var phi = Math.acos( -1 + ( 2 * i ) / l );
-					var theta = Math.sqrt( l * Math.PI ) * phi;
+		    })
 
-					var object = new THREE.Object3D();
+		    // Start Backbone history a necessary step for bookmarkable URL's
+		    Backbone.history.start();
 
-					object.position.x = 1000 * Math.cos( theta ) * Math.sin( phi );
-					object.position.y = 1000 * Math.sin( theta ) * Math.sin( phi );
-					object.position.z = 1000 * Math.cos( phi );
+			// var nutrition_view = new app.NutritionView({ el: $("#meals_container") });
 
-					vector.copy( object.position ).multiplyScalar( 2 );
+			// var camera, scene, renderer;
+			// var controls;
 
-					object.lookAt( vector );
+			// var objects = [];
+			// var targets = { table: [], sphere: [], helix: [], grid: [] };
 
-					targets.sphere.push( object );
+			// setTimeout(init, 4000)
+			// setTimeout(animate, 4100)
 
-				}
+			// function init() {
 
-				// helix
+			// 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
+			// 	camera.position.z = 1800;
 
-				var vector = new THREE.Vector3();
+			// 	scene = new THREE.Scene();
 
-				for ( var i = 0, l = objects.length; i < l; i ++ ) {
+			// 	var meals = document.getElementsByClassName('meal-container')
 
-					var phi = i * 0.175 + Math.PI;
+			// 	for ( var i = 0; i < meals.length; i ++ ) {
 
-					var object = new THREE.Object3D();
+			// 		var element = meals[i]
 
-					object.position.x = 1100 * Math.sin( phi );
-					object.position.y = - ( i * 8 ) + 450;
-					object.position.z = 1100 * Math.cos( phi );
+			// 		element.className = 'element'
 
-					vector.copy( object.position );
-					vector.x *= 2;
-					vector.z *= 2;
+			// 		var object = new THREE.CSS3DObject( element );
+			// 		object.position.x = Math.random() * 4000 - 2000;
+			// 		object.position.y = Math.random() * 4000 - 2000;
+			// 		object.position.z = Math.random() * 4000 - 2000;
+			// 		scene.add( object );
 
-					object.lookAt( vector );
+			// 		objects.push( object );
 
-					targets.helix.push( object );
+			// 	}
 
-				}
+			// 	var vector = new THREE.Vector3();
 
-				// grid
+			// 	for ( var i = 0, l = objects.length; i < l; i ++ ) {
 
-				for ( var i = 0; i < objects.length; i ++ ) {
+			// 		var phi = Math.acos( -1 + ( 2 * i ) / l );
+			// 		var theta = Math.sqrt( l * Math.PI ) * phi;
 
-					var object = new THREE.Object3D();
+			// 		var object = new THREE.Object3D();
 
-					object.position.x = ( ( i % 5 ) * 400 ) - 800;
-					object.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
-					object.position.z = ( Math.floor( i / 25 ) ) * 1000 - 2000;
+			// 		object.position.x = 1000 * Math.cos( theta ) * Math.sin( phi );
+			// 		object.position.y = 1000 * Math.sin( theta ) * Math.sin( phi );
+			// 		object.position.z = 1000 * Math.cos( phi );
 
-					targets.grid.push( object );
+			// 		vector.copy( object.position ).multiplyScalar( 2 );
 
-				}
+			// 		object.lookAt( vector );
 
-				//
+			// 		targets.sphere.push( object );
 
-				renderer = new THREE.CSS3DRenderer();
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.domElement.style.position = 'absolute';
-				document.getElementById( 'container' ).appendChild( renderer.domElement );
+			// 	}
 
-				//
+			// 	// helix
 
-				controls = new THREE.TrackballControls( camera, renderer.domElement );
-				controls.rotateSpeed = 0.5;
-				controls.addEventListener( 'change', render );
+			// 	var vector = new THREE.Vector3();
 
-				var button = document.getElementById( 'table' );
-				button.addEventListener( 'click', function ( event ) {
+			// 	for ( var i = 0, l = objects.length; i < l; i ++ ) {
 
-					transform( targets.table, 2000 );
+			// 		var phi = i * 0.175 + Math.PI;
 
-				}, false );
+			// 		var object = new THREE.Object3D();
 
-				var button = document.getElementById( 'sphere' );
-				button.addEventListener( 'click', function ( event ) {
+			// 		object.position.x = 1100 * Math.sin( phi );
+			// 		object.position.y = - ( i * 8 ) + 450;
+			// 		object.position.z = 1100 * Math.cos( phi );
 
-					transform( targets.sphere, 2000 );
+			// 		vector.copy( object.position );
+			// 		vector.x *= 2;
+			// 		vector.z *= 2;
 
-				}, false );
+			// 		object.lookAt( vector );
 
-				var button = document.getElementById( 'helix' );
-				button.addEventListener( 'click', function ( event ) {
+			// 		targets.helix.push( object );
 
-					transform( targets.helix, 2000 );
+			// 	}
 
-				}, false );
+			// 	// grid
 
-				var button = document.getElementById( 'grid' );
-				button.addEventListener( 'click', function ( event ) {
+			// 	for ( var i = 0; i < objects.length; i ++ ) {
 
-					transform( targets.grid, 2000 );
+			// 		var object = new THREE.Object3D();
 
-				}, false );
+			// 		object.position.x = ( ( i % 5 ) * 400 ) - 800;
+			// 		object.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
+			// 		object.position.z = ( Math.floor( i / 25 ) ) * 1000 - 2000;
 
-				transform( targets.grid, 5000 );
+			// 		targets.grid.push( object );
 
-				//
+			// 	}
 
-				window.addEventListener( 'resize', onWindowResize, false );
+			// 	//
 
-			}
+			// 	renderer = new THREE.CSS3DRenderer();
+			// 	renderer.setSize( window.innerWidth, window.innerHeight );
+			// 	renderer.domElement.style.position = 'absolute';
+			// 	document.getElementById( 'container' ).appendChild( renderer.domElement );
 
-			function transform( targets, duration ) {
+			// 	//
 
-				TWEEN.removeAll();
+			// 	controls = new THREE.TrackballControls( camera, renderer.domElement );
+			// 	controls.rotateSpeed = 0.5;
+			// 	controls.addEventListener( 'change', render );
 
-				for ( var i = 0; i < objects.length; i ++ ) {
+			// 	var button = document.getElementById( 'table' );
+			// 	button.addEventListener( 'click', function ( event ) {
 
-					var object = objects[ i ];
-					var target = targets[ i ];
+			// 		transform( targets.table, 2000 );
 
-					new TWEEN.Tween( object.position )
-						.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
-						.easing( TWEEN.Easing.Exponential.InOut )
-						.start();
+			// 	}, false );
 
-					new TWEEN.Tween( object.rotation )
-						.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
-						.easing( TWEEN.Easing.Exponential.InOut )
-						.start();
+			// 	var button = document.getElementById( 'sphere' );
+			// 	button.addEventListener( 'click', function ( event ) {
 
-				}
+			// 		transform( targets.sphere, 2000 );
 
-				new TWEEN.Tween( this )
-					.to( {}, duration * 2 )
-					.onUpdate( render )
-					.start();
+			// 	}, false );
 
-			}
+			// 	var button = document.getElementById( 'helix' );
+			// 	button.addEventListener( 'click', function ( event ) {
 
-			function onWindowResize() {
+			// 		transform( targets.helix, 2000 );
 
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
+			// 	}, false );
 
-				renderer.setSize( window.innerWidth, window.innerHeight );
+			// 	var button = document.getElementById( 'grid' );
+			// 	button.addEventListener( 'click', function ( event ) {
 
-			}
+			// 		transform( targets.grid, 2000 );
 
-			function animate() {
+			// 	}, false );
 
-				requestAnimationFrame( animate );
+			// 	transform( targets.grid, 5000 );
 
-				TWEEN.update();
-				controls.update();
+			// 	//
 
-			}
+			// 	window.addEventListener( 'resize', onWindowResize, false );
 
-			function render() {
+			// }
 
-				renderer.render( scene, camera );
+			// function transform( targets, duration ) {
 
-			}
+			// 	TWEEN.removeAll();
+
+			// 	for ( var i = 0; i < objects.length; i ++ ) {
+
+			// 		var object = objects[ i ];
+			// 		var target = targets[ i ];
+
+			// 		new TWEEN.Tween( object.position )
+			// 			.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+			// 			.easing( TWEEN.Easing.Exponential.InOut )
+			// 			.start();
+
+			// 		new TWEEN.Tween( object.rotation )
+			// 			.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
+			// 			.easing( TWEEN.Easing.Exponential.InOut )
+			// 			.start();
+
+			// 	}
+
+			// 	new TWEEN.Tween( this )
+			// 		.to( {}, duration * 2 )
+			// 		.onUpdate( render )
+			// 		.start();
+
+			// }
+
+			// function onWindowResize() {
+
+			// 	camera.aspect = window.innerWidth / window.innerHeight;
+			// 	camera.updateProjectionMatrix();
+
+			// 	renderer.setSize( window.innerWidth, window.innerHeight );
+
+			// }
+
+			// function animate() {
+
+			// 	requestAnimationFrame( animate );
+
+			// 	TWEEN.update();
+			// 	controls.update();
+
+			// }
+
+			// function render() {
+
+			// 	renderer.render( scene, camera );
+
+			// }
 
 })
 
