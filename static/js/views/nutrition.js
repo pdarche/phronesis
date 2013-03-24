@@ -83,7 +83,9 @@ app.NutritionFacts = Backbone.View.extend({
 
 })
 
-app.IngredientView = Backbone.View.extend({
+app.Ingredient = Backbone.View.extend({
+    tagName : 'div',
+    className : 'ingredient',
 
     initialize : function() {
 
@@ -91,7 +93,7 @@ app.IngredientView = Backbone.View.extend({
 
         if ( !($.isFunction(this.template)) ){
 
-            $.get('/static/js/templates/NutritionFacts.handlebars', function(tmpl){
+            $.get('/static/js/templates/ingredient.handlebars', function(tmpl){
                 self.template = tmpl
                 self.render()
             })
@@ -102,10 +104,28 @@ app.IngredientView = Backbone.View.extend({
 
         }
 
-        this.model.bind('change', _.bind(this.render, this));
+    },
+
+    render : function() {
+
+        var source = $(this.template).html()
+        var template = Handlebars.compile( source );
+        this.$el.html( template( this.model ) )
 
     },
-  
+
+    events : {
+
+        "click .remove-ingredient" : "removeIngredient"
+
+    },
+
+    removeIngredient : function() {
+
+        this.$el.remove()
+
+    }
+
 })
 
 
@@ -139,6 +159,13 @@ app.MealEditView = Backbone.View.extend({
 
         this.checkMeal()
         this.addFacts()
+
+        var self = this,
+            ingredients = this.model.attributes.ingredients
+
+        $.each(ingredients, function() {
+            self.addIngredientView( this )
+        }, self )
 
     },
 
@@ -181,6 +208,18 @@ app.MealEditView = Backbone.View.extend({
             model : self.model,
             el : $('#nutrition_facts')
         })
+
+    },
+
+    addIngredientView : function( model ) {
+
+        console.log("the mode lis ", model)
+
+        var ingredient = new app.Ingredient({
+            model : model
+        })
+
+        $('#ingredients_list').append( ingredient.el )
 
     },
 

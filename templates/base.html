@@ -5,6 +5,8 @@
 		<title>Phronesis</title>
 
 		<!-- META -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
 		<!-- CSS -->
 		<link rel="stylesheet" type="text/css" href="{{ static_url("css/style.css") }}"/>
@@ -17,15 +19,30 @@
 		<script type="text/javascript" src="{{ static_url("js/vendor/underscore.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/handlebars.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/backbone.js") }}"></script>
-		<script type="text/javascript" src="{{ static_url("js/vendor/date.js") }}"></script>
+		<!-- <script type="text/javascript" src="{{ static_url("js/vendor/date.js") }}"></script> -->
 		<script type="text/javascript" src="{{ static_url("js/charts/line.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/models/meal.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/nutrition.js") }}"></script>
+
 		<script type="text/javascript" src="{{ static_url("js/main.js") }}"></script>
+
+		<script type="text/javascript" src="{{ static_url("js/vendor/three.min.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/vendor/tween.min.js") }}" ></script>
+		<script type="text/javascript" src="{{ static_url("js/vendor/TrackballControls.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/vendor/CSS3DRenderer.js") }}"></script>
+
+		
+
 		<!--<script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>-->
 
 	</head>
 	<body>
 		{% block content %}{% end %}
+		<div id="container"></div>
+		<div id="menu">
+			<button id="table">TABLE</button>
+			<button id="sphere">SPHERE</button>
+			<button id="helix">HELIX</button>
+			<button id="grid">GRID</button>
 	</body>
 </html>
