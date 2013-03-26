@@ -167,6 +167,9 @@ app.MealEditView = Backbone.View.extend({
             self.addIngredientView( this )
         }, self )
 
+        $('.meal-container').hide().fadeIn()
+
+
     },
 
     events : {
@@ -450,6 +453,8 @@ app.MealEditView = Backbone.View.extend({
 
 
 app.NutritionView = Backbone.View.extend({
+    tagName : 'div',
+    id : 'meals_container',
     
     initialize: function(){
 

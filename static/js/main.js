@@ -1,9 +1,14 @@
 
 $(document).ready(function(){
 
+			window.location.hash = 'login';
+
 			var AppRouter = Backbone.Router.extend({
 				routes: {
-					"#": "index"
+					"login": "index",
+					"nutrition" : "nutrition",
+					"landingpage" : "landingpage",
+					"query" : "query"
 				}
 			});
 
@@ -12,14 +17,31 @@ $(document).ready(function(){
 
 		    app_router.on('route:index', function() {
 		        
-				var landingPage = new app.LandingPage({ el : $('body') })
+				var login = new app.Login({ el : $('body') })
+
+		    })
+
+		    app_router.on('route:nutrition', function() {
+
+		    	$('body').append("<div id='meals_container'></div>")
+				var nutrition_view = new app.NutritionView({ el: $('#meals_container') });
+
+		    })
+
+		    app_router.on('route:landingpage', function(){
+
+		    	var landingpage = new app.LandingPage({ el : $('body' )})
+
+		    })
+
+		    app_router.on('route:query', function(){
+
+		    	var query = new app.QueryView({ el : $('body' )})
 
 		    })
 
 		    // Start Backbone history a necessary step for bookmarkable URL's
 		    Backbone.history.start();
-
-			// var nutrition_view = new app.NutritionView({ el: $("#meals_container") });
 
 			// var camera, scene, renderer;
 			// var controls;

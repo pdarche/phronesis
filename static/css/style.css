@@ -265,7 +265,22 @@ p {
 	-webkit-transition: all .5s ease-in;
 }
 
+circle {
+  -moz-box-shadow:    3px 3px 5px 6px #ccc;
+  -webkit-box-shadow: 3px 3px 5px 6px #ccc;
+  box-shadow:         3px 3px 5px 6px #ccc;
+}
 
+line {
+	stroke : gray;
+	stroke-width : 1px;
+	opacity : .3;
+}
 
+rect {
+	stroke : gray;
+	stroke-width : .5px;
+	fill-opacity : 0;
+}
 
 

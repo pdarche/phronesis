@@ -1,7 +1,7 @@
 
 var app = app || {}; 
 
-app.LandingPage = Backbone.View.extend({
+app.Login = Backbone.View.extend({
 
     initialize: function(){
         
@@ -33,13 +33,47 @@ app.LandingPage = Backbone.View.extend({
 
     events : {
 
-        "click #signup_button" : "move"
+        "click #signup_button" : "login",
+
+    },
+
+    login : function() {
+
+        this.accept()
+
+    },
+
+    accept : function() {
+
+        var self = this
+
+        d3.select('.signup_container')
+            // .style('box-shadow', '0px 2px 10px lightgreen')
+            .style('border', '2px solid lightgreen')
+          .transition()
+            .call(setTimeout(self.move, 500))
+
+    },
+
+    reject : function() {
+
+        d3.select('.signup_container')
+            .style('box-shadow', '0px 2px 10px lightred')
+            .style('border', '1px solid lightred')
+          .transition() 
 
     },
 
     move : function(){
 
-        $('.signup_container').addClass('transition-out')
+        d3.select('.signup_container')
+            .transition()
+                .duration(250)
+            .style('margin', '-100px auto')
+            .remove()
+            .call( setTimeout(function(){
+                window.location.hash = 'query'
+            }, 500))
 
     }
 
