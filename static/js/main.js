@@ -11,7 +11,7 @@ $(document).ready(function(){
 					"query" : "query"
 				}
 			});
-
+			
     		// Initiate the router
 		    var app_router = new AppRouter;
 

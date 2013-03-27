@@ -5,18 +5,18 @@ body {
 	font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
 	margin: 0px;
 }
-
+/*
 #chart_container {
 	width:60%;
 	height:700px;
 	float:left;
-}
+}*/
 
-#query_container {
+/*#query_container {
 	width:40%;
 	height:700px;
 	float:left;
-}
+}*/
 
 #map, #timeseries {
 	background-color: white;
@@ -128,3 +128,4 @@ body {
 #go:hover, #add_attribute:hover, .chart-button:hover, .attribute:hover, .remove:hover{
 	cursor: pointer;
 }
+
