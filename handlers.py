@@ -1639,6 +1639,7 @@ class DataHandler(BaseHandler):
 		}
 
 		if order_by != None:
+			print "orderby is %s" % order_by
 			objs = paths[path].objects(**kw).order_by(order_by)
 		else:
 			objs = paths[path].objects(**kw)
@@ -1652,12 +1653,10 @@ class DataHandler(BaseHandler):
 	def order(self, params):
 		order_by = None		
 		if "order_by" in params.keys():
-			split = params["order_by"][0]
-			if split == "desc":
-				print "descending"
+			split = params["order_by"][0].split('__')
+			if split[1] == "desc":
 				order_by = "-%s" % split[0]
 			else:
-				print "acending"
 				order_by = "+%s" % split[0]
 
 			del params["order_by"]

@@ -19,6 +19,7 @@ class SleepRecord(Document):
 	phro_created_at = IntField()
 	username = StringField()
 	source = ListField()
+	created_at = IntField()
 	start_date = EmbeddedDocumentField(DateTime)
 	awakenings = IntField()
 	bed_time = EmbeddedDocumentField(DateTime)

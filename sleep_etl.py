@@ -135,6 +135,7 @@ for el in fin_list:
 	if el["fitbit"] != None and el["zeo"] != None:
 		z = el["zeo"]
 		f = el["fitbit"]
+		start_date_s = "%s-%s-%s" % (z.start_date.year, z.start_date.month, z.start_date.day)		
 
 		start_date = sleep.DateTime(
 				year = z.start_date.year,
@@ -176,6 +177,7 @@ for el in fin_list:
 				phro_created_at = int(time.time()),
 				username = "pdarche",
 				source = ["Zeo", "Fitbit"],
+				created_at = int(time.mktime(time.strptime(start_date_s, '%Y-%m-%d'))),
 				start_date = start_date,
 				awakenings = int(round((z.awakenings + f.ftbt_awakenings_count)/2)),
 				bed_time = bed_time,
@@ -216,10 +218,10 @@ for el in fin_list:
 	
 	elif el["fitbit"] != None:
 		f = el["fitbit"]
-		start_date = f.created_at.split('-')
-		year = start_date[0]
-		month = start_date[1]
-		day = start_date[2]
+		start_date_s = f.created_at.split('-')
+		year = start_date_s[0]
+		month = start_date_s[1]
+		day = start_date_s[2]
 		# t = datetime.strptime(f.ftbt_start_time, 
 		# 					"%H:%M").strftime('%I:%M').lower().split(':')
 		t = f.ftbt_start_time.split(":")
@@ -248,6 +250,7 @@ for el in fin_list:
 				phro_created_at = int(time.time()),
 				username = "pdarche",
 				source = ["Fitbit"],
+				created_at = int(time.mktime(time.strptime(f.created_at, '%Y-%m-%d'))),
 				start_date = start_date,
 				awakenings = f.ftbt_awakenings_count,
 				bed_time = bed_time,
@@ -287,6 +290,7 @@ for el in fin_list:
 	
 	elif el["zeo"] != None:
 		z = el["zeo"]
+		start_date_s = "%s-%s-%s" % (z.start_date.year, z.start_date.month, z.start_date.day)
 
 		start_date = sleep.DateTime(
 				year = z.start_date.year,
@@ -328,6 +332,7 @@ for el in fin_list:
 				phro_created_at = int(time.time()),
 				username = "pdarche",
 				source = ["Zeo", "Fitbit"],
+				created_at = int(time.mktime(time.strptime(start_date_s, '%Y-%m-%d'))),
 				start_date = start_date,
 				awakenings = int(round((z.awakenings + f.ftbt_awakenings_count)/2)),
 				bed_time = bed_time,

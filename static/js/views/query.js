@@ -21,10 +21,22 @@ app.QueryView = Backbone.View.extend({
                     max : 100,
                     values : [75,100],
                     slide: function( event, ui ) {
+
                         self.startDate = ui.values[0]
                         self.endDate = ui.values[1]
+
+                        var startDate = new Date(ui.values[0] * 1000),
+                            endDate = new Date(ui.values[1] * 1000)
+
+                        $('#start_date').html( self.formatDate(startDate))
+                        $('#end_date').html( self.formatDate(endDate))
+
+                        console.log(self.startDate)
+
                     }
                 });
+
+                $('#query_container').draggable()
 
             })
 
@@ -118,13 +130,38 @@ app.QueryView = Backbone.View.extend({
 
     },
 
+    formatDate : function( date ){
+
+        var day = date.getDate(),
+            month = date.getMonth(),
+            year = date.getFullYear()
+
+        return ( month + 1) + '/' + day + '/' + year 
+
+    },
+
     chooseCategory : function(ev){
 
         $('.chosen').removeClass('chosen')
         $(ev.target).addClass('chosen')
-        //get start date from records
-        //get min date from records
-        //set start and end date in slider
+
+        var category = $('.chosen').attr('id')
+
+        $.when( 
+            $.getJSON('/v1/data/pdarche/body/' + category +'?limit=1&order_by=created_at__asc'),
+            $.getJSON('/v1/data/pdarche/body/' + category +'?limit=1&order_by=created_at__desc')
+         )
+        .done(
+            function(start, end){
+                var start = start[0][0].created_at,
+                    end = end[0][0].created_at
+
+                $("#range_container")
+                    .slider('option', 'min', start)
+                    .slider('option', 'max', end)
+                    .slider('values', [start, end])
+            }
+        )
 
     },
 
@@ -136,8 +173,8 @@ app.QueryView = Backbone.View.extend({
 
         var category = $('.chosen').attr('id'),
             limit = $('#limit input').val(),
-            order_by = $('#ordering option:selected').val(),
-            dateValues = $('.ui-slider-range').value
+            order_by = 'created_at__' + $('#ordering option:selected').val(),
+            dateValues = $('#range_container').slider('values')
 
         if ( category === undefined ) {
             console.log("no category selected")
@@ -145,10 +182,13 @@ app.QueryView = Backbone.View.extend({
         }
 
         var url = '/v1/data/pdarche/body/' + category + '?' + this.checkDefined('order_by', order_by)
-            url += this.checkDefined('limit', limit, "&") 
+            url += this.checkDefined('limit', limit, "&")
+            url += '&created_at__gte=' + dateValues[0] + '&created_at__lte=' + dateValues[1]
 
         $.getJSON(url, function(data){
-            console.log(data)
+            
+
+
         })
 
     },
@@ -164,5 +204,37 @@ app.QueryView = Backbone.View.extend({
         }
 
     }
+
+});
+
+app.QueryCollection = Backbone.View.extend({
+
+    initialize: function(){
+
+        var self = this
+
+        if ( !($.isFunction(this.template)) ){
+
+            $.get('/static/js/templates/queryCollection.handlebars', function(tmpl){
+                self.template = tmpl
+                self.render( tmpl )
+            })
+
+        } else {
+
+            console.log("gots the template")
+
+        }
+
+    },
+
+    render : function( tmpl ) {
+
+        var source = $(tmpl).html()
+        var template = Handlebars.compile( source )
+        $('#query_container').append( template )
+
+    }
+
 
 });

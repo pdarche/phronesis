@@ -292,10 +292,10 @@ rect {
 	top: 80px;
 	left: 80px;
 	width: 400px;
-	height: 400px;
 	background-color: rgba(255,255,255,.7);
 	border: 1px solid white;
 	box-shadow: 0px 2px 10px gray;
+	padding-bottom: 20px;
 }
 
 .category {
@@ -313,6 +313,11 @@ rect {
 	text-align: center;
 	border: 1px solid #BBB;
 	padding: 10px;
+}
+
+#date_range {
+	text-align: left;
+	margin-bottom: 10px
 }
 
 .q {
