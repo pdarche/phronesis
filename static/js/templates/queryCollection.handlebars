@@ -1,8 +1,15 @@
-<script id="query_view" type="text/x-handlebars-template">
+<script id="query_collection" type="text/x-handlebars-template">
 	<div class="query-collection">
-			<div>{{ category }}</div>
-			<div>{{start_date}}<div>
-			<div>{{end_date}}<div>
-			<div>{{ records.length }} records</div>
+		<div class="collection-category">{{ category }}</div>
+		<div class="inner-collection-wrapper">		
+			<div class="record-count">
+				{{ recordCount }} 
+				<span class="rec">records</span>
+			</div>
+			<div class="collection-dates">
+				<div>{{startDate}}</div>
+				<div>{{endDate}}</div>
+			</div>
+		</div>
 	</div>
 </script>

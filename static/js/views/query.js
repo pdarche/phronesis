@@ -1,5 +1,42 @@
 var app = app || {};
 
+app.QueryCollection = Backbone.View.extend({
+
+    initialize: function(){
+
+        var self = this
+
+        if ( !($.isFunction(this.template)) ){
+
+            $.get('/static/js/templates/queryCollection.handlebars', function(tmpl){
+                self.template = tmpl
+                self.render( tmpl )
+            })
+
+        } else {
+
+            console.log("gots the template")
+
+        }
+
+    },
+
+    render : function( tmpl ) {
+
+        var self = this
+
+        var source = $(tmpl).html()
+        var template = Handlebars.compile( source )
+        $('#query_container').append( template(self.model) )
+
+        $('.query-collection').draggable({
+            revert : true
+        })
+
+    }
+
+});
+
 app.QueryView = Backbone.View.extend({
     
     startDate : undefined,
@@ -28,10 +65,8 @@ app.QueryView = Backbone.View.extend({
                         var startDate = new Date(ui.values[0] * 1000),
                             endDate = new Date(ui.values[1] * 1000)
 
-                        $('#start_date').html( self.formatDate(startDate))
-                        $('#end_date').html( self.formatDate(endDate))
-
-                        console.log(self.startDate)
+                        $('#slider_start_date').html( self.formatDate(startDate))
+                        $('#slider_end_date').html( self.formatDate(endDate))
 
                     }
                 });
@@ -126,7 +161,8 @@ app.QueryView = Backbone.View.extend({
     events : {
 
         "click .category" : "chooseCategory",
-        "change select" : "getRecords"
+        "change select" : "getRecords",
+        "click .record-attribute" : "chooseAttribute"
 
     },
 
@@ -142,6 +178,8 @@ app.QueryView = Backbone.View.extend({
 
     chooseCategory : function(ev){
 
+        var self = this
+
         $('.chosen').removeClass('chosen')
         $(ev.target).addClass('chosen')
 
@@ -153,19 +191,39 @@ app.QueryView = Backbone.View.extend({
          )
         .done(
             function(start, end){
-                var start = start[0][0].created_at,
-                    end = end[0][0].created_at
+                var s = start[0][0].created_at,
+                    e = end[0][0].created_at
 
                 $("#range_container")
-                    .slider('option', 'min', start)
-                    .slider('option', 'max', end)
-                    .slider('values', [start, end])
+                    .slider('option', 'min', s)
+                    .slider('option', 'max', e)
+                    .slider('values', [s, e])
+            
+                var attributes = Object.keys(start[0][0])
+
+                $('#record_attributes').empty()
+
+                $.get('/static/js/templates/recordAttribute.handlebars', function(tmpl){
+
+                    var source = $(tmpl).html()
+                    var template = Handlebars.compile( source )
+
+                    var apnd = function(){
+                        $('#record_attributes').append( template( { "attribute" : attributes } ) )    
+                    }
+                    
+                    $.proxy(apnd(), self)
+
+                })
+
             }
         )
 
     },
 
-    timeRange : function(){
+    chooseAttribute : function( ev ) {
+
+        $(ev.target).hasClass('chosen-attribute') ? $(ev.target).removeClass('chosen-attribute') : $(ev.target).addClass('chosen-attribute')
 
     },
 
@@ -174,7 +232,8 @@ app.QueryView = Backbone.View.extend({
         var category = $('.chosen').attr('id'),
             limit = $('#limit input').val(),
             order_by = 'created_at__' + $('#ordering option:selected').val(),
-            dateValues = $('#range_container').slider('values')
+            dateValues = $('#range_container').slider('values'),
+            self = this
 
         if ( category === undefined ) {
             console.log("no category selected")
@@ -187,7 +246,7 @@ app.QueryView = Backbone.View.extend({
 
         $.getJSON(url, function(data){
             
-
+            self.createRecords( data )
 
         })
 
@@ -203,38 +262,31 @@ app.QueryView = Backbone.View.extend({
             return amp+key + '=' + val
         }
 
-    }
-
-});
-
-app.QueryCollection = Backbone.View.extend({
-
-    initialize: function(){
-
-        var self = this
-
-        if ( !($.isFunction(this.template)) ){
-
-            $.get('/static/js/templates/queryCollection.handlebars', function(tmpl){
-                self.template = tmpl
-                self.render( tmpl )
-            })
-
-        } else {
-
-            console.log("gots the template")
-
-        }
-
     },
 
-    render : function( tmpl ) {
+    createRecords : function( collection ){
 
-        var source = $(tmpl).html()
-        var template = Handlebars.compile( source )
-        $('#query_container').append( template )
+        // _.each( collection, function(c){ console.log(c) }) 
+
+        var startDate = $('#slider_start_date').html(),
+            endDate = $('#slider_end_date').html(),
+            category = $('.chosen').html()
+
+
+        var model = {
+            category : category,
+            startDate : startDate,
+            endDate : endDate,
+            recordCount : collection.length,
+            records : collection
+        }
+
+        var collection = new app.QueryCollection({ 
+                el : $('#collection_container'), 
+                model : model
+            })
 
     }
 
-
 });
+

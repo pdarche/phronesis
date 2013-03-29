@@ -295,7 +295,6 @@ rect {
 	background-color: rgba(255,255,255,.7);
 	border: 1px solid white;
 	box-shadow: 0px 2px 10px gray;
-	padding-bottom: 20px;
 }
 
 .category {
@@ -324,14 +323,14 @@ rect {
 	display: inline-block;
 	padding: 10px;
 	border: 1px solid #BBB;
-	margin: 0px 0px 0px 15px
+	margin: 0px 0px 10px 15px
 }
 
 #range p {
 	margin: 5px 0px 10px 0px;
 }
 
-.chosen{
+.chosen, .chosen-attribute{
 	background-color: rgba(0,0,0,.4);
 	color: white;
 }
@@ -341,4 +340,58 @@ rect {
 	font-weight: normal;
 	margin: 10px 20px 5px 20px;
 	letter-spacing: -2
+}
+
+#record_attributes {
+/*	display: -webkit-box;
+	display: -moz-box;
+	-webkit-box-pack: center;
+	-mox-box-pack: center;
+	-webkit-box-align: center;
+	-moz-box-align: center;
+	-webkit-flex-flow: column wrap;*/
+	width: 370px;
+	margin: 0px auto;
+}
+
+.record-attribute {
+	display: inline-block;
+	padding: 5px;
+	margin: 5px 2px;
+	border: 1px solid gray;
+	font-size: 10px
+}
+
+.query-collection {
+	display: inline-block;
+	margin: 10px;
+	background-color: steelblue;
+	padding: 10px;
+	width: 120px;
+}
+
+.query-collection .collection-category{
+	text-align: center;
+	font-weight: bold;
+	margin-bottom: 10px;
+	color: white;
+}
+
+.rec {
+	font-size: 18px
+}
+
+.inner-collection-wrapper .record-count {
+	color: black;
+	width: 94%;
+	height: 80px;
+	background-color: white;
+	font-size: 25px;
+	margin: 0px auto;
+	text-align: center;
+}
+
+.inner-collection-wrapper .collection-dates div {
+	font-size:10px;
+	display: inline-block;
 }

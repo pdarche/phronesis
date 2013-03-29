@@ -1,16 +1,18 @@
 <script id="query_view" type="text/x-handlebars-template">
 <div id="query_container">
-<h2>Data</h2>
-<div id="category_container">
-	<div class="category" id="nutrition"> Nutrition </div>
-	<div class="category" id="sleep"> Sleep </div>
-	<div class="category" id="physicalActivity"> Physical Activity </div>
-	<div class="category" id=""> Bodily Attributes </div>
-</div>
+	<h2>Data</h2>
+	<div id="category_container">
+		<div class="category" id="nutrition"> Nutrition </div>
+		<div class="category" id="sleep"> Sleep </div>
+		<div class="category" id="physicalActivity"> Physical Activity </div>
+		<div class="category" id=""> Bodily Attributes </div>
+	</div>
+
+	<div id="record_attributes"></div>
 
 	<div id="range">
 		<p>Time Range</p>
-		<div id="date_range">start: <span id="start_date"> </span> end:<span id="end_date"></span></div>
+		<div id="date_range">start: <span id="slider_start_date"> </span> end:<span id="slider_end_date"></span></div>
 		<div id="range_container"></div>
 	</div>
 	<div class="q" id="limit"> limit <input type="text" default="None"></div>
@@ -21,6 +23,7 @@
 			<option value="desc">descending</option>
 		</select>
 	</div>
+	<div id="collection_container"></div>
 
 </div>
 </script>
