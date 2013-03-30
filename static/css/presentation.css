@@ -4,6 +4,7 @@ body {
 	-webkit-font-smoothing: antialiased;
 	font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
 	margin: 0px;
+	position: relative;
 }
 /*
 #chart_container {

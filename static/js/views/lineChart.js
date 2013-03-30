@@ -3,7 +3,7 @@ var app = app || {};
 app.LineChart = Backbone.View.extend({
     tagName : 'div',
     className : 'line-chart-container',
-    id : 'line_chart_' + $('.line-chart-container').length,
+    id : undefined,
 
     initialize : function() {
 
@@ -14,10 +14,12 @@ app.LineChart = Backbone.View.extend({
             $.get('/static/js/templates/lineChart.handlebars', function(tmpl){
                 self.template = tmpl
                 self.render()
+                self.$el.attr( 'id', 'line_chart_' + $('.line-chart-container').length )
+                var idSelector = '#' + self.$el.attr('id') 
 
-                $('.line-chart-container').draggable().resizable({
+                $(idSelector).draggable().resizable({
                     stop : function() {
-                        self.renderChart()
+                        self.renderChart()                        
                     }
                 })
 
@@ -39,6 +41,8 @@ app.LineChart = Backbone.View.extend({
         var template = Handlebars.compile( source );
         this.$el.html( template(this.model) )
 
+        console.log("the model Im rendering ", this.model)
+
     },
 
     events : {
@@ -49,17 +53,19 @@ app.LineChart = Backbone.View.extend({
 
     renderChart : function() {
 
+        console.log(this)
+
         var ddv = this.prepData(),
             data = ddv[0],
             dates = ddv[1],
             vals = ddv[2]
 
-        d3.select('svg').remove()
-
         var w = this.$el.width(),
             h = this.$el.height() - $('.destroy').height(),
             p = 20,
-            idSelector = '#' + this.id
+            idSelector = '#' + this.$el.attr('id')
+
+        d3.select(idSelector).select('svg').remove()
 
         var minDate = new Date(d3.min(dates) * 1000),
             maxDate = new Date(d3.max(dates) * 1000),
@@ -68,25 +74,27 @@ app.LineChart = Backbone.View.extend({
 
         var vis = d3.select(idSelector)
             .append("svg:svg")
-            .attr("width", w)
-            .attr("height", h)
-            .append("svg:g")
-            .attr("transform", "translate(" + 30 + ",0)")
+            .attr("width", w + p)
+            .attr("height", h + p)
+                .append("svg:g")
+                .attr("width", w)
+                .attr("height", h)
+                .attr("transform", "translate(" + 30 + ",0)")
 
         var y = d3.scale.linear().domain([minVal, maxVal]).range([ h - p, p ]),
-            x = d3.time.scale().domain([minDate, maxDate]).range([ (3 * p), w - (2 * p) ]),
+            x = d3.time.scale().domain([minDate, maxDate]).range([ p, w - (2 * p) ]),
             yAxis = d3.svg.axis().scale(y).orient("left").tickSize(1)
 
         var xAxis = d3.svg.axis()
             .scale(x)
             .orient('bottom')
             // .ticks(d3.time.days, 1)
-            .ticks(20)
-            .tickFormat(d3.time.format('%a %d'))
+            .ticks(10)
+            .tickFormat(d3.time.format('%b %d'))
             .tickSize(0)
             .tickPadding(8);
 
-        d3.selectAll('.x.axis')
+        d3.select(idSelector).selectAll('.x.axis')
             .attr('y', h + p)
             .transition(500)
             .style("fill-opacity", 0)
@@ -95,10 +103,10 @@ app.LineChart = Backbone.View.extend({
         vis.append('svg:g')
             .attr('class', 'x axis')
             .attr('transform', 'translate(0, ' + (h - p) + ')')
-            .call(xAxis);            
+            .call(xAxis); 
 
         //yticks
-        d3.selectAll('.y.axis')
+        d3.select(idSelector).selectAll('.y.axis')
             .transition(500)
             .style("fill-opacity", 0)
             .remove()
@@ -110,6 +118,24 @@ app.LineChart = Backbone.View.extend({
             .call(yAxis)
             .transition(500)
             .style('fill-opacity', 1)
+
+        var grays = vis.selectAll(".gray-line")
+             .data(y.ticks(10), function(d) { return d })
+           
+        grays.enter().insert("line")
+             .attr("x1", (2 * p) )
+             .attr("x2", w)
+             .attr("y1", y)
+             .attr("y2", y)
+             .attr("class", "gray-line")
+             .style("stroke", "#bbb")
+
+        grays.exit()
+            .transition()
+                .duration(500)
+                .style('fill-opacity', 0)
+                .remove()
+
 
         var path = vis.append("g").selectAll("path.line")
             .data([data])
@@ -160,6 +186,8 @@ app.LineChart = Backbone.View.extend({
         var data = [],
             dates = [],
             vals = []
+
+        console.log(this.model.records)
 
         _.each( this.model.records, function(obj){
             

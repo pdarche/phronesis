@@ -3,7 +3,7 @@ var app = app || {};
 app.QueryCollection = Backbone.View.extend({
 	tagName : 'div',
 	className : 'query-collection',
-	id : 'query_collection_' + $('.query-collection').length,
+	id : undefined,
 
     initialize: function(){
 
@@ -14,6 +14,7 @@ app.QueryCollection = Backbone.View.extend({
             $.get('/static/js/templates/queryCollection.handlebars', function(tmpl){
                 self.template = tmpl
                 self.render( tmpl )
+                self.$el.attr('id', 'query_collection_' + $('.query-collection').length) 
             })
 
         } else {
@@ -64,11 +65,11 @@ app.QueryView = Backbone.View.extend({
                 $('.chart-type-container').droppable({
                 	accept : '.query-collection',
                     hoverClass : 'chart-type-container-hover',
-                    drop : function(ev, ui) {                        
+                    drop : function(ev, ui) {
+                    	console.log("ui is", ui)
                         var draggableSelector = '#' + ui.draggable.attr("id");                        
                         var model = $(draggableSelector).data('collection-data')
-
-                        console.log("creating")
+                        console.log(model)
                         self.createLineChart( model )
                     }
                 })
@@ -90,8 +91,6 @@ app.QueryView = Backbone.View.extend({
         var source = $(tmpl).html()
         var template = Handlebars.compile( source )
         $('body').append( template )
-
-        $
 
         // var pad = 80,
         //     w = window.innerWidth - (2*pad),
