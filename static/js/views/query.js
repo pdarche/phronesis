@@ -1,6 +1,9 @@
 var app = app || {};
 
 app.QueryCollection = Backbone.View.extend({
+	tagName : 'div',
+	className : 'query-collection',
+	id : 'query_collection_' + $('.query-collection').length,
 
     initialize: function(){
 
@@ -27,11 +30,13 @@ app.QueryCollection = Backbone.View.extend({
 
         var source = $(tmpl).html()
         var template = Handlebars.compile( source )
-        $('#query_container').append( template(self.model) )
+        this.$el.html( template(self.model) )
 
         $('.query-collection').draggable({
             revert : true
         })
+
+        this.$el.data('collection-data', this.model)
 
     }
 
@@ -52,26 +57,21 @@ app.QueryView = Backbone.View.extend({
                 self.template = tmpl
                 self.render( tmpl )
 
-                $( "#range_container" ).slider({
-                    range : true,
-                    min : 0,
-                    max : 100,
-                    values : [75,100],
-                    slide: function( event, ui ) {
-
-                        self.startDate = ui.values[0]
-                        self.endDate = ui.values[1]
-
-                        var startDate = new Date(ui.values[0] * 1000),
-                            endDate = new Date(ui.values[1] * 1000)
-
-                        $('#slider_start_date').html( self.formatDate(startDate))
-                        $('#slider_end_date').html( self.formatDate(endDate))
-
-                    }
-                });
+                $.proxy(self.bindSlider(), self)
 
                 $('#query_container').draggable()
+
+                $('.chart-type-container').droppable({
+                	accept : '.query-collection',
+                    hoverClass : 'chart-type-container-hover',
+                    drop : function(ev, ui) {                        
+                        var draggableSelector = '#' + ui.draggable.attr("id");                        
+                        var model = $(draggableSelector).data('collection-data')
+
+                        console.log("creating")
+                        self.createLineChart( model )
+                    }
+                })
 
             })
 
@@ -91,63 +91,65 @@ app.QueryView = Backbone.View.extend({
         var template = Handlebars.compile( source )
         $('body').append( template )
 
-        var pad = 80,
-            w = window.innerWidth - (2*pad),
-            h = window.innerHeight - (2*pad)
+        $
 
-        var linedata = function( w, numLines ){
+        // var pad = 80,
+        //     w = window.innerWidth - (2*pad),
+        //     h = window.innerHeight - (2*pad)
+
+        // var linedata = function( w, numLines ){
             
-            var sep = w/numLines,
-                data = []
+        //     var sep = w/numLines,
+        //         data = []
 
-            for ( var i = 1; i < numLines; i++ ) {
-                data.push( (sep * i) )
-            } 
+        //     for ( var i = 1; i < numLines; i++ ) {
+        //         data.push( (sep * i) )
+        //     } 
 
-            return data
-        }
+        //     return data
+        // }
 
-        var vis = d3.select('#chart_container')
-            .append('svg')
-            .attr('width', window.innerWidth)
-            .attr('height', window.innerHeight)
-            .append('svg:g')
-                .attr('transform', 'translate(' + (w/2 + pad) + ',' + pad + ')')
+        // var vis = d3.select('#chart_container')
+        //     .append('svg')
+        //     .attr('width', window.innerWidth)
+        //     .attr('height', window.innerHeight)
+        //     .append('svg:g')
+        //         .attr('transform', 'translate(' + (w/2 + pad) + ',' + pad + ')')
 
-        vis.append('rect').attr('width', w/2).attr('height', h)
+        // vis.append('rect').attr('width', w/2).attr('height', h)
 
-        vis.selectAll('line.xGrid')
-            .data(linedata(w/2,30))
-          .enter().append('line')
-            .attr('class', 'xGrid')
-            .attr('x1', function(d) { return d })
-            .attr('x2', function(d) { return d })
-            .attr('y1', 0)
-            .attr('y2', h)
+        // vis.selectAll('line.xGrid')
+        //     .data(linedata(w/2,30))
+        //   .enter().append('line')
+        //     .attr('class', 'xGrid')
+        //     .attr('x1', function(d) { return d })
+        //     .attr('x2', function(d) { return d })
+        //     .attr('y1', 0)
+        //     .attr('y2', h)
 
-        vis.selectAll('line.yGrid')
-            .data(linedata(h,30))
-          .enter().append('line')
-            .attr('class', 'yGrid')
-            .attr('y1', function(d) { return d })
-            .attr('y2', function(d) { return d })
-            .attr('x1', 0)
-            .attr('x2', w/2)
+        // vis.selectAll('line.yGrid')
+        //     .data(linedata(h,30))
+        //   .enter().append('line')
+        //     .attr('class', 'yGrid')
+        //     .attr('y1', function(d) { return d })
+        //     .attr('y2', function(d) { return d })
+        //     .attr('x1', 0)
+        //     .attr('x2', w/2)
 
-        vis.append('text').text('Drag Records Here')
-            .attr('font-size', '50px')
-            .attr('x', function(){
-                var offset = w/4 - d3.select('text').node().getComputedTextLength()/2
-                return offset
-            })
-            .attr('y', h/2)
-            .style('fill', 'gray')
-            .on('mouseover', function(){
-                d3.select('rect').style('stroke', 'white')
-            })
-            .on('mouseout', function(){
-                d3.select('rect').style('stroke', 'grey')
-            })
+        // vis.append('text').text('Drag Records Here')
+        //     .attr('font-size', '50px')
+        //     .attr('x', function(){
+        //         var offset = w/4 - d3.select('text').node().getComputedTextLength()/2
+        //         return offset
+        //     })
+        //     .attr('y', h/2)
+        //     .style('fill', 'gray')
+        //     .on('mouseover', function(){
+        //         d3.select('rect').style('stroke', 'white')
+        //     })
+        //     .on('mouseout', function(){
+        //         d3.select('rect').style('stroke', 'grey')
+        //     })
 
         // d3.select('body').insert('div')
         //     .style('fixed','top')
@@ -221,6 +223,31 @@ app.QueryView = Backbone.View.extend({
 
     },
 
+    bindSlider : function() {
+
+        var self = this
+
+        $("#range_container").slider({
+            range : true,
+            min : 0,
+            max : 100,
+            values : [75,100],
+            slide: function( event, ui ) {
+
+                self.startDate = ui.values[0]
+                self.endDate = ui.values[1]
+
+                var startDate = new Date(ui.values[0] * 1000),
+                    endDate = new Date(ui.values[1] * 1000)
+
+                $('#slider_start_date').html( self.formatDate(startDate))
+                $('#slider_end_date').html( self.formatDate(endDate))
+
+            }
+        });
+
+    },
+
     chooseAttribute : function( ev ) {
 
         $(ev.target).hasClass('chosen-attribute') ? $(ev.target).removeClass('chosen-attribute') : $(ev.target).addClass('chosen-attribute')
@@ -281,10 +308,19 @@ app.QueryView = Backbone.View.extend({
             records : collection
         }
 
-        var collection = new app.QueryCollection({ 
-                el : $('#collection_container'), 
+        var collection = new app.QueryCollection({
                 model : model
             })
+
+        $('#query_container').append( collection.el )
+
+    },
+
+    createLineChart : function( model ){
+
+        var line = new app.LineChart({ model : model })
+
+        $('body').append( line.el )
 
     }
 

@@ -395,3 +395,39 @@ rect {
 	font-size:10px;
 	display: inline-block;
 }
+
+#chart_type_container {
+	position: fixed;
+	top: 20%;
+	left: 50%;
+	width: 500px;
+}
+
+.chart-type-container {
+	display: inline-block;
+	width: 200px;
+	height: 200px;
+	margin: 20px 0px 0px 20px; 
+	/*background-color: rgba(255,255,255,.8);*/
+	border: 1px solid gray;
+}
+
+.chart-type-container-hover {
+	border: 1px solid white;
+}
+
+.line-chart-container {
+	position: relative;
+/*	top:30%;*/
+	left: 50%;
+	width: 500px;
+	height: 300px;
+	background-color: rgba(255,255,255,.8);
+	border: 1px solid white;
+}
+
+path {
+    fill: none;
+    stroke: steelblue;
+}
+
