@@ -19,7 +19,7 @@ app.LineChart = Backbone.View.extend({
 
                 $(idSelector).draggable().resizable({
                     stop : function() {
-                        self.renderChart()                        
+                        self.renderChart()
                     }
                 })
 
@@ -37,11 +37,29 @@ app.LineChart = Backbone.View.extend({
 
     render : function() {
 
+        var attributes = []
+
+        for ( attr in categoryAttributes[this.model.attribute] ) {
+             attributes.push({ 
+                title : attr, 
+                id : categoryAttributes[this.model.attribute][attr] 
+            })
+        }
+
+        console.log("the attribute is", this.model.attribute)
+
         var source = $(this.template).html()
         var template = Handlebars.compile( source );
-        this.$el.html( template(this.model) )
+        this.$el.html( template( { "attribute" : attributes } ) )
 
-        console.log("the model Im rendering ", this.model)
+        if ( this.model.attribute === "physicalActivity"){
+            $('#steps').addClass('data-source')
+        } else if ( this.model.attribute === "sleep"){
+            console.log("yerp")
+            $('#total_z').addClass('data-source')
+        } else {
+            $('#calories').addClass('data-source')
+        }
 
     },
 
@@ -53,14 +71,12 @@ app.LineChart = Backbone.View.extend({
 
     renderChart : function() {
 
-        console.log(this)
-
         var ddv = this.prepData(),
             data = ddv[0],
             dates = ddv[1],
             vals = ddv[2]
 
-        var w = this.$el.width(),
+        var w =this.$el.width(),
             h = this.$el.height() - $('.destroy').height(),
             p = 20,
             idSelector = '#' + this.$el.attr('id')
@@ -181,21 +197,22 @@ app.LineChart = Backbone.View.extend({
 
     },
 
-    prepData : function(){
+    prepData : function( selected ){
 
         var data = [],
             dates = [],
-            vals = []
+            vals = [],
+            selected = $('.data-source').attr('id')
 
-        console.log(this.model.records)
+            console.log("the selected attribute is", selected)
 
         _.each( this.model.records, function(obj){
             
-            var datum = { x: obj.created_at, y : obj.steps }
+            var datum = { x: obj.created_at, y : obj[selected] }
 
             data.push(datum)
             dates.push(obj.created_at)
-            vals.push(obj.steps)
+            vals.push(obj[selected])
 
         })
 

@@ -66,11 +66,11 @@ app.QueryView = Backbone.View.extend({
                 	accept : '.query-collection',
                     hoverClass : 'chart-type-container-hover',
                     drop : function(ev, ui) {
-                    	console.log("ui is", ui)
-                        var draggableSelector = '#' + ui.draggable.attr("id");                        
+
+                        var draggableSelector = '#' + ui.draggable.attr('id');
                         var model = $(draggableSelector).data('collection-data')
-                        console.log(model)
-                        self.createLineChart( model )
+                        self.createChart( model, $(this).attr('id') )
+                    
                     }
                 })
 
@@ -202,21 +202,6 @@ app.QueryView = Backbone.View.extend({
             
                 var attributes = Object.keys(start[0][0])
 
-                $('#record_attributes').empty()
-
-                $.get('/static/js/templates/recordAttribute.handlebars', function(tmpl){
-
-                    var source = $(tmpl).html()
-                    var template = Handlebars.compile( source )
-
-                    var apnd = function(){
-                        $('#record_attributes').append( template( { "attribute" : attributes } ) )    
-                    }
-                    
-                    $.proxy(apnd(), self)
-
-                })
-
             }
         )
 
@@ -296,11 +281,13 @@ app.QueryView = Backbone.View.extend({
 
         var startDate = $('#slider_start_date').html(),
             endDate = $('#slider_end_date').html(),
-            category = $('.chosen').html()
+            category = $('.chosen').html(),
+            attribute = $('.chosen').attr('id')
 
 
         var model = {
             category : category,
+            attribute : attribute,
             startDate : startDate,
             endDate : endDate,
             recordCount : collection.length,
@@ -315,11 +302,28 @@ app.QueryView = Backbone.View.extend({
 
     },
 
-    createLineChart : function( model ){
+    createChart : function( model, chartType ){
 
-        var line = new app.LineChart({ model : model })
+    	console.log(chartType)
 
-        $('body').append( line.el )
+        switch ( chartType ){
+        	case "line_chart" :
+        		var line = new app.LineChart({ model : model })
+        		$('body').append( line.el )
+        		break;
+        	case "scatter_plot" :
+        		// var scatterplot
+        		console.log("scatter")
+        		break;
+        	case "pie_chart" :
+        		console.log("pie")
+        		// car pie chart
+        		break;
+        	case "histogram" :
+        		console.log("hist")
+        		// var histogram 
+        		break;
+        }
 
     }
 
