@@ -163,7 +163,7 @@ app.QueryView = Backbone.View.extend({
 
         "click .category" : "chooseCategory",
         "change select" : "getRecords",
-        "click .record-attribute" : "chooseAttribute"
+        // "click .record-attribute" : "chooseAttribute"
 
     },
 
@@ -229,12 +229,6 @@ app.QueryView = Backbone.View.extend({
 
             }
         });
-
-    },
-
-    chooseAttribute : function( ev ) {
-
-        $(ev.target).hasClass('chosen-attribute') ? $(ev.target).removeClass('chosen-attribute') : $(ev.target).addClass('chosen-attribute')
 
     },
 

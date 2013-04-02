@@ -19,11 +19,11 @@ app.LineChart = Backbone.View.extend({
 
                 $(idSelector).draggable().resizable({
                     stop : function() {
-                        self.renderChart()
+                        self.renderChart( self )
                     }
                 })
 
-                self.renderChart()
+                self.renderChart( self )
 
             })
 
@@ -46,16 +46,13 @@ app.LineChart = Backbone.View.extend({
             })
         }
 
-        console.log("the attribute is", this.model.attribute)
-
         var source = $(this.template).html()
         var template = Handlebars.compile( source );
         this.$el.html( template( { "attribute" : attributes } ) )
 
         if ( this.model.attribute === "physicalActivity"){
-            $('#steps').addClass('data-source')
+            $('#steps').addClass('data-source')        
         } else if ( this.model.attribute === "sleep"){
-            console.log("yerp")
             $('#total_z').addClass('data-source')
         } else {
             $('#calories').addClass('data-source')
@@ -65,19 +62,20 @@ app.LineChart = Backbone.View.extend({
 
     events : {
 
-        "click .destroy" : "removeChart"
+        "click .destroy" : "removeChart",
+        "click .record-attribute" : "changeDataSource",
 
     },
 
-    renderChart : function() {
+    renderChart : function( self ) {
 
-        var ddv = this.prepData(),
+        var ddv = self.prepData(),
             data = ddv[0],
             dates = ddv[1],
             vals = ddv[2]
 
         var w =this.$el.width(),
-            h = this.$el.height() - $('.destroy').height(),
+            h = this.$el.height() - $('.destroy').height() - 80,
             p = 20,
             idSelector = '#' + this.$el.attr('id')
 
@@ -152,7 +150,6 @@ app.LineChart = Backbone.View.extend({
                 .style('fill-opacity', 0)
                 .remove()
 
-
         var path = vis.append("g").selectAll("path.line")
             .data([data])
 
@@ -207,7 +204,7 @@ app.LineChart = Backbone.View.extend({
             console.log("the selected attribute is", selected)
 
         _.each( this.model.records, function(obj){
-            
+
             var datum = { x: obj.created_at, y : obj[selected] }
 
             data.push(datum)
@@ -217,6 +214,36 @@ app.LineChart = Backbone.View.extend({
         })
 
         return [ data, dates, vals ]
+
+    },
+
+    changeDataSource : function( ev ) {
+        var self = this
+
+        $('.data-source').removeClass('data-source')
+        $(ev.target).addClass('data-source')
+        self.renderChart( self )
+
+        // $.when( $('.data-source').removeClass('data-source'))
+        // .done(
+        //     function(){
+        //         $(ev.target).addClass('data-source')
+        //         console.log("the target is ", ev.target)
+        //         self.renderChart( self )
+        //     }
+        // )
+
+    },
+
+    addDataSource : function() {
+
+
+
+    },
+
+    removeDataSource : function() {
+
+
 
     },
 
