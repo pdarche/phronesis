@@ -73,6 +73,12 @@ app.LineChart = Backbone.View.extend({
             data = ddv[0],
             dates = ddv[1],
             vals = ddv[2]
+            mean = ddv[3]
+            median = ddv[4]
+            mode = ddv[5]
+            sd = ddv[6]
+
+        var round2 = d3.format(".02r");
 
         var w =this.$el.width(),
             h = this.$el.height() - $('.destroy').height() - 80,
@@ -137,8 +143,8 @@ app.LineChart = Backbone.View.extend({
              .data(y.ticks(10), function(d) { return d })
            
         grays.enter().insert("line")
-             .attr("x1", (2 * p) )
-             .attr("x2", w)
+             .attr("x1", p )
+             .attr("x2", w - (2 * p))
              .attr("y1", y)
              .attr("y2", y)
              .attr("class", "gray-line")
@@ -149,6 +155,34 @@ app.LineChart = Backbone.View.extend({
                 .duration(500)
                 .style('fill-opacity', 0)
                 .remove()
+
+        var meanLine = vis.append("svg:g")
+              .data([mean])
+                .attr("id", "mean")
+                .attr("transform", "translate(" + p + "," + y(mean) + ")")
+
+        meanLine.append("line")
+             .attr("id", "mean_line")
+             .attr("x1", 0 )
+             .attr("x2", w - (3 * p))
+             .attr("y1", 0)
+             .attr("y1", 0)
+             .style("stroke", "444")
+             .style("stroke-width", "2px")
+
+        meanLine.append("text")
+            .text(function(d){ return "mean: " + round2(d)})
+            .attr("id", "mean_text")
+            .attr("x", 5)
+            .attr("dy", 10)
+            .style("font-size", 10)
+
+        meanLine.append("text")
+            .text(function(d){ return "stdev: " + round2(sd)})
+            .attr("id", "sd_text")
+            .attr("x", 5)
+            .attr("dy", 20)
+            .style("font-size", 10)
 
         var path = vis.append("g").selectAll("path.line")
             .data([data])
@@ -213,7 +247,12 @@ app.LineChart = Backbone.View.extend({
 
         })
 
-        return [ data, dates, vals ]
+        var mean = j$(vals).mean(),
+            median = j$(vals).median(),
+            mode = j$(vals).mode(),
+            sd = j$(vals).stdev()
+
+        return [ data, dates, vals, mean, median, mode, sd ]
 
     },
 

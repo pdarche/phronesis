@@ -60,7 +60,7 @@ app.QueryView = Backbone.View.extend({
 
                 $.proxy(self.bindSlider(), self)
 
-                $('#query_container').draggable()
+                // $('#query_container').draggable()
 
                 $('.chart-type-container').droppable({
                 	accept : '.query-collection',
@@ -70,7 +70,8 @@ app.QueryView = Backbone.View.extend({
                         var draggableSelector = '#' + ui.draggable.attr('id');
                         var model = $(draggableSelector).data('collection-data')
                         self.createChart( model, $(this).attr('id') )
-                    
+                    	self.toggleContainer()
+
                     }
                 })
 
@@ -163,6 +164,7 @@ app.QueryView = Backbone.View.extend({
 
         "click .category" : "chooseCategory",
         "change select" : "getRecords",
+        "dblclick #query_container" : "toggleContainer"
         // "click .record-attribute" : "chooseAttribute"
 
     },
@@ -229,6 +231,15 @@ app.QueryView = Backbone.View.extend({
 
             }
         });
+
+    },
+
+    toggleContainer : function() {
+
+    	console.log("dblclicking", pos)
+
+    	var pos = $('#query_container').css('left')
+    	pos === "0px" ? $('#query_container').animate({ left : '-=350px' }) : $('#query_container').animate({ left : '+=350px' })
 
     },
 

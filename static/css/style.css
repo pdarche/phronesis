@@ -287,10 +287,10 @@ rect {
 	position: fixed;
 }
 
-#query_container{
-	position: relative;
-	top: 80px;
-	left: 80px;
+#query_container {
+	position: fixed;
+	top: 120px;
+	left: 0px;
 	width: 400px;
 	background-color: rgba(255,255,255,.7);
 	border: 1px solid white;
@@ -400,7 +400,9 @@ rect {
 	position: fixed;
 	top: 20%;
 	left: 50%;
-	width: 500px;
+	width: 470px;
+	text-align: center;
+	margin-left: -235px
 }
 
 .chart-type-container {
