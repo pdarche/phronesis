@@ -322,11 +322,13 @@ app.QueryView = Backbone.View.extend({
         		break;
         	case "pie_chart" :
         		console.log("pie")
-        		// car pie chart
+        		var pie = new app.PieChart({ model : model })
+        		$('body').append( pie.el )
         		break;
         	case "histogram" :
         		console.log("hist")
-        		// var histogram 
+        		var hist = new app.Histogram({ model : model })
+        		$('body').append( hist.el )
         		break;
         }
 

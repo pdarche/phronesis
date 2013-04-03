@@ -19,7 +19,7 @@ body {
 	float:left;
 }*/
 
-#map, #timeseries {
+#timeseries {
 	background-color: white;
 	width: 96%;
 	/*height: 48%;*/

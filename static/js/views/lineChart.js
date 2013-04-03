@@ -80,7 +80,7 @@ app.LineChart = Backbone.View.extend({
 
         var round2 = d3.format(".02r");
 
-        var w =this.$el.width(),
+        var w = this.$el.width(),
             h = this.$el.height() - $('.destroy').height() - 80,
             p = 20,
             idSelector = '#' + this.$el.attr('id')

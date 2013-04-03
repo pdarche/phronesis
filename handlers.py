@@ -937,11 +937,11 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 		self.fitbit_request('/user/-/activities/minutesFairlyActive/date/%s/today' % memberSince,
 			access_token =  accessToken,
 			user_id =		userID,
-			callback = 		self.async_callback(self._on_mins_moderately_active)
+			callback = 		self.async_callback(self._on_mins_fairly_active)
 		)
 		self.activities.append(data)
 
-	def _on_mins_moderately_active(self, data):
+	def _on_mins_fairly_active(self, data):
 		accessToken = self.get_access_token()
 		memberSince = self.get_member_since()
 		userID = self.get_user_id()
@@ -1143,7 +1143,7 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 				ftbt_elevation = float(day[5]["value"]),
 				ftbt_mins_sedentary = int(day[6]["value"]),
 				ftbt_mins_lightly_active = int(day[7]["value"]),
-				ftbt_mins_farily_active = int(day[8]["value"]),
+				ftbt_mins_fairly_active = int(day[8]["value"]),
 				ftbt_mins_very_active = int(day[9]["value"]),
 				ftbt_active_score = None,
 				ftbt_activities = None

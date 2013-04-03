@@ -50,4 +50,19 @@ var categoryAttributes = {
 		"cholesterol" : "cholesterol"
 	}
 
-} 
+}
+
+var pieValues = {
+	"sleep" : [ 
+		"time_in_light", "time_in_deep", "time_in_rem", "time_in_wake", "time_to_z"
+	 ],
+
+	"physicalActivity" : [
+		"mins_sedentary", "mins_fairly_active", "mins_lightly_active", "mins_very_active"
+	],
+
+	"nutrition" : [
+		"total_fat", "total_carbs", "protein"
+	]
+}
+
