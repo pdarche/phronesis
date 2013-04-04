@@ -66,3 +66,13 @@ var pieValues = {
 	]
 }
 
+var adjectives = [
+	"healthy", "sustainable", "intelligent",
+	"generous", "curageous", "focused",
+	"attentive", "kind", "punctual", "just",
+	"disciplined", "honest", "respectful", "responsible",
+	"educated", "wise"
+]
+
+
+

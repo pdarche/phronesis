@@ -8,7 +8,8 @@ $(document).ready(function(){
 					"login": "index",
 					"nutrition" : "nutrition",
 					"landingpage" : "landingpage",
-					"query" : "query"
+					"query" : "query",
+					"define" : "define"
 				}
 			});
 			
@@ -30,13 +31,19 @@ $(document).ready(function(){
 
 		    app_router.on('route:landingpage', function(){
 
-		    	var landingpage = new app.LandingPage({ el : $('body' )})
+		    	var landingpage = new app.LandingPage({ el : $('body')})
 
 		    })
 
 		    app_router.on('route:query', function(){
 
-		    	var query = new app.QueryView({ el : $('body' )})
+		    	var query = new app.QueryView({ el : $('body')})
+
+		    })
+
+			app_router.on('route:define', function(){
+
+		    	var define = new app.DefineView({ el : $('body')})
 
 		    })
 
