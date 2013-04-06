@@ -18,7 +18,7 @@ $(document).ready(function(){
 
 		    app_router.on('route:index', function() {
 		        
-				var login = new app.Login({ el : $('body') })
+				var login = new app.Login({ el : $('#content_container') })
 
 		    })
 
@@ -31,19 +31,19 @@ $(document).ready(function(){
 
 		    app_router.on('route:landingpage', function(){
 
-		    	var landingpage = new app.LandingPage({ el : $('body')})
+		    	var landingpage = new app.LandingPage({ el : $('#content_container')})
 
 		    })
 
 		    app_router.on('route:query', function(){
 
-		    	var query = new app.QueryView({ el : $('body')})
+		    	var query = new app.QueryView({ el : $('#content_container')})
 
 		    })
 
 			app_router.on('route:define', function(){
 
-		    	var define = new app.DefineView({ el : $('body')})
+		    	var define = new app.DefineView({ el : $('#content_container')})
 
 		    })
 

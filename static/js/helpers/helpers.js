@@ -67,11 +67,22 @@ var pieValues = {
 }
 
 var adjectives = [
-	"healthy", "sustainable", "intelligent",
-	"generous", "curageous", "focused",
-	"attentive", "kind", "punctual", "just",
-	"disciplined", "honest", "respectful", "responsible",
-	"educated", "wise"
+	{ name : "healthy", attributes : [ "fun", "tasty", "pizza" ] }, 
+	{ name : "sustainable", attributes : [ "carbon-neutral", "cradel to cradel consumptions", "reduced energy use" ] }, 
+	{ name : "intelligent", attributes : [ "working memory", "spatial reasoning", "abstract reasoning" ] },
+	{ name : "generous", attributes : [ "microloans", "friends birthdays", "pizza time"] }, 
+	{ name : "curageous", attributes : [ "don't run away when scary things happen"] },
+	{ name : "focused", attributes : ["some things ", "stuff", "pizza" ] },
+	{ name : "attentive", attributes : ["some things ", "stuff", "pizza" ] },
+	{ name : "kind", attributes : ["some things ", "stuff", "pizza" ] },
+	{ name : "punctual", attributes : ["some things ", "stuff", "pizza" ] },
+	{ name : "just", attributes : ["some things ", "stuff", "pizza" ] },
+	{ name : "disciplind", attributes : ["some things ", "stuff", "pizza" ] },
+	{ name : "honest", attributes : ["some things ", "stuff", "pizza" ] },
+	{ name : "respectful", attributes : ["some things ", "stuff", "pizza" ] },
+	{ name : "responsible", attributes : ["some things ", "stuff", "pizza" ] },
+	{ name : "educated", attributes : ["some things ", "stuff", "pizza" ] },
+	{ name : "wise", attributes : ["some things ", "stuff", "pizza" ] }
 ]
 
 

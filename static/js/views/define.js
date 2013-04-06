@@ -3,6 +3,7 @@ var app = app || {};
 app.DefineView = Backbone.View.extend({
     // tagName : 'div',
     // className : 'define-container',
+    state : 0,
 
     initialize : function() {
 
@@ -26,25 +27,34 @@ app.DefineView = Backbone.View.extend({
 
     render : function() {
 
-        console.log("rendering")
-
         var source = $(this.template).html()
         var template = Handlebars.compile( source );
         this.$el.html( template( { "adjectives" : adjectives } ) )
+
+        $('#adjective_container').isotope({
+            // itemSelector : '.adjective-wrap',
+            layoutMode: 'masonryHorizontal',
+            masonryHorizontal: {
+                rowHeight: 40
+            },
+            resizesContainer: false,
+            gutterWidth: 20
+        })
 
     },
 
     transitionIn : function(){
 
-        $('#define_instructions').removeClass('hidden-top')
-        $('.adjective').removeClass('hidden-left')
+        $('#instructions').removeClass('hidden-top')
+        $('.adjective-wrap').removeClass('hidden-left')
         $('.top-adj').removeClass('hidden-left')
 
     },
 
     events : {
 
-        "click .adjective" : "toggleAdjective"
+        "click .adjective-wrap" : "toggleAdjective",
+        "click .adjective-attribute" : "toggleSpecifics"
 
     },
 
@@ -52,11 +62,15 @@ app.DefineView = Backbone.View.extend({
 
         var self = this
 
-        $(ev.target).hasClass('chosen-adj') ? $(ev.target).removeClass('chosen-adj') : $(ev.target).addClass('chosen-adj')
+        $(ev.target).parent().hasClass('chosen-adj') ? $(ev.target).parent().removeClass('chosen-adj') : $(ev.target).parent().addClass('chosen-adj')
 
         if ( $('.chosen-adj').length === 3 ){
 
-            $('.adjective').not('.chosen-adj').addClass('hidden-left')
+            $('#adjective_container').isotope({
+                    layoutMode : 'straightAcross',
+                    filter : '.chosen-adj'
+                })
+
             self.expandChosen()
         
         }
@@ -65,10 +79,22 @@ app.DefineView = Backbone.View.extend({
 
     expandChosen : function(){
 
-        $('.chosen-adj').addClass('enlarged')
-        $('.adjective').not('.chosen-adj').remove()
-        //unbind adjective choice
 
+        this.$el.undelegate('.adjective-wrap', 'click')
+        $('.adjective-wrap').not('.chosen-adj').remove() 
+        $('#instructions p').html("These are <span id='three'>big</span> categories. More <span>precisely...</span>")
+        $('.adjective-specifics').eq(0).delay(500).slideDown()
+        //unbind adjective choice
+    },
+
+    toggleSpecifics : function(){
+        console.log("clicking")
+        var index = $(this).index() + 1
+        $('.adjective-specifics')
+            .eq(this.state).slideUp()
+        $('.adjective-specifics')    
+            .eq(this.state+1).slideDown()
+        this.state++
     }
 
 })

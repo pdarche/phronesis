@@ -26,6 +26,7 @@
 		<script type="text/javascript" src="{{ static_url("js/vendor/backbone.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/jstat.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/colorbrewer.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/vendor/jquery.isotope.min.js") }}"></script>
 		<script src="http://d3js.org/d3.v3.min.js"></script>
 
 		<!-- <script type="text/javascript" src="{{ static_url("js/vendor/date.js") }}"></script> -->
@@ -51,6 +52,8 @@
 
 	</head>
 	<body>
-		{% block content %}{% end %}
+		<div id="content_container"></div>
+		{% block content %}
+		{% end %}
 	</body>
 </html>

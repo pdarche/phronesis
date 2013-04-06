@@ -7,7 +7,7 @@ app.Login = Backbone.View.extend({
         
         if ( !($.isFunction(this.template)) ){
 
-            var self = this;    
+            var self = this;
             $.get('/static/js/templates/landingpage.handlebars', function(tmpl){
                 self.template = tmpl;
                 self.render();
@@ -47,9 +47,8 @@ app.Login = Backbone.View.extend({
 
         var self = this
 
-        $('.signup_container').addClass('accept')
+        $('.signup-container').addClass('accept')
         setTimeout( self.move, 500)
-
 
     },
 

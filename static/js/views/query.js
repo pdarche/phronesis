@@ -60,8 +60,6 @@ app.QueryView = Backbone.View.extend({
 
                 $.proxy(self.bindSlider(), self)
 
-                // $('#query_container').draggable()
-
                 $('.chart-type-container').droppable({
                 	accept : '.query-collection',
                     hoverClass : 'chart-type-container-hover',
