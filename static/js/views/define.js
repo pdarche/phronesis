@@ -1,8 +1,6 @@
 var app = app || {};
 
 app.DefineView = Backbone.View.extend({
-    // tagName : 'div',
-    // className : 'define-container',
     state : 0,
 
     initialize : function() {
@@ -88,13 +86,23 @@ app.DefineView = Backbone.View.extend({
     },
 
     toggleSpecifics : function(){
-        console.log("clicking")
+
+        var self = this
+
         var index = $(this).index() + 1
         $('.adjective-specifics')
             .eq(this.state).slideUp()
         $('.adjective-specifics')    
             .eq(this.state+1).slideDown()
         this.state++
+
+        if (this.state === 3){
+            setTimeout( self.showGrid, 500)
+        }
+    },
+
+    showGrid : function(){
+        window.location.hash = 'grid'
     }
 
 })

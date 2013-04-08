@@ -9,7 +9,8 @@ $(document).ready(function(){
 					"nutrition" : "nutrition",
 					"landingpage" : "landingpage",
 					"query" : "query",
-					"define" : "define"
+					"define" : "define",
+					"grid" : "grid"
 				}
 			});
 			
@@ -44,6 +45,12 @@ $(document).ready(function(){
 			app_router.on('route:define', function(){
 
 		    	var define = new app.DefineView({ el : $('#content_container')})
+
+		    })
+
+		    app_router.on('route:grid', function(){
+
+		    	var define = new app.GridView({ el : $('#content_container')})
 
 		    })
 

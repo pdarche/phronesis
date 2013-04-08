@@ -244,7 +244,37 @@ p {
 /************ SIGNUP ****************/
 
 #content_container {
-	margin: 3%;
+	position: relative;
+	margin: 4% 3% 0% 3%;
+	height: 650px
+}
+
+.test-div {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background-color: white;
+	opacity: 0;
+}
+
+.exploration-heading{
+	position: relative;
+	color: #333;
+	background-color: #eee;
+	margin: 0px;
+	padding: 5px 10px;
+	font-size: 12px;
+	font-weight: bold;	
+	/*display: none;*/
+	display: inline-block;
+	-webkit-transition: all 500ms ease-in;
+}
+
+#content_container .expanded{
+	-webkit-transform : translate3d(0px, 0px, 0px);
+	-webkit-transition: all 100ms ease-out;
+	height: 100%;
+	width: 100%;
 }
 
 .grid-12 {
@@ -288,16 +318,94 @@ p {
 	height: 100px;
 }
 .row-2 {
-	height: 100px;
+	height: 200px;
+	-webkit-transition: all 200ms ease-in;
 }
 .row-3 {
-	height: 100px;
+	height: 300px;
+	-webkit-transition: all 600ms ease-in;
 }
 .row-4 {
-	height: 100px;
+	height: 400px;
+	-webkit-transition: all 1000ms ease-in;
 }
 .row-5 {
-	height: 100px;
+	height: 500px;
+}
+
+.col{
+	float: left
+}
+
+.chart-1 {
+	-webkit-transform : translate3d(0px, 0px, 0px);
+}
+
+.chart-2 {
+	-webkit-transform : translate3d(0px, 320px, 0px);
+}
+
+.chart-3 {
+	-webkit-transform : translate3d(340px, 0px, 0px);
+}
+
+.chart-4 {
+	-webkit-transform : translate3d(340px, 420px, 0px);
+}
+
+.chart-5 {
+	-webkit-transform : translate3d(900px, 0px, 0px);	
+}
+
+.chart-6 {
+	-webkit-transform : translate3d(790px, 420px, 0px);
+}
+
+.chart-7 {
+	-webkit-transform : translate3d(900px, 320px, 0px);
+	height: 80px;
+}
+
+.chart-7 div {
+	display: inline-block;
+	width: 24%;
+	text-align: center;
+}
+
+/*
+col translation values:
+1 col : ; ; 2 col : ; ; 3 col : 340px;
+4 col : 5 col : 6 col : ;
+7 col : 790px; 8 col: 900px; 9 col : ;
+10 col : ; 11 col : ; 12 col: ;
+*/
+
+/* 
+row translation values:
+1 row: ;
+2 row: ;
+3 row: 320px;
+4 row: 420px;
+5 row: ;
+6 row: ;
+
+*/
+
+/*   LINE CHART */
+
+.title {
+	font-size: 20px;
+	/*font-weight: bold*/
+}
+
+.label {
+	font-weight: bold
+}
+
+/* MAP */
+#map {
+	height: 255px;
+	margin: 10px
 }
 
 .signup-container {
@@ -305,6 +413,11 @@ p {
 	top: 150px;
 	margin: 0px auto;
 	padding: 20px;
+}
+
+.major text {
+	font-size: 12px;
+	color: gray;
 }
 
 .signup-container #greeting p { 
@@ -421,7 +534,7 @@ line {
 rect {
 	stroke : gray;
 	stroke-width : .5px;
-	fill-opacity : 0;
+	fill-opacity : 1;
 }
 
 #chart_container{
