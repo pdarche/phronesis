@@ -87,6 +87,4 @@ app.GridView = Backbone.View.extend({
 
     }
 
-
-
 })

@@ -10,7 +10,8 @@ $(document).ready(function(){
 					"landingpage" : "landingpage",
 					"query" : "query",
 					"define" : "define",
-					"grid" : "grid"
+					"grid" : "grid",
+					"profile" : "profile"
 				}
 			});
 			
@@ -51,6 +52,12 @@ $(document).ready(function(){
 		    app_router.on('route:grid', function(){
 
 		    	var define = new app.GridView({ el : $('#content_container')})
+
+		    })
+
+		    app_router.on('route:profile', function(){
+
+		    	var profile = new app.ProfileView({ el : $('#content_container')})
 
 		    })
 

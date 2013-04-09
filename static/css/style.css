@@ -246,7 +246,7 @@ p {
 #content_container {
 	position: relative;
 	margin: 4% 3% 0% 3%;
-	height: 650px
+	height: 640px;
 }
 
 .test-div {
@@ -263,7 +263,7 @@ p {
 	background-color: #eee;
 	margin: 0px;
 	padding: 5px 10px;
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: bold;	
 	/*display: none;*/
 	display: inline-block;
@@ -407,6 +407,54 @@ row translation values:
 	height: 255px;
 	margin: 10px
 }
+
+/* PROFILE */
+
+#col_1 {
+	margin-left: 6.5%;
+}
+
+#col_1, #col_2 {
+	float: left;
+	height: 100%;
+}
+
+#profile {
+	width: 100%;
+	height: 100%;
+}
+
+#col_1 div, #col_2 div {
+	background-color: white;
+	margin: 15px 15px 15px 0px;
+	opacity: 0;
+	-webkit-transition: all 250ms ease-in;
+}
+
+#col_1 .row-2 {
+	height: 185px;
+}
+
+#col_2 .adj {
+	display: inline-block;
+	margin: 0px;
+}
+
+.adj p {
+	padding: 20px;
+	margin: 0px;
+}
+
+#profile_content{
+	height: 536px;
+}
+
+#col_2 .adj .active-adj{
+	background-color: hsl(236, 93%, 66%);
+	color: white;
+}
+
+/**/
 
 .signup-container {
 	position: relative;

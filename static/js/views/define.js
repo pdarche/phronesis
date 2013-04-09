@@ -60,7 +60,8 @@ app.DefineView = Backbone.View.extend({
 
         var self = this
 
-        $(ev.target).parent().hasClass('chosen-adj') ? $(ev.target).parent().removeClass('chosen-adj') : $(ev.target).parent().addClass('chosen-adj')
+        $(ev.target).parent().hasClass('chosen-adj') ? $(ev.target).parent().removeClass('chosen-adj') : 
+                                                       $(ev.target).parent().addClass('chosen-adj');
 
         if ( $('.chosen-adj').length === 3 ){
 
@@ -83,6 +84,7 @@ app.DefineView = Backbone.View.extend({
         $('#instructions p').html("These are <span id='three'>big</span> categories. More <span>precisely...</span>")
         $('.adjective-specifics').eq(0).delay(500).slideDown()
         //unbind adjective choice
+
     },
 
     toggleSpecifics : function(){
@@ -97,12 +99,16 @@ app.DefineView = Backbone.View.extend({
         this.state++
 
         if (this.state === 3){
-            setTimeout( self.showGrid, 500)
+            setTimeout( self.showProfile, 500)
         }
     },
 
     showGrid : function(){
         window.location.hash = 'grid'
+    },
+
+    showProfile : function(){
+        window.location.hash = 'profile'
     }
 
 })
