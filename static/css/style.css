@@ -1,3 +1,7 @@
+body {
+	padding-top: 1px
+}
+
 p {
 	font-size: 20px;
 }
@@ -277,6 +281,55 @@ p {
 	width: 100%;
 }
 
+/* NAV */
+#heading {
+	position: fixed;
+	width: 100%;
+	height: 30px;
+	background-color: #333;
+	display: none;
+}
+
+#nav_adjective_container{
+	margin-left: 6%;
+	display: inline-block;
+	height: 100%;
+}
+
+#nav_adjective_container div, #nav_container div {
+	display: inline-block;
+	color: white;
+	padding: 6px
+}
+
+#nav_adjective_container p, #nav_container p {
+	/*margin: 0px;*/
+	font-size: 14px;
+	display: table-cell; 
+  	vertical-align: middle; 
+ 	text-align: center;
+}
+
+#nav_container {
+	display: inline-block;
+	float: right;
+	margin-right: 6%;
+}
+
+.active-adj {
+	font-weight: bold; 
+}
+
+.nav-element:hover, .nav-adjective:hover {
+	cursor: pointer;
+}
+
+.active-view {
+	font-weight: bold;
+}
+
+/**/
+
 .grid-12 {
 	width: 96%;
 }
@@ -419,7 +472,7 @@ row translation values:
 	height: 100%;
 }
 
-#profile {
+#profile_container {
 	width: 100%;
 	height: 100%;
 }

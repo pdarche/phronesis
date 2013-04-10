@@ -34,6 +34,7 @@
 		<!-- <script type="text/javascript" src="{{ static_url("js/vendor/date.js") }}"></script> -->
 		<script type="text/javascript" src="{{ static_url("js/charts/line.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/models/meal.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/models/user.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/nutrition.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/landingpage.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/query.js") }}"></script>
@@ -57,7 +58,19 @@
 
 	</head>
 	<body>
-		<div id="heading"></div>
+		<div id="heading">
+			<div id="nav_adjective_container">		
+				<div id="adjective_1" class="nav-adjective active-adj"><p>Healthy</p></div>
+				<div id="adjective_2" class="nav-adjective"><p>Sustainable</p></div>
+				<div id="adjective_3" class="nav-adjective"><p>Educated</p></div>
+			</div>
+			<div id="nav_container">
+				<div id="profile" class="nav-element"><p>pdarche</p></div>
+				<div id="what" class="nav-element"><p>What</p></div>
+				<div id="why" class="nav-element"><p>Why</p></div>
+				<div id="how" class="nav-element"><p>How</p></div>
+			</div>
+		</div>
 		<div id="content_container"></div>
 		{% block content %}
 		{% end %}

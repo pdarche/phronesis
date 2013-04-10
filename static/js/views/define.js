@@ -65,6 +65,15 @@ app.DefineView = Backbone.View.extend({
 
         if ( $('.chosen-adj').length === 3 ){
 
+            console.log( "the chosen ones are ", $('.chosen-adj'))
+
+            $.each($('.chosen-adj'), function(i, obj){
+                var selector = '#adjective_' + (i + 1),
+                    adjective = $(obj).find('.adjective').html()
+
+                $(selector).html(adjective)
+            })
+
             $('#adjective_container').isotope({
                     layoutMode : 'straightAcross',
                     filter : '.chosen-adj'
@@ -92,10 +101,8 @@ app.DefineView = Backbone.View.extend({
         var self = this
 
         var index = $(this).index() + 1
-        $('.adjective-specifics')
-            .eq(this.state).slideUp()
-        $('.adjective-specifics')    
-            .eq(this.state+1).slideDown()
+        $('.adjective-specifics').eq(this.state).slideUp()
+        $('.adjective-specifics').eq(this.state+1).slideDown()        
         this.state++
 
         if (this.state === 3){
@@ -104,10 +111,12 @@ app.DefineView = Backbone.View.extend({
     },
 
     showGrid : function(){
+        $('#heading').fadeIn()
         window.location.hash = 'grid'
     },
 
     showProfile : function(){
+        $('#heading').fadeIn()
         window.location.hash = 'profile'
     }
 

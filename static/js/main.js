@@ -10,10 +10,17 @@ $(document).ready(function(){
 					"landingpage" : "landingpage",
 					"query" : "query",
 					"define" : "define",
-					"grid" : "grid",
+					"why" : "why",
 					"profile" : "profile"
 				}
 			});
+
+			$('.nav-element').click(function(){
+				var view = $(this).attr('id')
+				window.location.hash = view
+				$('.active-view').removeClass('active-view')
+				$(this).addClass('active-view')
+			})
 			
     		// Initiate the router
 		    var app_router = new AppRouter;
@@ -49,7 +56,7 @@ $(document).ready(function(){
 
 		    })
 
-		    app_router.on('route:grid', function(){
+		    app_router.on('route:why', function(){
 
 		    	var define = new app.GridView({ el : $('#content_container')})
 

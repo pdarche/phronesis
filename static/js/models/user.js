@@ -1,4 +1,4 @@
- var app = app || {};
+var app = app || {};
 
 app.User = Backbone.Model.extend({
         defaults: {
@@ -19,7 +19,7 @@ app.User = Backbone.Model.extend({
                 foursquare_bio : undefined,
                 foursquare_home_city : undefined,
                 foursquare_user_photo : undefined
-            }
+            },
             ftbt_user_info : {
                 ftbt_avatar : undefined,
                 ftbt_gender : undefined,
