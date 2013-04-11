@@ -2,16 +2,14 @@
 	<div id="instructions" class="hidden-top">
 		<p>Choose <span id="three">three</span> adjectives you wish you embodied</p>
 	</div>
+	<div id="adjective_specifics"></div>
 	<div id="adjective_container">
 		{{#each adjectives}}
 			<div class="adjective-wrap">
 				<div class="adjective">{{ name }}</div>
-				<div class="adjective-specifics">
-					{{#each attributes}}
-						<div class="adjective-attribute">{{ this }}</div>
-					{{/each}}
-				</div>
 			</div>
-		{{/each}}
+		{{/each}}		
 	</div>
+
+
 </script>

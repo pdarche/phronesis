@@ -608,13 +608,30 @@ row translation values:
 
 #adjective_container .adjective-wrap .adjective-specifics {
 	display: none;
-	/*height: 300px;*/
 	position: absolute;
 	left: 300px;
 	top: 0px;
 	width: 1000px;
 	height: 640px;
 	background-color: white;
+}
+
+#adjective_specifics{
+	display: none;
+	/*height: 300px;*/
+	position: absolute;
+	left: 320px;
+	top: 187px;
+	width: 980px;
+	height: 400px;
+	background-color: white;
+	-webkit-transition: all 500ms ease-in;
+	z-index: 2;
+}
+
+.not-active {
+	background-color: #ccc;
+	color: #333
 }
 
 #three {
@@ -627,27 +644,19 @@ row translation values:
 	color: white;
 }
 
-div[class*='chosen-adj-]{
+#adjective_container div[class*="chosen-adj-"] {
 	width: 300px;
 	text-align: center;
 }
 
-#adjective_container .chosen-adj-0 {
-	/*-webkit-transform: translate3d(0px,0px,0px) !important;*/
-	width: 300px;
-	text-align: center;
+#adjective_container div[class*="chosen-adj-"] .adjective {
+	color: #333;
+	background-color: #ccc;
 }
 
-#adjective_container  .chosen-adj-1 {
-	/*-webkit-transform: translate3d(0px,150px,0px) !important;*/
-	width: 300px;
-	text-align: center;
-}
-
-#adjective_container .chosen-adj-2 {
-	/*-webkit-transform: translate3d(0px,300px,0px) !important;*/
-	width: 300px;
-	text-align: center;
+#adjective_container div[class*="chosen-adj-"] .active-adj {
+	background-color: hsl(236, 93%, 66%);
+	color: white;
 }
 
 .hidden-left {
@@ -668,7 +677,7 @@ div[class*='chosen-adj-]{
 	padding: 10px;
 	border-bottom: 1px solid #ccc;
 	width: 300px;
-	font-size: 18px
+	font-size: 18px;
 }
 
 circle {

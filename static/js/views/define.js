@@ -65,7 +65,7 @@ app.DefineView = Backbone.View.extend({
 
         if ( $('.chosen-adj').length === 3 ){
 
-            $('.chosen-adj').removeClass('isotope-item')
+            $('#adjective_specifics').fadeIn()
 
             $('.chosen-adj').each(function(i, obj){
                 var selector = '#adjective_' + (i + 1),
@@ -99,18 +99,27 @@ app.DefineView = Backbone.View.extend({
         this.$el.undelegate('.adjective-wrap', 'click')
         $('.adjective-wrap').not('.chosen-adj').remove() 
         $('#instructions p').html("These are <span id='three'>big</span> categories. More <span>precisely...</span>")
-        $('.adjective-specifics').eq(0).delay(500).slideDown()
+        // $('.adjective-specifics').eq(0).delay(500).slideDown()
         //unbind adjective choice
+        this.toggleSpecifics()
 
     },
 
     toggleSpecifics : function(){
 
-        var self = this
+        var self = this,
+            activeAdj = '.chosen-adj-'+ this.state,
+            adjName = $(activeAdj).find('div').html()
 
-        var index = $(this).index() + 1
-        $('.adjective-specifics').eq(this.state).slideUp()
-        $('.adjective-specifics').eq(this.state+1).slideDown()        
+        console.log(adj[adjName])
+
+        $(activeAdj).find('div').addClass('active-adj')
+
+        var specific = new app.AdjectiveSpecifics({ 
+            el : $('#adjective_specifics'),
+            model : adj[adjName]
+        })
+
         this.state++
 
         if (this.state === 3){
