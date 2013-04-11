@@ -12,7 +12,8 @@
 		<link rel="stylesheet" type="text/css" href="{{ static_url("css/style.css") }}"/>
 		<link rel="stylesheet" type="text/css" href="{{ static_url("css/presentation.css") }}"/>
 		<link rel="stylesheet" type="text/css" href="{{ static_url("css/colorbrewer.css") }}"/>
-		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css"/>	
+		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css"/>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />	
 
 		<!-- JS -->
 		<script type="text/javascript" src="{{ static_url("js/helpers/helpers.js") }}"></script>
@@ -27,20 +28,25 @@
 		<script type="text/javascript" src="{{ static_url("js/vendor/jstat.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/colorbrewer.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/jquery.isotope.min.js") }}"></script>
+		<script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
 		<script src="http://d3js.org/d3.v3.min.js"></script>
 
 		<!-- <script type="text/javascript" src="{{ static_url("js/vendor/date.js") }}"></script> -->
 		<script type="text/javascript" src="{{ static_url("js/charts/line.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/models/meal.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/models/user.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/nutrition.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/landingpage.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/query.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/lineChart.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/histogram.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/pieChart.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/views/scatterPlot.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/define.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/views/grid.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/views/profile.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/signup.js") }}"></script>
-
+		
 		<script type="text/javascript" src="{{ static_url("js/main.js") }}"></script>
 
 		<script type="text/javascript" src="{{ static_url("js/vendor/three.min.js") }}"></script>
@@ -52,6 +58,19 @@
 
 	</head>
 	<body>
+		<div id="heading">
+			<div id="nav_adjective_container">		
+				<div id="adjective_1" class="nav-adjective active-adj accent-1"><p>Healthy</p></div>
+				<div id="adjective_2" class="nav-adjective accent-2"><p>Sustainable</p></div>
+				<div id="adjective_3" class="nav-adjective accent-3"><p>Educated</p></div>
+			</div>
+			<div id="nav_container">
+				<div id="profile" class="nav-element"><p>pdarche</p></div>
+				<div id="what" class="nav-element"><p>What</p></div>
+				<div id="why" class="nav-element"><p>Why</p></div>
+				<div id="how" class="nav-element"><p>How</p></div>
+			</div>
+		</div>
 		<div id="content_container"></div>
 		{% block content %}
 		{% end %}

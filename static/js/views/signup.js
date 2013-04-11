@@ -40,6 +40,14 @@ app.Login = Backbone.View.extend({
     login : function() {
 
         this.accept()
+        // var self = this,
+        //     username = $('#username').val(),
+        //     password = $('#password').val(),
+        //     postData = { username : username, password : password }
+
+        // $.post('v1/login', postData, function(res){
+        //     res === "success" ? self.accept() : self.reject
+        // })
 
     },
 
@@ -57,7 +65,7 @@ app.Login = Backbone.View.extend({
         d3.select('.signup_container')
             .style('box-shadow', '0px 2px 10px lightred')
             .style('border', '1px solid lightred')
-          .transition() 
+          .transition()
 
     },
 

@@ -1,8 +1,6 @@
 var app = app || {};
 
 app.DefineView = Backbone.View.extend({
-    // tagName : 'div',
-    // className : 'define-container',
     state : 0,
 
     initialize : function() {
@@ -62,14 +60,32 @@ app.DefineView = Backbone.View.extend({
 
         var self = this
 
-        $(ev.target).parent().hasClass('chosen-adj') ? $(ev.target).parent().removeClass('chosen-adj') : $(ev.target).parent().addClass('chosen-adj')
+        $(ev.target).parent().hasClass('chosen-adj') ? $(ev.target).parent().removeClass('chosen-adj') : 
+                                                       $(ev.target).parent().addClass('chosen-adj');
 
         if ( $('.chosen-adj').length === 3 ){
 
+            $('.chosen-adj').removeClass('isotope-item')
+
+            $('.chosen-adj').each(function(i, obj){
+                var selector = '#adjective_' + (i + 1),
+                    adjective = $(obj).find('.adjective').html()
+
+                $(selector).html(adjective)
+            })
+
             $('#adjective_container').isotope({
-                    layoutMode : 'straightAcross',
-                    filter : '.chosen-adj'
+                    layoutMode : 'straightDown',
+                    filter : '.chosen-adj',
+                    columnWidth : 240,
+                    gutterWidth : 20
                 })
+
+            $('.chosen-adj').each(function(i){
+                var newClass = 'chosen-adj-' + i 
+                console.log(this)
+                $(this).addClass(newClass)
+            })
 
             self.expandChosen()
         
@@ -85,16 +101,31 @@ app.DefineView = Backbone.View.extend({
         $('#instructions p').html("These are <span id='three'>big</span> categories. More <span>precisely...</span>")
         $('.adjective-specifics').eq(0).delay(500).slideDown()
         //unbind adjective choice
+
     },
 
     toggleSpecifics : function(){
-        console.log("clicking")
+
+        var self = this
+
         var index = $(this).index() + 1
-        $('.adjective-specifics')
-            .eq(this.state).slideUp()
-        $('.adjective-specifics')    
-            .eq(this.state+1).slideDown()
+        $('.adjective-specifics').eq(this.state).slideUp()
+        $('.adjective-specifics').eq(this.state+1).slideDown()        
         this.state++
+
+        if (this.state === 3){
+            setTimeout( self.showProfile, 500)
+        }
+    },
+
+    showGrid : function(){
+        $('#heading').fadeIn()
+        window.location.hash = 'grid'
+    },
+
+    showProfile : function(){
+        $('#heading').fadeIn()
+        window.location.hash = 'profile'
     }
 
 })

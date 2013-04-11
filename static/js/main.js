@@ -9,9 +9,33 @@ $(document).ready(function(){
 					"nutrition" : "nutrition",
 					"landingpage" : "landingpage",
 					"query" : "query",
-					"define" : "define"
+					"define" : "define",
+					"why" : "why",
+					"profile" : "profile"
 				}
 			});
+
+			$('.nav-element').click(function(){
+				var view = $(this).attr('id')
+				window.location.hash = view
+				$('.active-view').removeClass('active-view')
+				$(this).addClass('active-view')
+			})
+
+			$('.nav-adjective').click(function(){
+				
+				var index = $(this).index() + 1,
+					newAccent = $(this).attr('class').match(/accent-[0-9]/g)[0]
+
+				$('.active-adj').removeClass('active-adj')
+				$(this).addClass('active-adj')
+
+				$('[class*="accent"]').not('.nav-adjective').removeClass(function(i, c) {
+				  console.log(c.match(/accent-[0-9]/g)[0])
+				  return c.match(/accent-[0-9]/g)[0]
+				}).addClass(newAccent)
+
+			})
 			
     		// Initiate the router
 		    var app_router = new AppRouter;
@@ -44,6 +68,18 @@ $(document).ready(function(){
 			app_router.on('route:define', function(){
 
 		    	var define = new app.DefineView({ el : $('#content_container')})
+
+		    })
+
+		    app_router.on('route:why', function(){
+
+		    	var define = new app.GridView({ el : $('#content_container')})
+
+		    })
+
+		    app_router.on('route:profile', function(){
+
+		    	var profile = new app.ProfileView({ el : $('#content_container')})
 
 		    })
 

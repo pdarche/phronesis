@@ -86,7 +86,7 @@ class LoginHandler(tornado.web.RequestHandler):
 			response = "Sorry brah, password mismatch\n"
 		else:
 			self.set_secure_cookie("username", username)
-			response = "logged in\n"
+			response = "success"
 
 		self.write(response)
 

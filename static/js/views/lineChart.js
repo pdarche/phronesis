@@ -2,8 +2,7 @@ var app = app || {};
 
 app.LineChart = Backbone.View.extend({
     tagName : 'div',
-    className : 'line-chart-container',
-    id : undefined,
+    className : 'line-chart',
 
     initialize : function() {
 
@@ -14,15 +13,6 @@ app.LineChart = Backbone.View.extend({
             $.get('/static/js/templates/lineChart.handlebars', function(tmpl){
                 self.template = tmpl
                 self.render()
-                self.$el.attr( 'id', 'line_chart_' + $('.line-chart-container').length )
-                var idSelector = '#' + self.$el.attr('id') 
-
-                $(idSelector).draggable().resizable({
-                    stop : function() {
-                        self.renderChart( self )
-                    }
-                })
-
                 self.renderChart( self )
 
             })
@@ -37,26 +27,9 @@ app.LineChart = Backbone.View.extend({
 
     render : function() {
 
-        var attributes = []
-
-        for ( attr in categoryAttributes[this.model.attribute] ) {
-             attributes.push({ 
-                title : attr, 
-                id : categoryAttributes[this.model.attribute][attr] 
-            })
-        }
-
         var source = $(this.template).html()
         var template = Handlebars.compile( source );
-        this.$el.html( template( { "attribute" : attributes } ) )
-
-        if ( this.model.attribute === "physicalActivity"){
-            $('#steps').addClass('data-source')        
-        } else if ( this.model.attribute === "sleep"){
-            $('#total_z').addClass('data-source')
-        } else {
-            $('#calories').addClass('data-source')
-        }
+        this.$el.append( template )
 
     },
 
@@ -80,60 +53,88 @@ app.LineChart = Backbone.View.extend({
 
         var round2 = d3.format(".02r");
 
-        var w = this.$el.width(),
-            h = this.$el.height() - $('.destroy').height() - 80,
-            p = 20,
-            idSelector = '#' + this.$el.attr('id')
+        var classSelector = '.line-chart'
 
-        d3.select(idSelector).select('svg').remove()
+        var margin = {top: 60, right: 30, bottom: 20, left: 50},
+            w = this.$el.width() - margin.left - margin.right,
+            h = this.$el.height() - 75 - margin.top - margin.bottom
+
+        d3.select(classSelector).select('svg').remove()
 
         var minDate = new Date(d3.min(dates) * 1000),
             maxDate = new Date(d3.max(dates) * 1000),
             minVal = d3.min(vals)
             maxVal = d3.max(vals)
 
-        var vis = d3.select(idSelector)
+        var vis = d3.select(classSelector).select('.vis-container')
             .append("svg:svg")
-            .attr("width", w + p)
-            .attr("height", h + p)
+            // .attr("transform", "translate(0," + 20 + ")")
+            .attr("width", w + margin.left + margin.right)
+            .attr("height", h + margin.top + margin.bottom + 50)
                 .append("svg:g")
-                .attr("width", w)
-                .attr("height", h)
-                .attr("transform", "translate(" + 30 + ",0)")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        var y = d3.scale.linear().domain([minVal, maxVal]).range([ h - p, p ]),
-            x = d3.time.scale().domain([minDate, maxDate]).range([ p, w - (2 * p) ]),
+
+        //title
+        d3.select(classSelector).select('.vis-container').select('svg')
+            .append("text")
+            .attr("class", "title")
+            .attr("text-anchor", "middle")
+            .attr("x", 270)
+            .attr("y", 40)
+            .text("Steps Taken");
+
+        //x-axis labels
+        vis.append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "end")
+            .attr("x", w)
+            .attr("y", h - 10)
+            .text("Date");
+
+        //y-axis label
+        vis.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("y", 6)
+            .attr("x", 0)
+            .attr("dy", ".75em")
+            .attr("transform", "rotate(-90)")
+            .text("Steps");        
+
+
+        var y = d3.scale.linear().domain([minVal, maxVal]).range([ h, 0 ]),
+            x = d3.time.scale().domain([minDate, maxDate]).range([ 0, w ]),
             yAxis = d3.svg.axis().scale(y).orient("left").tickSize(1)
 
         var xAxis = d3.svg.axis()
             .scale(x)
             .orient('bottom')
-            // .ticks(d3.time.days, 1)
-            .ticks(10)
+            .ticks(6)
             .tickFormat(d3.time.format('%b %d'))
             .tickSize(0)
-            .tickPadding(8);
+            .tickPadding(5);
 
-        d3.select(idSelector).selectAll('.x.axis')
-            .attr('y', h + p)
+        d3.select(classSelector).selectAll('.x.axis')
+            .attr('y', h)
             .transition(500)
             .style("fill-opacity", 0)
             .remove()
 
         vis.append('svg:g')
             .attr('class', 'x axis')
-            .attr('transform', 'translate(0, ' + (h - p) + ')')
-            .call(xAxis); 
+            .attr('transform', 'translate(0, ' + h + ')')
+            .call(xAxis);
 
         //yticks
-        d3.select(idSelector).selectAll('.y.axis')
+        d3.select(classSelector).selectAll('.y.axis')
             .transition(500)
             .style("fill-opacity", 0)
             .remove()
 
         vis.append("svg:g")
             .attr("class", "y axis")
-            .attr("transform", "translate(" + p + ",0)")
+            .attr("transform", "translate(0,0)")
             .style('fill-opacity', 0)
             .call(yAxis)
             .transition(500)
@@ -143,8 +144,8 @@ app.LineChart = Backbone.View.extend({
              .data(y.ticks(10), function(d) { return d })
            
         grays.enter().insert("line")
-             .attr("x1", p )
-             .attr("x2", w - (2 * p))
+             .attr("x1", 0)
+             .attr("x2", w)
              .attr("y1", y)
              .attr("y2", y)
              .attr("class", "gray-line")
@@ -159,12 +160,12 @@ app.LineChart = Backbone.View.extend({
         var meanLine = vis.append("svg:g")
               .data([mean])
                 .attr("id", "mean")
-                .attr("transform", "translate(" + p + "," + y(mean) + ")")
+                .attr("transform", "translate(0," + y(mean) + ")")
 
         meanLine.append("line")
              .attr("id", "mean_line")
              .attr("x1", 0 )
-             .attr("x2", w - (3 * p))
+             .attr("x2", w)
              .attr("y1", 0)
              .attr("y1", 0)
              .style("stroke", "444")
@@ -199,6 +200,7 @@ app.LineChart = Backbone.View.extend({
                   })
                   .y(function(d) { return y(d.y) })
               )
+              .style('stroke-width', 2)
 
         var circles = vis.selectAll(".value")
                 .data(data)
@@ -215,6 +217,18 @@ app.LineChart = Backbone.View.extend({
                 })
                 .attr("cy", function(d) { return y(d.y); })
                 .attr("r", 4)
+            .style("opacity", 0)
+
+        circles.on('mouseover',function(obj){
+            console.log(obj)
+            d3.select(this)
+                .style('opacity', 1)
+                .style('fill', 'steelblue')
+        })
+        .on('mouseout', function(){
+            d3.select(this)
+                .style('opacity', 0)
+        })
 
         circles.exit()
             .transition()
@@ -232,18 +246,15 @@ app.LineChart = Backbone.View.extend({
 
         var data = [],
             dates = [],
-            vals = [],
-            selected = $('.data-source').attr('id')
+            vals = []
 
-            console.log("the selected attribute is", selected)
+        _.each( this.model.data, function(obj){
 
-        _.each( this.model.records, function(obj){
-
-            var datum = { x: obj.created_at, y : obj[selected] }
+            var datum = { x: obj.created_at, y : obj["steps"] }
 
             data.push(datum)
             dates.push(obj.created_at)
-            vals.push(obj[selected])
+            vals.push(obj["steps"])
 
         })
 
