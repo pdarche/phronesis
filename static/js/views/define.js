@@ -65,9 +65,9 @@ app.DefineView = Backbone.View.extend({
 
         if ( $('.chosen-adj').length === 3 ){
 
-            console.log( "the chosen ones are ", $('.chosen-adj'))
+            $('.chosen-adj').removeClass('isotope-item')
 
-            $.each($('.chosen-adj'), function(i, obj){
+            $('.chosen-adj').each(function(i, obj){
                 var selector = '#adjective_' + (i + 1),
                     adjective = $(obj).find('.adjective').html()
 
@@ -75,9 +75,17 @@ app.DefineView = Backbone.View.extend({
             })
 
             $('#adjective_container').isotope({
-                    layoutMode : 'straightAcross',
-                    filter : '.chosen-adj'
+                    layoutMode : 'straightDown',
+                    filter : '.chosen-adj',
+                    columnWidth : 240,
+                    gutterWidth : 20
                 })
+
+            $('.chosen-adj').each(function(i){
+                var newClass = 'chosen-adj-' + i 
+                console.log(this)
+                $(this).addClass(newClass)
+            })
 
             self.expandChosen()
         

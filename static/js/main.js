@@ -21,6 +21,21 @@ $(document).ready(function(){
 				$('.active-view').removeClass('active-view')
 				$(this).addClass('active-view')
 			})
+
+			$('.nav-adjective').click(function(){
+				
+				var index = $(this).index() + 1,
+					newAccent = $(this).attr('class').match(/accent-[0-9]/g)[0]
+
+				$('.active-adj').removeClass('active-adj')
+				$(this).addClass('active-adj')
+
+				$('[class*="accent"]').not('.nav-adjective').removeClass(function(i, c) {
+				  console.log(c.match(/accent-[0-9]/g)[0])
+				  return c.match(/accent-[0-9]/g)[0]
+				}).addClass(newAccent)
+
+			})
 			
     		// Initiate the router
 		    var app_router = new AppRouter;
