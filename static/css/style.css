@@ -588,7 +588,7 @@ row translation values:
 	-webkit-transition: all 500ms cubic-bezier(0.000, 0.825, 0.660, 1.095);
 }
 
-.adjective {
+.adjective, .tracker {
 	font-size: 40px;
 	background-color: white;
 	padding: 20px;
@@ -606,7 +606,7 @@ row translation values:
 	transform-style: preserve-3d;
 }
 
-#adjective_container .adjective-wrap .adjective-specifics {
+#adjective_container .adjective-wrap .adjective-specifics, #tracker_container {
 	display: none;
 	position: absolute;
 	left: 300px;
@@ -617,8 +617,7 @@ row translation values:
 }
 
 #adjective_specifics{
-	display: none;
-	/*height: 300px;*/
+	opacity: 0;
 	position: absolute;
 	left: 320px;
 	top: 187px;
@@ -626,7 +625,6 @@ row translation values:
 	height: 400px;
 	background-color: white;
 	-webkit-transition: all 500ms ease-in;
-	z-index: 2;
 }
 
 .not-active {
@@ -678,6 +676,12 @@ row translation values:
 	border-bottom: 1px solid #ccc;
 	width: 300px;
 	font-size: 18px;
+}
+
+.adjective-attribute:hover{
+	cursor: pointer;
+	background-color: hsl(236, 93%, 66%);
+	color: white;
 }
 
 circle {

@@ -111,9 +111,8 @@ app.DefineView = Backbone.View.extend({
             activeAdj = '.chosen-adj-'+ this.state,
             adjName = $(activeAdj).find('div').html()
 
-        console.log(adj[adjName])
-
-        $(activeAdj).find('div').addClass('active-adj')
+        $('.active-adj').removeClass('active-adj')
+        $('.chosen-adj').eq(this.state).find('.adjective').addClass('active-adj')
 
         var specific = new app.AdjectiveSpecifics({ 
             el : $('#adjective_specifics'),
@@ -122,8 +121,8 @@ app.DefineView = Backbone.View.extend({
 
         this.state++
 
-        if (this.state === 3){
-            setTimeout( self.showProfile, 500)
+        if (this.state === 4){
+            setTimeout( self.showTrackers, 500)
         }
     },
 
@@ -135,6 +134,10 @@ app.DefineView = Backbone.View.extend({
     showProfile : function(){
         $('#heading').fadeIn()
         window.location.hash = 'profile'
+    },
+
+    showTrackers : function(){
+        window.location.hash = 'addTrackers'
     }
 
 })

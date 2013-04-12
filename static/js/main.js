@@ -11,7 +11,8 @@ $(document).ready(function(){
 					"query" : "query",
 					"define" : "define",
 					"why" : "why",
-					"profile" : "profile"
+					"profile" : "profile",
+					"addTrackers" : "addTrackers"
 				}
 			});
 
@@ -80,6 +81,12 @@ $(document).ready(function(){
 		    app_router.on('route:profile', function(){
 
 		    	var profile = new app.ProfileView({ el : $('#content_container')})
+
+		    })
+
+		    app_router.on('route:addTrackers', function(){
+
+		    	var trackers = new app.AddTrackers({ el : $('#content_container')})
 
 		    })
 
