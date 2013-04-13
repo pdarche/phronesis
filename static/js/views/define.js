@@ -65,13 +65,13 @@ app.DefineView = Backbone.View.extend({
 
         if ( $('.chosen-adj').length === 3 ){
 
-            $('.chosen-adj').removeClass('isotope-item')
+            $('#adjective_specifics').fadeIn()
 
             $('.chosen-adj').each(function(i, obj){
                 var selector = '#adjective_' + (i + 1),
                     adjective = $(obj).find('.adjective').html()
 
-                $(selector).html(adjective)
+                $(selector).html(adjective).addClass(adjective)
             })
 
             $('#adjective_container').isotope({
@@ -83,7 +83,6 @@ app.DefineView = Backbone.View.extend({
 
             $('.chosen-adj').each(function(i){
                 var newClass = 'chosen-adj-' + i 
-                console.log(this)
                 $(this).addClass(newClass)
             })
 
@@ -99,22 +98,31 @@ app.DefineView = Backbone.View.extend({
         this.$el.undelegate('.adjective-wrap', 'click')
         $('.adjective-wrap').not('.chosen-adj').remove() 
         $('#instructions p').html("These are <span id='three'>big</span> categories. More <span>precisely...</span>")
-        $('.adjective-specifics').eq(0).delay(500).slideDown()
         //unbind adjective choice
+        this.toggleSpecifics()
 
     },
 
     toggleSpecifics : function(){
 
-        var self = this
+        console.log("is this where things are happening?")
 
-        var index = $(this).index() + 1
-        $('.adjective-specifics').eq(this.state).slideUp()
-        $('.adjective-specifics').eq(this.state+1).slideDown()        
+        var self = this,
+            activeAdj = '.chosen-adj-'+ this.state,
+            adjName = $(activeAdj).find('div').html()
+
+        $('.active-adj').removeClass('active-adj')
+        $('.chosen-adj').eq(this.state).find('.adjective').addClass('active-adj')
+
+        var specific = new app.AdjectiveSpecifics({ 
+            el : $('#adjective_specifics'),
+            model : adj[adjName]
+        })
+
         this.state++
 
-        if (this.state === 3){
-            setTimeout( self.showProfile, 500)
+        if (this.state === 4){
+            setTimeout( self.showTrackers, 500)
         }
     },
 
@@ -126,6 +134,10 @@ app.DefineView = Backbone.View.extend({
     showProfile : function(){
         $('#heading').fadeIn()
         window.location.hash = 'profile'
+    },
+
+    showTrackers : function(){
+        window.location.hash = 'addTrackers'
     }
 
 })

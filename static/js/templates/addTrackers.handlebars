@@ -1,0 +1,13 @@
+<script id="add_initial_trackers_view" type="x-handlebars-template">
+		<div id="instructions" class="hidden-top">
+		<p>Connect any <span id="three">trackers</span> you are currently using.</p>
+	</div>
+	<div id="tracker_container">
+		{{#each tracker}}
+			<div class="tracker-wrap">
+				<div class="tracker">{{ name }}</div>
+			</div>
+		{{/each}}
+		<div id="done">Done</div>
+	</div>
+</script>
