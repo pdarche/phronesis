@@ -71,7 +71,7 @@ app.DefineView = Backbone.View.extend({
                 var selector = '#adjective_' + (i + 1),
                     adjective = $(obj).find('.adjective').html()
 
-                $(selector).html(adjective)
+                $(selector).html(adjective).addClass(adjective)
             })
 
             $('#adjective_container').isotope({
@@ -98,13 +98,14 @@ app.DefineView = Backbone.View.extend({
         this.$el.undelegate('.adjective-wrap', 'click')
         $('.adjective-wrap').not('.chosen-adj').remove() 
         $('#instructions p').html("These are <span id='three'>big</span> categories. More <span>precisely...</span>")
-        // $('.adjective-specifics').eq(0).delay(500).slideDown()
         //unbind adjective choice
         this.toggleSpecifics()
 
     },
 
     toggleSpecifics : function(){
+
+        console.log("is this where things are happening?")
 
         var self = this,
             activeAdj = '.chosen-adj-'+ this.state,

@@ -41,14 +41,15 @@ app.AddTrackers = Backbone.View.extend({
 
     events : {
 
-        "click .tracker-wrap" : "highlightTracker",
+        "click .tracker-wrap" : "toggleTracker",
         "click #done" : "showProfile"
 
     },
 
-    highlightTracker : function( ev ){
+    toggleTracker : function( ev ){
 
-        $(ev.target).addClass('chosen-tracker')
+        $(ev.target).hasClass('chosen-tracker') ?  $(ev.target).removeClass('chosen-tracker') : 
+                                                   $(ev.target).addClass('chosen-tracker')
 
     },
 

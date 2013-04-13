@@ -10,6 +10,7 @@ $(document).ready(function(){
 					"landingpage" : "landingpage",
 					"query" : "query",
 					"define" : "define",
+					"what" : "what",
 					"why" : "why",
 					"profile" : "profile",
 					"addTrackers" : "addTrackers"
@@ -75,6 +76,12 @@ $(document).ready(function(){
 		    app_router.on('route:why', function(){
 
 		    	var define = new app.GridView({ el : $('#content_container')})
+
+		    })
+
+		   	app_router.on('route:what', function(){
+
+		    	var define = new app.WhatView({ el : $('#content_container')})
 
 		    })
 

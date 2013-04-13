@@ -334,7 +334,7 @@ p {
 	font-weight: bold; 
 }
 
-.nav-element:hover, .nav-adjective:hover {
+.nav-element:hover, .nav-adjective:hover, .tracker:hover, #done:hover {
 	cursor: pointer;
 }
 
