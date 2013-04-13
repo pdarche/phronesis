@@ -1,6 +1,6 @@
 var app = app || {};
 
-app.HowView = Backbone.View.extend({
+app.CardioView = Backbone.View.extend({
 
     index : undefined,
 
@@ -10,7 +10,7 @@ app.HowView = Backbone.View.extend({
 
         if ( !($.isFunction(this.template)) ){
 
-            $.get('/static/js/templates/how.handlebars', function(tmpl){
+            $.get('/static/js/templates/health/cardiovascular-health.handlebars', function(tmpl){
                 self.template = tmpl
                 self.render()
             })

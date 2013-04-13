@@ -87,24 +87,87 @@ var adjectives = [
 
 
 var adj = {
-	"healthy" : { attributes : [ "cardiovascular health", "musculoskelatal health", "mental health", "respatory health" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=health" }, 
-	"sustainable" : { attributes : [ "reduce carbon footprint", "reduce waste", "reduce energy use" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=sustainability" }, 
-	"intelligent" : { attributes : [ "working memory", "spatial reasoning", "abstract reasoning" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=intelligence"},
-	"generous" : { attributes : [ "microloans", "friends birthdays", "pizza time"], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=generosity"}, 
-	"courageous" : { attributes : [ "don't run away when scary things happen"], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=courage"},
-	"focused" : { attributes : ["some things ", "stuff", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=focus"},
-	"attentive" : { attributes : ["some things ", "stuff", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=attention"},
-	"kind" : { attributes : ["some things ", "stuff", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=kindness" },
-	"punctual" : { attributes : ["some things ", "stuff", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=puncutality"},
-	"just" : { attributes : ["some things ", "stuff", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=justice"},
-	"disciplined" : { attributes : ["some things ", "stuff", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=discipline"},
-	"honest" : { attributes : ["some things ", "stuff", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=honesty"},
-	"respectful" : { attributes : ["some things ", "stuff", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=respect"},
-	"responsible": { attributes : ["some things ", "stuff", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=responsibility"},
-	"educated" : { attributes : ["read the Western Cannon", "more things", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=education"},
-	"wise" : { attributes : ["some things ", "stuff", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=wisdom"}
+	"healthy" : { 
+		attributes : [ "cardiovascular health", "musculoskelatal health", "mental health", "respatory health" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=health",
+		actions : [ "reduce sodium intake", "exercise 45 minutes per day", "quite smoking", "limit saturated fat intake to less than 20 grams per day", "limit sodium intake to 2400mg per day", "limit alchohol consumption to 1 drink per day (average)", "reduce stress" ] 
+	}, 
+	"sustainable" : { 
+		attributes : [ "reduce carbon footprint", "reduce waste", "reduce energy use" ],
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=sustainability",
+		actions : ["limit carbon footprint to 2 tons per year", "limit electricity consumption to 1000 Watts per year", "purchase primarily from B Corporations"]
+	},
+	"intelligent" : { 
+		attributes : [ "working memory", "spatial reasoning", "abstract reasoning" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=intelligence",
+		actions : []
+	},
+	"generous" : { 
+		attributes : [ "microloans", "friends birthdays", "pizza time"], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=generosity", 
+		actions : []
+	},
+	"courageous" : { 
+		attributes : [ "don't run away when scary things happen"], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=courage",
+		actions : []
+	},
+	"focused" : { 
+		attributes : ["some things ", "stuff", "pizza" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=focus",
+		actiosn : []
+	},
+	"attentive" : { 
+		attributes : ["some things ", "stuff", "pizza" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=attention",
+		actiosn : []
+	},
+	"kind" : { 
+		attributes : ["some things ", "stuff", "pizza" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=kindness",
+		actiosn : []
+	},
+	"punctual" : { 
+		attributes : ["some things ", "stuff", "pizza" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=puncutality",
+		actiosn : []
+	},
+	"just" : { 
+		attributes : ["some things ", "stuff", "pizza" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=justice",
+		actiosn : []
+	},
+	"disciplined" : { 
+		attributes : ["some things ", "stuff", "pizza" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=discipline",
+		actiosn : []
+	},
+	"honest" : { 
+		attributes : ["some things ", "stuff", "pizza" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=honesty",
+		actiosn : []
+	},
+	"respectful" : { 
+		attributes : ["some things ", "stuff", "pizza" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=respect",
+		actiosn : []
+	},
+	"responsible" : { 
+		attributes : ["some things ", "stuff", "pizza" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=responsibility",
+		actiosn : []
+	},
+	"educated" : { 
+		attributes : ["read the Western Cannon", "more things", "pizza" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=education",
+		actiosn : []
+	},
+	"wise" : { 
+		attributes : ["some things ", "stuff", "pizza" ], 
+		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=wisdom",
+		actiosn : []
+	}
 }
-
 
 
 var trackers = [

@@ -1,17 +1,16 @@
 
 $(document).ready(function(){
 
-			window.location.hash = 'login';
-
 			var AppRouter = Backbone.Router.extend({
 				routes: {
-					"login": "index",
+					"": "index",
 					"nutrition" : "nutrition",
 					"landingpage" : "landingpage",
 					"query" : "query",
 					"define" : "define",
 					"what" : "what",
 					"why" : "why",
+					"how" : "how",
 					"profile" : "profile",
 					"addTrackers" : "addTrackers"
 				}
@@ -82,6 +81,16 @@ $(document).ready(function(){
 		   	app_router.on('route:what', function(){
 
 		    	var define = new app.WhatView({ el : $('#content_container')})
+
+		    })
+
+			app_router.on('route:how', function(){
+
+				var primaryAdj = $('#adjective_1').html()
+		    	var how = new app.HowView({ 
+		    		el : $('#content_container'),
+		    		model : adj[primaryAdj]
+		    	})
 
 		    })
 

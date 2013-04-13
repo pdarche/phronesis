@@ -524,6 +524,25 @@ row translation values:
 
 /**/
 
+/* HOW */
+
+#action_container {
+	height: 100%;
+	background-color: white;
+	float: left;
+}
+
+.action-wrap {
+	display: block;
+	width: 300px;
+	padding: 10px;
+	font-size: 20px;
+	margin: 20px;
+	border-bottom: 1px solid #333
+}
+
+/**/
+
 .signup-container {
 	position: relative;
 	top: 150px;
