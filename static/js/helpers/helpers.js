@@ -87,7 +87,7 @@ var adjectives = [
 
 
 var adj = {
-	"healthy" : { attributes : [ "cardio-vascular health", "musculoskelatal health", "mental health", "respatory health" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=health" }, 
+	"healthy" : { attributes : [ "cardiovascular health", "musculoskelatal health", "mental health", "respatory health" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=health" }, 
 	"sustainable" : { attributes : [ "reduce carbon footprint", "reduce waste", "reduce energy use" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=sustainability" }, 
 	"intelligent" : { attributes : [ "working memory", "spatial reasoning", "abstract reasoning" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=intelligence"},
 	"generous" : { attributes : [ "microloans", "friends birthdays", "pizza time"], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=generosity"}, 

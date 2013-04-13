@@ -2,6 +2,8 @@ var app = app || {};
 
 app.WhatView = Backbone.View.extend({
 
+    index : undefined,
+
     initialize : function() {
 
         var self = this
@@ -23,9 +25,9 @@ app.WhatView = Backbone.View.extend({
 
     render : function() {
 
-        var source = $(this.template).html()
+        var source = $(this.template).html();
         var template = Handlebars.compile( source );
-        this.$el.html( template( { "adjectives" : adjectives } ) )
+        this.$el.html( template( { "adjectives" : adjectives } ) );
 
         $('#adjective_container').isotope({
             layoutMode: 'masonryHorizontal',
@@ -53,16 +55,44 @@ app.WhatView = Backbone.View.extend({
 
     toggleAdjective : function( ev ){
 
+        var self = this
+
         if ( $('.chosen-adj').length < 3 ){
 
-            $(ev.target).parent().hasClass('chosen-adj') ? $(ev.target).parent().removeClass('chosen-adj') :
-                                                              $(ev.target).parent().addClass('chosen-adj')
+            if ( $(ev.target).parent().hasClass('chosen-adj') ){
 
-            var selector = $(ev.target).html()
+                $(ev.target).parent().removeClass('chosen-adj')
+                var adj = $(ev.target).html(),
+                    selector = '.' + adj
+
+                self.index = $(selector).index()
+                console.log("the index is", self.index)
+                $(selector).html("")
+                $(selector).removeClass(adj)                
+
+            } else {
+
+                $(ev.target).parent().addClass('chosen-adj')
+                var adj = $(ev.target).html(),
+                    selector = '.' + adj
+
+                console.log(self.index)
+                $('.nav-adjective').eq(self.index).addClass(adj)
+                $('.nav-adjective').eq(self.index).html(adj)
+                self.index++
+
+            }
 
         } else {
 
-            $(ev.target).parent().removeClass('chosen-adj')
+                $(ev.target).parent().removeClass('chosen-adj')
+                var adj = $(ev.target).html(),
+                    selector = '.' + adj
+
+                self.index = $(selector).index()
+                console.log("the index is", self.index)
+                $(selector).html("")
+                $(selector).removeClass(adj)
 
         }
 
