@@ -83,7 +83,6 @@ app.DefineView = Backbone.View.extend({
 
             $('.chosen-adj').each(function(i){
                 var newClass = 'chosen-adj-' + i 
-                console.log(this)
                 $(this).addClass(newClass)
             })
 

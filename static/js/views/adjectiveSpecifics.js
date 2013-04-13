@@ -12,7 +12,7 @@ app.AdjectiveSpecifics = Backbone.View.extend({
 
             $.get('/static/js/templates/adjectiveSpecifics.handlebars', function(tmpl){
                 self.template = tmpl
-                self.render() 
+                self.render()
             })
 
         } else {
@@ -50,10 +50,6 @@ app.AdjectiveSpecifics = Backbone.View.extend({
     },
 
     advanceAttributes : function( ev ){
-
-        // $('.active-adj').removeClass('active-adj')
-        // $('.chosen-adj').eq(this.state).find('.adjective').addClass('active-adj')
-        // this.state++
 
     }
 

@@ -581,16 +581,24 @@ row translation values:
 	top: -100px;
 }
 
-#adjective_container {
+#adjective_container, #tracker_container {
 	position: relative;
 	height: 400px;
 	margin: 0px;
 	-webkit-transition: all 500ms cubic-bezier(0.000, 0.825, 0.660, 1.095);
 }
 
-.adjective, .tracker {
+.adjective, .tracker, #done {
 	font-size: 40px;
 	background-color: white;
+	padding: 20px;
+	-webkit-transition: all 750ms cubic-bezier(0.215, 0.610, 0.000, 0.975);
+}
+
+#done {
+	background-color: red;
+	color: white;
+	font-size: 40px;
 	padding: 20px;
 	-webkit-transition: all 750ms cubic-bezier(0.215, 0.610, 0.000, 0.975);
 }
@@ -599,14 +607,14 @@ row translation values:
 	cursor: pointer;
 }
 
-.adjective-wrap {
+.adjective-wrap, .tracker-wrap {
 	height: 88px;
 	margin: 0px 20px;
 	-webkit-transition: all 500ms cubic-bezier(0.215, 0.610, 0.000, 0.975);
 	transform-style: preserve-3d;
 }
 
-#adjective_container .adjective-wrap .adjective-specifics, #tracker_container {
+#adjective_container .adjective-wrap .adjective-specifics {
 	display: none;
 	position: absolute;
 	left: 300px;
@@ -636,7 +644,7 @@ row translation values:
 	color: hsl(236, 93%, 66%);
 }
 
-.chosen-adj .adjective{
+.chosen-adj .adjective, .tracker-wrap .chosen-tracker{
 	/*hsl(391, 93%, 56%)*/
 	background-color: hsl(236, 93%, 66%);
 	color: white;
@@ -682,6 +690,12 @@ row translation values:
 	cursor: pointer;
 	background-color: hsl(236, 93%, 66%);
 	color: white;
+}
+
+.tracker {
+	display: inline-block;
+	background-color: white;
+
 }
 
 circle {

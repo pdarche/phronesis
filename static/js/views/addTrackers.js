@@ -11,6 +11,7 @@ app.AddTrackers = Backbone.View.extend({
             $.get('/static/js/templates/addTrackers.handlebars', function(tmpl){
                 self.template = tmpl
                 self.render() 
+                $('#instructions').removeClass('hidden-top')
             })
 
         } else {
@@ -35,6 +36,26 @@ app.AddTrackers = Backbone.View.extend({
             resizesContainer: false,
             gutterWidth: 20
         })
+
+    },
+
+    events : {
+
+        "click .tracker-wrap" : "highlightTracker",
+        "click #done" : "showProfile"
+
+    },
+
+    highlightTracker : function( ev ){
+
+        $(ev.target).addClass('chosen-tracker')
+
+    },
+
+    showProfile : function( ev ){
+
+        $('#heading').fadeIn()
+        window.location.hash = 'profile'
 
     }
 
