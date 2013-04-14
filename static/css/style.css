@@ -530,6 +530,8 @@ row translation values:
 	height: 100%;
 	background-color: white;
 	float: left;
+	opacity: 0;
+	-webkit-transition: all 500ms ease-in;
 }
 
 .action-wrap {

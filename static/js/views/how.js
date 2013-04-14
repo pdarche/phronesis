@@ -2,8 +2,6 @@ var app = app || {};
 
 app.HowView = Backbone.View.extend({
 
-    index : undefined,
-
     initialize : function() {
 
         var self = this
@@ -13,6 +11,15 @@ app.HowView = Backbone.View.extend({
             $.get('/static/js/templates/how.handlebars', function(tmpl){
                 self.template = tmpl
                 self.render()
+
+                var activeAdj = $('#adjective_1').html(),
+                    actions = new app.ActionsView({ 
+                        el : $('#action_container'),
+                        model : adj[activeAdj]
+                    })
+                $('#action_container').css('opacity', 1)
+                $('#adjective_1').addClass('active-adj')
+                 
             })
 
         } else {
@@ -25,12 +32,30 @@ app.HowView = Backbone.View.extend({
 
     render : function() {
 
-        console.log("the model is", this.model)
-
         var source = $(this.template).html();
         var template = Handlebars.compile( source );
-        this.$el.html( template( { "actions" : this.model.actions } ) );
+        this.$el.html( template );
 
     },
+
+    events : {
+
+        "click .action" : "toggleAction"
+
+    },
+
+    toggleAdjective : function( ev ){
+
+        console.log("being clicked")
+        var selectedAdj = $('active-adj').html()
+        console.log(selectedAdj)
+
+    },
+
+    toggleAction : function(){
+
+        console.log("clicking action")
+
+    }
 
 })

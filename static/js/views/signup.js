@@ -11,6 +11,7 @@ app.Login = Backbone.View.extend({
             $.get('/static/js/templates/landingpage.handlebars', function(tmpl){
                 self.template = tmpl;
                 self.render();
+                setTimeout(self.updateGreeting, 1800)
             })
 
         } else {
@@ -33,7 +34,7 @@ app.Login = Backbone.View.extend({
 
     events : {
 
-        "click #signup_button" : "login",
+        "click #signup_button" : "login"
 
     },
 
@@ -73,6 +74,17 @@ app.Login = Backbone.View.extend({
 
         $('.signup_container').remove()
         window.location.hash = 'define'
+
+    },
+
+    updateGreeting : function() {
+
+        $('#greeting').children().fadeOut('fast').queue( function(){
+            $(this).remove()
+            $('#greeting').append('<p>sign in <span style="font-size : 40px; color: steelblue"> or sign up</span></p>')
+                          .hide().fadeIn()
+        })
+        
 
     }
 

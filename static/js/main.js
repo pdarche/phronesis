@@ -36,6 +36,19 @@ $(document).ready(function(){
 				  return c.match(/accent-[0-9]/g)[0]
 				}).addClass(newAccent)
 
+				if ( window.location.hash === 'what' ){
+					console.log("what")
+				} else if ( window.location.hash === 'how') {
+					console.log("why")
+				} else {
+					
+	                var activeAdj = $('.active-adj').html(),
+	                    actions = new app.ActionsView({ 
+	                        el : $('#action_container'),
+	                        model : adj[activeAdj]
+	                    })
+				}
+
 			})
 			
     		// Initiate the router
@@ -86,11 +99,7 @@ $(document).ready(function(){
 
 			app_router.on('route:how', function(){
 
-				var primaryAdj = $('#adjective_1').html()
-		    	var how = new app.HowView({ 
-		    		el : $('#content_container'),
-		    		model : adj[primaryAdj]
-		    	})
+		    	var how = new app.HowView({ el : $('#content_container') })
 
 		    })
 
@@ -102,7 +111,7 @@ $(document).ready(function(){
 
 		    app_router.on('route:addTrackers', function(){
 
-		    	var trackers = new app.AddTrackers({ el : $('#content_container')})
+		    	var trackers = new app.AddTrackers( { el : $('#content_container') })
 
 		    })
 

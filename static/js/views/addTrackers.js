@@ -56,7 +56,7 @@ app.AddTrackers = Backbone.View.extend({
     showProfile : function( ev ){
 
         $('#heading').fadeIn()
-        window.location.hash = 'profile'
+        window.location.hash = 'how'
 
     }
 
