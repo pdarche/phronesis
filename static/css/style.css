@@ -261,7 +261,7 @@ p {
 	opacity: 0;
 }
 
-.exploration-heading{
+.exploration-heading, .how-heading{
 	position: relative;
 	color: #333;
 	background-color: #eee;
@@ -401,6 +401,10 @@ p {
 	height: 500px;
 }
 
+.row-6 {
+	height: 615px;
+}
+
 .col{
 	float: left
 }
@@ -526,21 +530,41 @@ row translation values:
 
 /* HOW */
 
-#action_container {
+#how_content .col-1 {
+	margin-left: 30px; 
+}
+
+#how_content  .col-1, #how_content  .col-2, #how_content  .col-3 {
+	float: left;
 	height: 100%;
+}
+/*.col-1 div, .col-2 div, .col-3 div*/
+.how-rect {
+	background-color: white;
+	margin: 0px 15px 15px 0px;
+	opacity: 0;
+	-webkit-transition: all 250ms ease-in;
+}
+
+
+#action_container {
 	background-color: white;
 	float: left;
 	opacity: 0;
 	-webkit-transition: all 500ms ease-in;
 }
 
-.action-wrap {
+#action_container .action-wrap {
 	display: block;
-	width: 300px;
 	padding: 10px;
 	font-size: 20px;
 	margin: 20px;
-	border-bottom: 1px solid #333
+	border-bottom: 1px solid #333;
+}
+
+#action_container .action-wrap div {
+	font-size: 14px;
+	opacity: 1;
 }
 
 /**/

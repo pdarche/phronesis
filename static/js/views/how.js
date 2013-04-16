@@ -14,10 +14,10 @@ app.HowView = Backbone.View.extend({
 
                 var activeAdj = $('#adjective_1').html(),
                     actions = new app.ActionsView({ 
-                        el : $('#action_container'),
+                        el : $('#action_list'),
                         model : adj[activeAdj]
                     })
-                $('#action_container').css('opacity', 1)
+                $('#action_container, .how-rect, .action-wrap').css('opacity', 1)
                 $('#adjective_1').addClass('active-adj')
                  
             })

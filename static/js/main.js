@@ -43,7 +43,7 @@ $(document).ready(function(){
 				} else {
 					
 	                var activeAdj = $('.active-adj').html(),
-	                    actions = new app.ActionsView({ 
+	                    actions = new app.ActionsView({
 	                        el : $('#action_container'),
 	                        model : adj[activeAdj]
 	                    })

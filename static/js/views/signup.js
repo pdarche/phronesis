@@ -11,7 +11,7 @@ app.Login = Backbone.View.extend({
             $.get('/static/js/templates/landingpage.handlebars', function(tmpl){
                 self.template = tmpl;
                 self.render();
-                setTimeout(self.updateGreeting, 1800)
+                setTimeout(self.updateGreeting, 1600)
             })
 
         } else {
