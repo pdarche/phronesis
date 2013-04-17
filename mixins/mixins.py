@@ -263,6 +263,8 @@ class FlickrMixin(tornado.auth.OAuthMixin):
         url_elems.append("&".join("%s=%s" % (k, str(v)) for k, v in sorted(args.items())))             
         url = "&".join(e for e in url_elems)
         
+
+        print url
         # Add the OAuth resource request signature if web have credentials
         if access_token:
             all_args = dict()

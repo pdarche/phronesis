@@ -48,6 +48,16 @@ class SignUpHandler(tornado.web.RequestHandler):
 		
 		#if the username isn't already taken, create new user object 
 		if len( models.userinfo.User.objects(username=username) ) == 0:
+			
+			adjectives = models.userinfo.UserAdjectives(
+				first_priority = None,
+				first_priority_specifics = None,
+				second_priority = None,
+				second_priority_specifics = None,
+				third_priority = None,
+				third_priority_specifics = None,
+			)
+
 			newuser = models.userinfo.User(
 				date = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 				username = username,
@@ -60,7 +70,8 @@ class SignUpHandler(tornado.web.RequestHandler):
 				facebook_user_info = None,
 				khanacademy_user_info = None,
 				twitter_user_info = None,
-				google_user_info = None
+				google_user_info = None,
+				adjectives = adjectives
 			)
 
 			if newuser.save():
@@ -146,7 +157,7 @@ class TwitterConnectHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixi
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, 'Twitter authentication failed')
 
-		self.redirect('/twitter')
+		self.redirect('/v1/twitter')
 
 	def _twitter_on_user(self, user):
 		if not user:
@@ -200,7 +211,7 @@ class FacebookConnectHandler(tornado.web.RequestHandler, tornado.auth.FacebookGr
 		if self.get_argument('code', None):
 			print "getting authenticated user"
 			self.get_authenticated_user(
-				redirect_uri = 'http://localhost:8000/facebook',
+				redirect_uri = 'http://localhost:8000//v1/facebook',
 				client_id = self.settings['facebook_api_key'],
 				client_secret = self.settings['facebook_secret'],
 				code = self.get_argument('code'),
@@ -212,7 +223,7 @@ class FacebookConnectHandler(tornado.web.RequestHandler, tornado.auth.FacebookGr
 			self.write('logged into the facebook')
 
 		self.authorize_redirect(
-			redirect_uri = 'http://localhost:8000/facebook',
+			redirect_uri = 'http://localhost:8000/v1/facebook',
 			client_id = self.settings['facebook_api_key'],
 			extra_params = { 'scope' : 'read_stream, publish_stream' }
 		)
@@ -514,7 +525,7 @@ class FoursquareHandler(tornado.web.RequestHandler, mixins.FoursquareMixin):
     def get(self):
         if self.get_argument("code", False):
             self.get_authenticated_user(
-                redirect_uri='http://localhost:8000/foursquare',
+                redirect_uri='http://localhost:8000/v1/foursquare',
                 client_id=self.settings["foursquare_client_id"],
                 client_secret=self.settings["foursquare_client_secret"],
                 code=self.get_argument("code"),
@@ -523,7 +534,7 @@ class FoursquareHandler(tornado.web.RequestHandler, mixins.FoursquareMixin):
             return
 
         self.authorize_redirect(
-			redirect_uri='http://localhost:8000/foursquare',
+			redirect_uri='http://localhost:8000/v1/foursquare',
             client_id=self.settings["foursquare_api_key"]
         )
 
@@ -570,7 +581,7 @@ class GoogleHandler(tornado.web.RequestHandler, tornado.auth.GoogleMixin):
 		if not user:
 		    raise tornado.web.HTTPError(500, "Google auth failed")
 
-		g = models.GoogleUserInfo(
+		g = models.userinfo.GoogleUserInfo(
 			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 			google_first_name = user["first_name"],
 			google_claimed_id = user["claimed_id"],
@@ -621,7 +632,8 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 				)
 				return
 
-		self.authorize_redirect('http://localhost:8000/flickr')
+		print "redirecting"
+		self.authorize_redirect('http://localhost:8000/v1/flickr')
 
 	def _flickr_on_auth(self, user):
 		if not user:
@@ -692,12 +704,15 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 				)
 				return
 
-		self.khanacademy_authorize_redirect('http://localhost:8000/khanacademy')  # Khan Academy requires a callback url
+		self.khanacademy_authorize_redirect('http://localhost:8000/v1/khanacademy')  # Khan Academy requires a callback url
 
 	def _khanacademy_on_auth(self, user):
 		if not user:
 			self.clear_all_cookies()
 			raise tornado.web.HTTPError(500, 'Khan Academy authentication failed')
+
+		# self.write(json.dumps(user))
+		# self.finish()
 
 		ka_access = models.userinfo.KhanAcademyAccessToken(
 			khanacademy_secret = user["access_token"]["secret"],
@@ -706,7 +721,7 @@ class KhanAcademyHandler(tornado.web.RequestHandler, mixins.KhanAcademyMixin):
 
 		ka = models.userinfo.KhanAcademyUserInfo(
 			created_at = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
-			khanacademy_has_notification = user["has_notification"],
+			khanacademy_has_notification = None,
 			khanacademy_can_record_tutorial = user["can_record_tutorial"],
 			khanacademy_is_demo = user["is_demo"],
 			khanacademy_key_email = user["key_email"].encode('utf-8'),
@@ -837,11 +852,11 @@ class WithingsHandler(tornado.web.RequestHandler, mixins.WithingsMixin):
 ####### REFACTOR.  THIS IS TERRIBLE
 class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):	
 	# if user.ftbt_user_info != None:
-
 	activities = []
 	foods = []
 	sleep = []
 	body = []
+
 	@tornado.web.authenticated
 	@tornado.web.asynchronous
 	def get(self):
@@ -1420,7 +1435,7 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 			return user_info
 
 		else:
-			self.redirect('/foursquare')
+			self.redirect('/v1/foursquare')
 
 
 

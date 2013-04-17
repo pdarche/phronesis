@@ -50,6 +50,14 @@ app.User = Backbone.Model.extend({
             },
             zeo_user_info : {
                 created_at : undefined
+            },
+            adjectives : {
+                first_priority : undefined,
+                first_priority_specifics : undefined,
+                second_priority : undefined,
+                second_priority_specifics : undefined,
+                third_priority : undefined,
+                third_priority_specifics : undefined
             }
         },
         initialize: function(){

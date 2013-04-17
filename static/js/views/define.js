@@ -64,8 +64,29 @@ app.DefineView = Backbone.View.extend({
 
         var accentClass = $(ev.target).html() + '-accent'
 
-        $(ev.target).parent().hasClass('chosen-adj') ? $(ev.target).parent().removeClass('chosen-adj') : 
-                                                       $(ev.target).parent().addClass('chosen-adj').children().addClass(accentClass);
+        if ( $(ev.target).parent().hasClass('chosen-adj') ){
+
+            $(ev.target).parent().removeClass('chosen-adj')
+
+        } else {
+
+            if ( user.attributes.adjectives.first_priority === null ){
+
+                user.attributes.adjectives.first_priority = $(ev.target).html()
+
+            } else if (user.attributes.adjectives.second_priority === null ){
+
+                user.attributes.adjectives.second_priority = $(ev.target).html()
+
+            } else {
+
+                user.attributes.adjectives.third_priority = $(ev.target).html()
+
+            }
+
+            $(ev.target).parent().addClass('chosen-adj').children().addClass(accentClass);
+
+        }
 
         if ( $('.chosen-adj').length === 3 ){
 

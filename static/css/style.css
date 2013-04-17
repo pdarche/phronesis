@@ -771,10 +771,10 @@ row translation values:
 	font-size: 18px;
 }
 
-/*.adjective-attribute:hover{
+.adjective-attribute:hover{
 	cursor: pointer;
 	color: white;
-}*/
+}
 
 .tracker {
 	display: inline-block;
