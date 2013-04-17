@@ -345,6 +345,8 @@ p {
 
 /**/
 
+/* GRID */
+
 .grid-12 {
 	width: 96%;
 }
@@ -462,6 +464,42 @@ row translation values:
 6 row: ;
 
 */
+
+/**/
+
+/* COLORS */
+
+#adjective_container .chosen-adj .sustainable-accent {
+	background-color: #00B25C;
+	color: white;
+}
+
+#adjective_container .chosen-adj .healthy-accent {
+	background-color: #FF8E00;
+	color: white;
+}
+
+#adjective_container .chosen-adj .educated-accent {
+	background-color: #FF4100;
+	color: white;
+}
+
+.sustainable-accent {
+	background-color: #00B25C;
+	color: white;
+}
+
+.healthy-accent {
+	background-color: #FF8E00;
+	color: white;
+}
+
+.educated-accent {
+	background-color: #FF4100;
+	color: white;
+}
+
+/**/
 
 /*   LINE CHART */
 
@@ -690,7 +728,7 @@ row translation values:
 	color: hsl(236, 93%, 66%);
 }
 
-.chosen-adj .adjective, .tracker-wrap .chosen-tracker{
+/*.chosen-adj .adjective,*/ .tracker-wrap .chosen-tracker{
 	/*hsl(391, 93%, 56%)*/
 	background-color: hsl(236, 93%, 66%);
 	color: white;
@@ -701,13 +739,14 @@ row translation values:
 	text-align: center;
 }
 
-#adjective_container div[class*="chosen-adj-"] .adjective {
+/*#adjective_container div[class*="chosen-adj-"] .adjective {
 	color: #333;
 	background-color: #ccc;
-}
+}*/
 
-#adjective_container div[class*="chosen-adj-"] .active-adj {
-	background-color: hsl(236, 93%, 66%);
+#adjective_container div[class*="chosen-adj-"] .inactive {
+	/*background-color: hsl(236, 93%, 66%);*/
+	background-color: #ccc;
 	color: white;
 }
 
@@ -732,11 +771,10 @@ row translation values:
 	font-size: 18px;
 }
 
-.adjective-attribute:hover{
+/*.adjective-attribute:hover{
 	cursor: pointer;
-	background-color: hsl(236, 93%, 66%);
 	color: white;
-}
+}*/
 
 .tracker {
 	display: inline-block;
