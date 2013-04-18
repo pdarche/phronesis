@@ -11,7 +11,7 @@ app.GridView = Backbone.View.extend({
             $.get('/static/js/templates/grid.handlebars', function(tmpl){
                 self.template = tmpl
                 self.render()
-                self.renderHistogram()
+                self.renderCharts()
             })
 
         } else {
@@ -39,21 +39,21 @@ app.GridView = Backbone.View.extend({
 
     },
 
-    renderHistogram : function() {
+    renderCharts : function() {
 
         var self = this
 
-        $.when( 
-            $.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000&created_at__lte=1365375284')
-        )
-        .done(
-            function( data ){
+        // $.when( 
+        //     $.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000&created_at__lte=1365375284')
+        // )
+        // .done(
+        //     function( data ){
 
-                var hist = new app.Histogram({ el : $('.histogram'), model : { "data" : data } })
+                var hist = new app.Histogram({ el : $('.histogram'), model : { "data" : self.model } })
 
-                var line = new app.LineChart({ el : $('.line-chart'), model : { "data" : data } })
+                var line = new app.LineChart({ el : $('.line-chart'), model : { "data" : self.model } })
 
-                var scatter = new app.ScatterPlot({ el : $('.scatter-plot'), model : { "data" : data } })
+                var scatter = new app.ScatterPlot({ el : $('.scatter-plot'), model : { "data" : self.model } })
 
                 var map = new L.Map('map');
 
@@ -65,9 +65,9 @@ app.GridView = Backbone.View.extend({
                 map.setView(new L.LatLng(51.3, 0.7),9);
                 map.addLayer(osm);
 
-            }
+        //     }
 
-        )
+        // )
 
     },
 
@@ -85,6 +85,19 @@ app.GridView = Backbone.View.extend({
         $('.expanded').removeClass('expanded')
         $('.test-div').show()
 
-    }
+    },
+
+    changeActiveAdj : function( ev ) {
+
+        if ( !$(this).hasClass('active-adj') ){
+
+            console.log("changing this than")
+             var adjAccent = $(ev.target).html() + '-accent'
+             $('.active-adj').removeClass(currentAdj + ' active-adj')
+             $(this).addClass(adjAccent + ' active-adj')
+
+        }
+
+    } 
 
 })

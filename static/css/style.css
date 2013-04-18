@@ -284,7 +284,7 @@ p {
 
 /* ACCENTS */
 
-.accent-1 {
+/*.accent-1 {
 	border-bottom: 1px solid hsl(391, 93%, 56%);
 }
 
@@ -294,7 +294,7 @@ p {
 
 .accent-3 {
 	border-bottom: 1px solid hsl(200, 93%, 56%)
-}
+}*/
 
 /* NAV */
 #heading {
@@ -315,7 +315,7 @@ p {
 #nav_adjective_container div, #nav_container div {
 	display: inline-block;
 	color: white;
-	padding: 6px
+	padding: 6px 6px 7px 6px;
 }
 
 #nav_adjective_container p, #nav_container p {
@@ -486,7 +486,7 @@ row translation values:
 
 .sustainable-accent {
 	background-color: #00B25C;
-	color: white;
+	color: white;	
 }
 
 .healthy-accent {
@@ -962,7 +962,7 @@ path {
 
 .line {
     fill: none;
-    stroke: steelblue;
+    /*stroke: steelblue;*/
 }
 
 .histogram-container rect {

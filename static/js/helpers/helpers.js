@@ -181,6 +181,13 @@ var trackers = [
 		{ name : "Twitter" },
 		{ name : "Khan Academy" },
 		{ name : "Good Reads" },
-		{ name : "GitHub" },		
+		{ name : "GitHub" },
+		{ name : "WattVision" }		
 	]
+
+var accents = {
+	sustainable : '#00B25C',
+	healthy : '#FF8E00',
+	educated : '#FF4100'
+}
 

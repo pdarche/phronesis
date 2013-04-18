@@ -42,14 +42,18 @@ app.LineChart = Backbone.View.extend({
 
     renderChart : function( self ) {
 
+        var adj = $('.active-adj').html(),
+            accent = accents[adj]
+
         var ddv = self.prepData(),
-            data = ddv[0],
-            dates = ddv[1],
-            vals = ddv[2]
-            mean = ddv[3]
-            median = ddv[4]
-            mode = ddv[5]
-            sd = ddv[6]
+            data = ddv.data,
+            dates = ddv.dates,
+            vals = ddv.vals,
+            mean = ddv.mean,
+            median = ddv.median,
+            mode = ddv.mode,
+            sd = ddv.sd
+
 
         var round2 = d3.format(".02r");
 
@@ -68,7 +72,6 @@ app.LineChart = Backbone.View.extend({
 
         var vis = d3.select(classSelector).select('.vis-container')
             .append("svg:svg")
-            // .attr("transform", "translate(0," + 20 + ")")
             .attr("width", w + margin.left + margin.right)
             .attr("height", h + margin.top + margin.bottom + 50)
                 .append("svg:g")
@@ -82,7 +85,7 @@ app.LineChart = Backbone.View.extend({
             .attr("text-anchor", "middle")
             .attr("x", 270)
             .attr("y", 40)
-            .text("Steps Taken");
+            .text(ddv.title);
 
         //x-axis labels
         vis.append("text")
@@ -90,7 +93,7 @@ app.LineChart = Backbone.View.extend({
             .attr("text-anchor", "end")
             .attr("x", w)
             .attr("y", h - 10)
-            .text("Date");
+            .text(ddv.xAxis);
 
         //y-axis label
         vis.append("text")
@@ -100,10 +103,11 @@ app.LineChart = Backbone.View.extend({
             .attr("x", 0)
             .attr("dy", ".75em")
             .attr("transform", "rotate(-90)")
-            .text("Steps");        
+            .text(ddv.yAxis)
+            .style('color', 'gray')
 
 
-        var y = d3.scale.linear().domain([minVal, maxVal]).range([ h, 0 ]),
+        var y = d3.scale.linear().domain([0, maxVal]).range([ h, 0 ]),
             x = d3.time.scale().domain([minDate, maxDate]).range([ 0, w ]),
             yAxis = d3.svg.axis().scale(y).orient("left").tickSize(1)
 
@@ -201,6 +205,7 @@ app.LineChart = Backbone.View.extend({
                   .y(function(d) { return y(d.y) })
               )
               .style('stroke-width', 2)
+              .style('stroke', accent)
 
         var circles = vis.selectAll(".value")
                 .data(data)
@@ -208,7 +213,7 @@ app.LineChart = Backbone.View.extend({
         circles.enter().append("svg:circle")
             .attr("class", "value")
             .attr("fill", "none")
-            .attr("stroke", "steelblue")
+            .attr("stroke", accent)
             .transition()
                 .duration(500)
                 .attr("cx", function(d) {
@@ -223,7 +228,7 @@ app.LineChart = Backbone.View.extend({
             console.log(obj)
             d3.select(this)
                 .style('opacity', 1)
-                .style('fill', 'steelblue')
+                .style('fill', accent)
         })
         .on('mouseout', function(){
             d3.select(this)
@@ -246,15 +251,29 @@ app.LineChart = Backbone.View.extend({
 
         var data = [],
             dates = [],
-            vals = []
+            vals = [],
+            dataType = this.getDataType(),
+            x, y, title
 
         _.each( this.model.data, function(obj){
 
-            var datum = { x: obj.created_at, y : obj["steps"] }
+            if ( dataType === "mins_very_active" ){
+                var datum = { x: obj.created_at, y : obj[dataType] }
+                vals.push(obj[dataType])
+                x = "dates",
+                y = "minutes",
+                title = "Minutes Very Active"
+            } else if ( dataType === "power" ) {
+                var powerUsage = Math.floor(Math.random() * 2000) + 3000
+                var datum = { x: obj.created_at, y : powerUsage }
+                vals.push(powerUsage)
+                x = "dates",
+                y = "watts",
+                title = "Average Watts Per Day"
+            }
 
             data.push(datum)
             dates.push(obj.created_at)
-            vals.push(obj["steps"])
 
         })
 
@@ -263,7 +282,46 @@ app.LineChart = Backbone.View.extend({
             mode = j$(vals).mode(),
             sd = j$(vals).stdev()
 
-        return [ data, dates, vals, mean, median, mode, sd ]
+        return { 
+            data : data,
+            dates : dates,
+            vals : vals,
+            mean : mean,
+            median : median,
+            mode : mode,
+            sd : sd,
+            xAxis : x,
+            yAxis : y,
+            title : title
+        }
+
+    },
+
+    getDataType : function(){
+
+        var activeAdj = $('.active-adj').html()
+
+        var dataType
+
+        switch(activeAdj){
+            case "healthy":
+                console.log("steps")
+                dataType = "mins_very_active"
+                break
+            case "sustainable":
+                dataType = "power" 
+                console.log("power")
+                break
+            case "educated":
+                dataType = "books"
+                console.log("books")
+                break
+        }
+
+        return dataType
+    },
+
+    getDataInfo : function(){
 
     },
 
@@ -273,15 +331,6 @@ app.LineChart = Backbone.View.extend({
         $('.data-source').removeClass('data-source')
         $(ev.target).addClass('data-source')
         self.renderChart( self )
-
-        // $.when( $('.data-source').removeClass('data-source'))
-        // .done(
-        //     function(){
-        //         $(ev.target).addClass('data-source')
-        //         console.log("the target is ", ev.target)
-        //         self.renderChart( self )
-        //     }
-        // )
 
     },
 
@@ -302,5 +351,9 @@ app.LineChart = Backbone.View.extend({
         this.$el.remove()
 
     }
+
+
+
+
 
 })

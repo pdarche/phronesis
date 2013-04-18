@@ -119,9 +119,8 @@ app.DefineView = Backbone.View.extend({
 
     expandChosen : function(){
 
-
         this.$el.undelegate('.adjective-wrap', 'click')
-        $('.adjective-wrap').not('.chosen-adj').remove() 
+        $('.adjective-wrap').not('.chosen-adj').remove()
         $('#instructions p').html("These are <span id='three'>big</span> categories. More <span>precisely...</span>")
         //unbind adjective choice
         this.toggleSpecifics()
@@ -153,7 +152,6 @@ app.DefineView = Backbone.View.extend({
     addAccent : function( ev ){
 
         var accentClass = $('.adjective').not('.inactive').attr('class').split(" ")[1]
-        console.log(accentClass)
         $(ev.target).addClass(accentClass)
 
     },
