@@ -55,6 +55,8 @@ app.GridView = Backbone.View.extend({
 
                 var scatter = new app.ScatterPlot({ el : $('.scatter-plot'), model : { "data" : self.model } })
 
+                var descriptiveStats = new app.DescriptiveStats({ el : $('.descriptive-stats'), model : { "data" : self.model } })
+
                 var map = new L.Map('map');
 
                 // create the tile layer with correct attribution

@@ -824,12 +824,12 @@ rect {
 	margin: 15px
 }
 
-#range {
+/*#range {
 	margin: 15px;
 	text-align: center;
 	border: 1px solid #BBB;
 	padding: 10px;
-}
+}*/
 
 #date_range {
 	text-align: left;
@@ -966,9 +966,46 @@ path {
 }
 
 .histogram-container rect {
-	fill : steelblue;
+	/*fill : steelblue;*/
 	stroke: white;
 	fill-opacity : 1;	
+}
+
+#range {
+	float: left;
+}
+
+#range div{
+	/*display: inline-block;*/
+	margin-top: 10px;
+	/*text-align: center;*/
+}
+
+#center_and_spread div {
+	/*display: inline-block;*/
+}
+
+#center_and_spread p {
+	text-align: center;
+	margin: 5px;
+}
+
+#mean {
+	display: block;
+	width: 200px;
+	margin: 30px auto;
+	float: left;
+}
+
+#mean p {
+	font-size: 140px;
+	margin: 5px;
+	text-align: center;
+}
+
+#mean h5 {
+	margin: 5px;
+	text-align: center;
 }
 
 .destroy {
