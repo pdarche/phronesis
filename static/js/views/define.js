@@ -152,7 +152,7 @@ app.DefineView = Backbone.View.extend({
     addAccent : function( ev ){
 
         var accentClass = $('.adjective').not('.inactive').attr('class').split(" ")[1]
-        $(ev.target).addClass(accentClass)
+        $(ev.target).addClass(accentClass).css({"padding-left" : "40px"})
 
     },
 
@@ -160,7 +160,7 @@ app.DefineView = Backbone.View.extend({
         
         // console.log(ev.target)
         var toRemoveClass = $(ev.target).attr('class').split(" ")[1]
-        $('.adjective-attribute').removeClass(toRemoveClass)
+        $('.adjective-attribute').removeClass(toRemoveClass).css({"padding-left" : "10px"})
 
     },
 

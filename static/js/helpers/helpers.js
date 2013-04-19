@@ -68,7 +68,7 @@ var pieValues = {
 
 var adjectives = [
 	{ name : "healthy", attributes : [ "fun", "tasty", "pizza" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=health" }, 
-	{ name : "sustainable", attributes : [ "carbon-neutral", "cradel to cradel consumptions", "reduced energy use" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=sustainability" }, 
+	{ name : "sustainable", attributes : [ "carbon-neutral", "cradel to cradel consumptions", "reduced energy use", "reduce consumption" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=sustainability" }, 
 	{ name : "intelligent", attributes : [ "working memory", "spatial reasoning", "abstract reasoning" ], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=intelligence"},
 	{ name : "generous", attributes : [ "microloans", "friends birthdays", "pizza time"], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=generosity"}, 
 	{ name : "courageous", attributes : [ "don't run away when scary things happen"], wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=courage"},
@@ -93,7 +93,7 @@ var adj = {
 		actions : [ "exercise 45 minutes per day", "quite smoking", "limit saturated fat intake to less than 20 grams per day", "limit sodium intake to 2400mg per day", "limit alchohol consumption to 1 drink per day (average)", "reduce stress" ] 
 	}, 
 	"sustainable" : { 
-		attributes : [ "reduce carbon footprint", "reduce waste", "reduce energy use" ],
+		attributes : [ "reduce carbon footprint", "reduce waste", "reduce energy use", "reduce meat consumption" ],
 		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=sustainability",
 		actions : ["limit carbon footprint to 2 tons per year", "limit electricity consumption to 1000 Watts per year", "purchase primarily from B Corporations"]
 	},
@@ -158,7 +158,7 @@ var adj = {
 		actiosn : []
 	},
 	"educated" : { 
-		attributes : ["read the Western Cannon", "more things", "pizza" ], 
+		attributes : ["expand my literary knowledge", "expand my scientific knowledge", "expand my historical knowledge", "expand my mathematical knowledge", "expand my social scientific knowledge" ], 
 		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=education",
 		actiosn : []
 	},

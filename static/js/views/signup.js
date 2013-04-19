@@ -11,7 +11,9 @@ app.Login = Backbone.View.extend({
             $.get('/static/js/templates/landingpage.handlebars', function(tmpl){
                 self.template = tmpl;
                 self.render();
-                setTimeout(self.updateGreeting, 1600)
+                $('#greeting p').removeClass('hidden-way-top')
+                setTimeout(self.updateGreeting, 1800)
+
             })
 
         } else {
@@ -34,11 +36,12 @@ app.Login = Backbone.View.extend({
 
     events : {
 
-        "click #signup_button" : "login"
+        "click #signup_button" : "signup",
+        "click .signup-container span a" : "signin"
 
     },
 
-    login : function() {
+    signup : function() {
 
         this.accept()
         // var self = this,
@@ -49,6 +52,14 @@ app.Login = Backbone.View.extend({
         // $.post('v1/login', postData, function(res){
         //     res === "success" ? self.accept() : self.reject
         // })
+
+    },
+
+    signin : function( ev ){
+
+        ev.preventDefault()
+        $('#re-enter').fadeOut()
+        $('#signup_button').html("sign in")
 
     },
 
@@ -158,7 +169,8 @@ app.Login = Backbone.View.extend({
                 })
             })
 
-        $('.signup-container').addClass('accept')
+        $('.signup-container').addClass('accept-top')
+        $('.logo-container').delay(500).addClass('accept-left')
         setTimeout( self.move, 500)
 
     },
@@ -183,7 +195,7 @@ app.Login = Backbone.View.extend({
 
         $('#greeting').children().fadeOut('fast').queue( function(){
             $(this).remove()
-            $('#greeting').append('<p>sign in <span style="font-size : 40px; color: steelblue"> or sign up</span></p>')
+            $('#greeting').append('<p>sign up <span> or <a href="#">sign in</a></span></p>')
                           .hide().fadeIn()
         })
         
