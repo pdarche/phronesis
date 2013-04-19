@@ -41,8 +41,9 @@ app.WhatView = Backbone.View.extend({
         $('#instructions').removeClass('hidden-top')
 
         $('.nav-adjective').each(function(){
-            var selector = '#' + $(this).html()
-            $(selector).parent().addClass('chosen-adj')
+            var selector = '#' + $(this).html(),
+                accentClass = $(this).html() + "-accent"
+            $(selector).parent().addClass('chosen-adj').children().addClass(accentClass)
         })
 
     },

@@ -51,8 +51,6 @@ app.Histogram = Backbone.View.extend({
         var min = d3.min(values),
             max = d3.max(values)
 
-        console.log(min)
-
         var classSelector = '.histogram'
 
         // A formatter for counts.

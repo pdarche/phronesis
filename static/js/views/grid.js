@@ -57,6 +57,8 @@ app.GridView = Backbone.View.extend({
 
                 var descriptiveStats = new app.DescriptiveStats({ el : $('.descriptive-stats'), model : { "data" : self.model } })
 
+                var subsets = new app.Subsets({ el : $('.subsets'), model : { "data" : self.model } })
+
                 var map = new L.Map('map');
 
                 // create the tile layer with correct attribution

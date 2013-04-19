@@ -469,22 +469,22 @@ row translation values:
 
 /* COLORS */
 
-#adjective_container .chosen-adj .sustainable-accent {
+#adjective_container .chosen-adj .sustainable-accent, .sustainable-accent, .adjective .sustainable-accent {
 	background-color: #00B25C;
 	color: white;
 }
 
-#adjective_container .chosen-adj .healthy-accent {
+#adjective_container .chosen-adj .healthy-accent, .healthy-accent, .adjective .healthy-accent {
 	background-color: #FF8E00;
 	color: white;
 }
 
-#adjective_container .chosen-adj .educated-accent {
+#adjective_container .chosen-adj .educated-accent, .educated-accent, .adjective .educated-accent {
 	background-color: #FF4100;
 	color: white;
 }
 
-.sustainable-accent {
+ {
 	background-color: #00B25C;
 	color: white;	
 }
@@ -1039,6 +1039,13 @@ rect {
 	padding: 15px;
 	box-shadow: 0px 2px 8px gray;
 	display: inline-block;	
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
 }
 
 path {

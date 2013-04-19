@@ -58,7 +58,7 @@ app.AddTrackers = Backbone.View.extend({
         $('#heading').fadeIn()
         var adjAccent = $('.active-adj').html() + '-accent'
         $('.active-adj').addClass(adjAccent)
-        window.location.hash = 'how'
+        window.location.hash = 'why'
 
     }
 
