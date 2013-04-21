@@ -88,14 +88,16 @@ var adjectives = [
 
 var adj = {
 	"healthy" : { 
-		attributes : [ "improve my cardiovascular health", "improve my musculoskelatal health", "improve my mental health", "improve my resparitory health" ], 
+		attributes : [ "improve my cardiovascular health", "improve my musculoskelatal health", "improve my mental health", "improve my respiratory health" ], 
 		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=health",
-		actions : [ "exercise 45 minutes per day", "quite smoking", "limit saturated fat intake to less than 20 grams per day", "limit sodium intake to 2400mg per day", "limit alchohol consumption to 1 drink per day (average)", "reduce stress" ] 
+		actions : [ "exercise 45 minutes per day", "quite smoking", "limit saturated fat intake to less than 20 grams per day", "limit sodium intake to 2400mg per day", "limit alchohol consumption to 1 drink per day (average)", "reduce stress" ],
+		actions_heading : "Experts in cardiovascular health recommend"
 	}, 
 	"sustainable" : { 
 		attributes : [ "reduce carbon footprint", "reduce waste", "reduce energy use", "reduce meat consumption" ],
 		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=sustainability",
-		actions : ["limit carbon footprint to 2 tons per year", "limit electricity consumption to 1000 Watts per year", "purchase primarily from B Corporations"]
+		actions : ["limit carbon footprint to 2 tons per year", "limit electricity consumption to 1000 Watts per year", "purchase primarily from B Corporations"],
+		actions_heading : "Sustainability experts recommend"
 	},
 	"intelligent" : { 
 		attributes : [ "working memory", "spatial reasoning", "abstract reasoning" ], 
@@ -160,7 +162,8 @@ var adj = {
 	"educated" : { 
 		attributes : ["expand my literary knowledge", "expand my scientific knowledge", "expand my historical knowledge", "expand my mathematical knowledge", "expand my social scientific knowledge" ], 
 		wiki_url : "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&rvsection=0&titles=education",
-		actiosn : []
+		actions : [ "eat pizza", "eat more pizza", "eat a lot of pizza" ],
+		actions_heading : "Education experts recommend"
 	},
 	"wise" : { 
 		attributes : ["some things ", "stuff", "pizza" ], 

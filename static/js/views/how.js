@@ -12,12 +12,21 @@ app.HowView = Backbone.View.extend({
                 self.template = tmpl
                 self.render()
 
+                console.log("initializing")
+
                 var activeAdj = $('#adjective_1').html(),
                     actions = new app.ActionsView({ 
                         el : $('#action_list'),
                         model : adj[activeAdj]
                     })
+
+                // var currentStatus = new app.CurrentStatusView({
+                //     el : $(),
+                //     model : 
+                // })
+
                 $('#action_container, .how-rect, .action-wrap').css('opacity', 1)
+                //this should change with global heading 
                 $('#adjective_1').addClass('active-adj')
                  
             })
@@ -40,21 +49,36 @@ app.HowView = Backbone.View.extend({
 
     events : {
 
-        "click .action" : "toggleAction"
+        "click .action" : "toggleAction",
+        "click #triggers_heading" : "toggleTriggers"
 
     },
 
     toggleAdjective : function( ev ){
-
-        console.log("being clicked")
+        
         var selectedAdj = $('active-adj').html()
         console.log(selectedAdj)
 
     },
 
-    toggleAction : function(){
+    toggleAction : function( ev ){
 
-        console.log("clicking action")
+        var accentClass = $('.active-adj').html() + "-accent"
+        $('.chosen-action').removeClass(accentClass).removeClass('chosen-action')
+        $(ev.target).addClass(accentClass + ' chosen-action')
+
+    },
+
+    toggleTriggers : function(){
+
+        console.log("toggling")
+
+        $('.col-2').hasClass('grid-6') ? $('.col-2').removeClass('grid-6').addClass('grid-3') :
+                                        $('.col-2').addClass('grid-6').removeClass('grid-3')
+
+
+        $('.col-3').hasClass('grid-3') ? $('.col-3').removeClass('grid-3').addClass('grid-6') :
+                                        $('.col-3').addClass('grid-3').removeClass('grid-6')                                        
 
     }
 

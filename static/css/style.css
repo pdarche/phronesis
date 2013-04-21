@@ -568,6 +568,10 @@ row translation values:
 
 /* HOW */
 
+#action_list h2 {
+	padding: 0px 20px;
+}
+
 #how_content .col-1 {
 	margin-left: 30px; 
 }
@@ -584,25 +588,40 @@ row translation values:
 	-webkit-transition: all 250ms ease-in;
 }
 
+.how-rect, .col-2 div, .col-3 div {
+	-webkit-transition: all 250ms ease-in;	
+}
+
 
 #action_container {
 	background-color: white;
 	float: left;
 	opacity: 0;
-	-webkit-transition: all 500ms ease-in;
+	-webkit-transition: all 200ms ease-in;
 }
 
 #action_container .action-wrap {
 	display: block;
-	padding: 10px;
+	/*padding: 10px;*/
 	font-size: 20px;
-	margin: 20px;
+	margin: 10px 20px;
 	border-bottom: 1px solid #333;
 }
 
 #action_container .action-wrap div {
 	font-size: 14px;
 	opacity: 1;
+	padding: 10px 0px 10px 10px;	
+	-webkit-transition : all 200ms ease-in;
+}
+
+#action_container .action-wrap div:hover {
+	cursor:pointer;
+}
+
+#action_container .action-wrap .chosen-action {
+	font-size: 18px;
+	padding-right: 10px;
 }
 
 /**/

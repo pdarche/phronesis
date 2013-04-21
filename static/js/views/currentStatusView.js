@@ -28,9 +28,10 @@ app.ActionsView = Backbone.View.extend({
 
         this.$el.empty()
 
+
         var source = $(this.template).html();
         var template = Handlebars.compile( source );
-        this.$el.append( template( { "actions" : this.model.actions, "actions_heading" : this.model.actions_heading }) );
+        this.$el.append( template();
         $('#action_list').hide().fadeIn()
 
     }
