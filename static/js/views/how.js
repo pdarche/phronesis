@@ -12,21 +12,23 @@ app.HowView = Backbone.View.extend({
                 self.template = tmpl
                 self.render()
 
-                console.log("initializing")
-
-                var activeAdj = $('#adjective_1').html(),
-                    actions = new app.ActionsView({ 
+                var activeAdj = $('#adjective_1').html()
+                
+                var actions = new app.ActionsView({ 
                         el : $('#action_list'),
                         model : adj[activeAdj]
                     })
 
-                // var currentStatus = new app.CurrentStatusView({
-                //     el : $(),
-                //     model : 
-                // })
+                var currentStatus = new app.CurrentStatusView({ 
+                        el : $('#current_status_content')
+                    })
+
+                var triggers = new app.TriggersView({ 
+                        el : $('#triggers_content')
+                    })
 
                 $('#action_container, .how-rect, .action-wrap').css('opacity', 1)
-                //this should change with global heading 
+                //this should change with global heading
                 $('#adjective_1').addClass('active-adj')
                  
             })

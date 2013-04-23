@@ -1,0 +1,22 @@
+<script id="triggers_partial" type="x-handlebars-template">
+	<div class="trigger-container" id="spatial_triggers">
+		<div id="spatial_trigger_control_container">
+			<h3>Spatial Triggers</h3>
+			<ul>
+				<li id="current_triggers">Current Triggers</li>
+				<li id="add_trigger">Add Triggers</li>
+			</ul>
+			<div id="trigger_map"></div>
+			<input type="text" id="space_trigger_distance" placeholder="input distance (in miles)"> from
+			<input type="text" id="space_trigger_search" placeholder="search for location">
+			<button>add trigger</button>
+			<textarea id="space_textarea" placeholder="Add your message" cols="34"></textarea>
+		</div>
+	</div>
+	<div class="trigger-container" id="temporal_triggers">
+		<h3>Temporal Triggers</h3>
+		<div id="datetime_container"></div>
+		<input type="text" id="temporal_trigger" placeholder="click to add temporal trigger">
+		<textarea id="time_textarea" placeholder="Add your message"></textarea>
+	</div>
+</script>
