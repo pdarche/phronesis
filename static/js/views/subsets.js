@@ -1,8 +1,8 @@
 var app = app || {};
 
-app.LineChart = Backbone.View.extend({
+app.Subsets = Backbone.View.extend({
     tagName : 'div',
-    className : 'line-chart',
+    className : 'subsets',
 
     initialize : function() {
 
@@ -10,7 +10,7 @@ app.LineChart = Backbone.View.extend({
 
         if ( !($.isFunction(this.template)) ){
 
-            $.get('/static/js/templates/lineChart.handlebars', function(tmpl){
+            $.get('/static/js/templates/subsets.handlebars', function(tmpl){
                 self.template = tmpl
                 self.render()
                 self.renderChart( self )
@@ -45,19 +45,15 @@ app.LineChart = Backbone.View.extend({
         var adj = $('.active-adj').html(),
             accent = accents[adj]
 
-        var ddv = self.prepData(),
-            data = ddv.data,
-            dates = ddv.dates,
-            vals = ddv.vals,
-            mean = ddv.mean,
-            median = ddv.median,
-            mode = ddv.mode,
-            sd = ddv.sd
-
+        var returnedData = this.prepData(),            
+            data = returnedData.data
+            values = returnedData.vals,
+            dates = returnedData.dates,
+            title = returnedData.title
 
         var round2 = d3.format(".02r");
 
-        var classSelector = '.line-chart'
+        var classSelector = '.subsets'
 
         var margin = {top: 60, right: 30, bottom: 20, left: 50},
             w = this.$el.width() - margin.left - margin.right,
@@ -66,9 +62,7 @@ app.LineChart = Backbone.View.extend({
         d3.select(classSelector).select('svg').remove()
 
         var minDate = new Date(d3.min(dates) * 1000),
-            maxDate = new Date(d3.max(dates) * 1000),
-            minVal = d3.min(vals)
-            maxVal = d3.max(vals)
+            maxDate = new Date(d3.max(dates) * 1000)
 
         var vis = d3.select(classSelector).select('.vis-container')
             .append("svg:svg")
@@ -84,135 +78,39 @@ app.LineChart = Backbone.View.extend({
             .attr("class", "title")
             .attr("text-anchor", "middle")
             .attr("x", 270)
-            .attr("y", 40)
-            .text(ddv.title);
+            .attr("y", 20)
+            .text(title);
 
-        //x-axis labels
-        vis.append("text")
-            .attr("class", "x label")
-            .attr("text-anchor", "end")
-            .attr("x", w)
-            .attr("y", h - 10)
-            .text(ddv.xAxis);
-
-        //y-axis label
-        vis.append("text")
-            .attr("class", "y label")
-            .attr("text-anchor", "end")
-            .attr("y", 6)
-            .attr("x", 0)
-            .attr("dy", ".75em")
-            .attr("transform", "rotate(-90)")
-            .text(ddv.yAxis)
-            .style('color', 'gray')
-
-
-        var y = d3.scale.linear().domain([0, maxVal]).range([ h, 0 ]),
-            x = d3.time.scale().domain([minDate, maxDate]).range([ 0, w ]),
-            yAxis = d3.svg.axis().scale(y).orient("left").tickSize(1)
+        var x = d3.time.scale().domain([minDate, maxDate]).range([ 0, w ])
 
         var xAxis = d3.svg.axis()
             .scale(x)
             .orient('bottom')
-            .ticks(6)
+            .ticks(10)
             .tickFormat(d3.time.format('%b %d'))
             .tickSize(0)
             .tickPadding(5);
 
-        d3.select(classSelector).selectAll('.x.axis')
-            .attr('y', h)
-            .transition(500)
-            .style("fill-opacity", 0)
-            .remove()
-
         vis.append('svg:g')
             .attr('class', 'x axis')
-            .attr('transform', 'translate(0, ' + h + ')')
+            .attr('transform', 'translate(0, ' + ( h - 5 ) + ')')
             .call(xAxis);
 
-        //yticks
-        d3.select(classSelector).selectAll('.y.axis')
-            .transition(500)
-            .style("fill-opacity", 0)
-            .remove()
+        d3.select(classSelector).selectAll('.axis').selectAll('text')
+            .attr("transform", "rotate(90)")
+            .attr("x", 25)
+            .attr("y", 0)
+            .style('font-size', 12)
+            .style('fill', 'gray')
+            .attr("text-anchor", "start");
 
-        vis.append("svg:g")
-            .attr("class", "y axis")
-            .attr("transform", "translate(0,0)")
-            .style('fill-opacity', 0)
-            .call(yAxis)
-            .transition(500)
-            .style('fill-opacity', 1)
-
-        var grays = vis.selectAll(".gray-line")
-             .data(y.ticks(10), function(d) { return d })
-           
-        grays.enter().insert("line")
-             .attr("x1", 0)
-             .attr("x2", w)
-             .attr("y1", y)
-             .attr("y2", y)
-             .attr("class", "gray-line")
-             .style("stroke", "#bbb")
-
-        grays.exit()
-            .transition()
-                .duration(500)
-                .style('fill-opacity', 0)
-                .remove()
-
-        var meanLine = vis.append("svg:g")
-              .data([mean])
-                .attr("id", "mean")
-                .attr("transform", "translate(0," + y(mean) + ")")
-
-        meanLine.append("line")
-             .attr("id", "mean_line")
-             .attr("x1", 0 )
-             .attr("x2", w)
-             .attr("y1", 0)
-             .attr("y1", 0)
-             .style("stroke", "444")
-             .style("stroke-width", "2px")
-
-        meanLine.append("text")
-            .text(function(d){ return "mean: " + round2(d)})
-            .attr("id", "mean_text")
-            .attr("x", 5)
-            .attr("dy", 10)
-            .style("font-size", 10)
-
-        meanLine.append("text")
-            .text(function(d){ return "stdev: " + round2(sd)})
-            .attr("id", "sd_text")
-            .attr("x", 5)
-            .attr("dy", 20)
-            .style("font-size", 10)
-
-        var path = vis.append("g").selectAll("path.line")
-            .data([data])
-
-        path.enter().append("svg:path")
-          .attr("class", "line")
-          .attr("d", d3.svg.line().x(0).y(0) )
-          .transition()
-              .attr("d", d3.svg.line()
-                  .interpolate("cardinal")
-                  .x(function(d) {
-                    var date = new Date(d.x * 1000)
-                    return x(date) 
-                  })
-                  .y(function(d) { return y(d.y) })
-              )
-              .style('stroke-width', 2)
-              .style('stroke', accent)
+        console.log("the vis is ", vis)
 
         var circles = vis.selectAll(".value")
                 .data(data)
 
         circles.enter().append("svg:circle")
             .attr("class", "value")
-            .attr("fill", "none")
             .attr("stroke", accent)
             .transition()
                 .duration(500)
@@ -220,20 +118,30 @@ app.LineChart = Backbone.View.extend({
                     var date = new Date(d.x * 1000)
                     return x(date)
                 })
-                .attr("cy", function(d) { return y(d.y); })
+                .attr("cy", function(d) { 
+                    var yPos
+                    d.y >= 10000 ? yPos = -10 : yPos = 30
+                    return yPos; 
+                })
                 .attr("r", 4)
-            .style("opacity", 0)
+                // .attr("fill", accent)
+                .attr("fill", function(d){
+                    var stroke
+                    d.y >= 10000 ? stroke = "green" : stroke = "red"
+                    return stroke;   
+                })
+            // .style("opacity", 0)
 
-        circles.on('mouseover',function(obj){
-            console.log(obj)
-            d3.select(this)
-                .style('opacity', 1)
-                .style('fill', accent)
-        })
-        .on('mouseout', function(){
-            d3.select(this)
-                .style('opacity', 0)
-        })
+        // circles.on('mouseover',function(obj){
+        //     console.log(obj)
+        //     d3.select(this)
+        //         .style('opacity', 1)
+        //         .style('fill', accent)
+        // })
+        // .on('mouseout', function(){
+        //     d3.select(this)
+        //         .style('opacity', 0)
+        // })
 
         circles.exit()
             .transition()
@@ -244,6 +152,7 @@ app.LineChart = Backbone.View.extend({
                 })
                 .attr("cy", function(d) { return y(d.y); })
             .remove();
+
 
     },
 
@@ -257,12 +166,12 @@ app.LineChart = Backbone.View.extend({
 
         _.each( this.model.data, function(obj){
 
-            if ( dataType === "mins_very_active" ){
+            if ( dataType === "steps" ){
                 var datum = { x: obj.created_at, y : obj[dataType] }
                 vals.push(obj[dataType])
                 x = "dates",
                 y = "minutes",
-                title = "Minutes Very Active"
+                title = "Over or Under 10,000 Steps"
             } else if ( dataType === "power" ) {
                 var powerUsage = Math.floor(Math.random() * 2000) + 3000
                 var datum = { x: obj.created_at, y : powerUsage }
@@ -306,7 +215,7 @@ app.LineChart = Backbone.View.extend({
         switch(activeAdj){
             case "healthy":
                 console.log("steps")
-                dataType = "mins_very_active"
+                dataType = "steps"
                 break
             case "sustainable":
                 dataType = "power" 
@@ -321,10 +230,6 @@ app.LineChart = Backbone.View.extend({
         return dataType
     },
 
-    getDataInfo : function(){
-
-    },
-
     changeDataSource : function( ev ) {
         var self = this
 
@@ -334,26 +239,10 @@ app.LineChart = Backbone.View.extend({
 
     },
 
-    addDataSource : function() {
-
-
-
-    },
-
-    removeDataSource : function() {
-
-
-
-    },
-
     removeChart : function(){
 
         this.$el.remove()
 
     }
-
-
-
-
 
 })

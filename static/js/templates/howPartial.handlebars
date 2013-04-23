@@ -1,0 +1,10 @@
+<script id="how_adjective_partial" type="x-handlebars-template">
+	<div>
+		<h2>{{actions_heading}}</h2>
+	</div>
+	{{#each actions}}
+		<div class="action-wrap">
+			<div id="{{ this }}" class="action">{{ this }}</div>
+		</div>
+	{{/each}}
+</script>

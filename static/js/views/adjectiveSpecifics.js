@@ -25,15 +25,6 @@ app.AdjectiveSpecifics = Backbone.View.extend({
 
     render : function() {
 
-        // $.when( $.getJSON(this.model.wiki_url) )
-        //  .done(
-        //     function(data){
-        //         var pageId = Object.keys(data.query.pages)[0],
-        //             content = data.query.pages[pageId].revisions[0]
-        //         $('#wiki_definition').html(wiky.process(content["*"]))
-        //     }
-        //  )
-
         var source = $(this.template).html()
         var template = Handlebars.compile( source );
         this.$el.html( template( this.model ) )

@@ -26,6 +26,7 @@
 		<script type="text/javascript" src="{{ static_url("js/vendor/handlebars.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/backbone.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/jstat.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/vendor/timepicker.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/colorbrewer.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/jquery.isotope.min.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/wiki2html.js") }}"></script>
@@ -43,9 +44,15 @@
 		<script type="text/javascript" src="{{ static_url("js/views/histogram.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/pieChart.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/scatterPlot.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/views/descriptiveStats.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/views/subsets.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/define.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/grid.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/what.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/views/how.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/views/actions.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/views/triggers.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/views/currentStatus.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/profile.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/adjectiveSpecifics.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/addTrackers.js") }}"></script>
@@ -64,15 +71,15 @@
 	<body>
 		<div id="heading">
 			<div id="nav_adjective_container">		
-				<div id="adjective_1" class="nav-adjective active-adj accent-1"><p></p></div>
-				<div id="adjective_2" class="nav-adjective accent-2"><p></p></div>
-				<div id="adjective_3" class="nav-adjective accent-3"><p></p></div>
+				<div id="adjective_1" class="nav-adjective active-adj"><p></p></div>
+				<div id="adjective_2" class="nav-adjective"><p></p></div>
+				<div id="adjective_3" class="nav-adjective"><p></p></div>
 			</div>
 			<div id="nav_container">
 				<div id="profile" class="nav-element"><p>pdarche</p></div>
-				<div id="what" class="nav-element"><p>What</p></div>
-				<div id="why" class="nav-element"><p>Why</p></div>
-				<div id="how" class="nav-element"><p>How</p></div>
+				<div id="what" class="nav-element"><p>Define</p></div>
+				<div id="why" class="nav-element"><p>Explore</p></div>
+				<div id="how" class="nav-element"><p>Improve</p></div>
 			</div>
 		</div>
 		<div id="content_container"></div>

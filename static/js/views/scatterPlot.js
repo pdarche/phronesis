@@ -42,6 +42,9 @@ app.ScatterPlot = Backbone.View.extend({
 
     renderChart : function( self ) {
 
+        var adj = $('.active-adj').html(),
+            accent = accents[adj]
+
         var returned = this.prepData()
             values = returned[0],
             xVals = returned[1],
@@ -100,6 +103,25 @@ app.ScatterPlot = Backbone.View.extend({
             .transition(500)
             .style('fill-opacity', 1)
 
+        //x-axis labels
+        svg.append("text")
+            .attr("class", "xlabel")
+            .attr("text-anchor", "end")
+            .attr("x", width)
+            .attr("y", height - 10)
+            .text("steps");
+
+        //y-axis label
+        svg.append("text")
+            .attr("class", "ylabel")
+            .attr("text-anchor", "end")
+            .attr("y", 6)
+            .attr("x", 0)
+            .attr("dy", ".75em")
+            .attr("transform", "rotate(-90)")
+            .text("calories")
+            .style('color', 'gray')
+
         svg.selectAll("circle")
            .data(values)
           .enter()
@@ -111,7 +133,7 @@ app.ScatterPlot = Backbone.View.extend({
                 return y(d[1]);
            })
            .attr("r", 5)
-           .style('fill', 'steelblue')
+           .style('fill', accent)
            .style('fill-opacity', .4)
 
         var grays = svg.selectAll(".scatter-gray-y")

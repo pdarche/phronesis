@@ -1,17 +1,16 @@
 
 $(document).ready(function(){
 
-			window.location.hash = 'login';
-
 			var AppRouter = Backbone.Router.extend({
 				routes: {
-					"login": "index",
+					"": "index",
 					"nutrition" : "nutrition",
 					"landingpage" : "landingpage",
 					"query" : "query",
 					"define" : "define",
 					"what" : "what",
 					"why" : "why",
+					"how" : "how",
 					"profile" : "profile",
 					"addTrackers" : "addTrackers"
 				}
@@ -25,17 +24,39 @@ $(document).ready(function(){
 			})
 
 			$('.nav-adjective').click(function(){
+
+				var currentAdj = $('.active-adj').html() + '-accent'
 				
-				var index = $(this).index() + 1,
-					newAccent = $(this).attr('class').match(/accent-[0-9]/g)[0]
+				if ( !$(this).hasClass('active-adj') ){
 
-				$('.active-adj').removeClass('active-adj')
-				$(this).addClass('active-adj')
+					var adjAccent = $(this).html() + '-accent'
+					$('.active-adj').removeClass(currentAdj + ' active-adj')
+					$(this).addClass(adjAccent + ' active-adj')
 
-				$('[class*="accent"]').not('.nav-adjective').removeClass(function(i, c) {
-				  console.log(c.match(/accent-[0-9]/g)[0])
-				  return c.match(/accent-[0-9]/g)[0]
-				}).addClass(newAccent)
+				}
+
+				if ( window.location.hash === '#what' ){
+				
+
+				
+				} else if ( window.location.hash === '#why') {
+
+					$.when( 
+						$.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000&created_at__lte=1365375284')
+					 )
+					 .done( function(data){
+
+					 	var why = new app.GridView({ el : $('#content_container'), model : data })
+
+					 })
+
+				} else {					
+	            	var activeAdj = $('.active-adj').html(),
+	                actions = new app.ActionsView({
+	                    el : $('#action_list'),
+	                    model : adj[activeAdj]
+	                })
+				}
 
 			})
 			
@@ -75,13 +96,27 @@ $(document).ready(function(){
 
 		    app_router.on('route:why', function(){
 
-		    	var define = new app.GridView({ el : $('#content_container')})
+		    	// var why = new app.GridView({ el : $('#content_container')})
+	    		$.when(
+					$.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000&created_at__lte=1365375284')
+				 )
+				 .done( function(data){
+
+				 	var why = new app.GridView({ el : $('#content_container'), model : data })
+
+				 })
 
 		    })
 
 		   	app_router.on('route:what', function(){
 
-		    	var define = new app.WhatView({ el : $('#content_container')})
+		    	var what = new app.WhatView({ el : $('#content_container')})
+
+		    })
+
+			app_router.on('route:how', function(){
+
+		    	var how = new app.HowView({ el : $('#content_container') })
 
 		    })
 
@@ -93,7 +128,7 @@ $(document).ready(function(){
 
 		    app_router.on('route:addTrackers', function(){
 
-		    	var trackers = new app.AddTrackers({ el : $('#content_container')})
+		    	var trackers = new app.AddTrackers( { el : $('#content_container') })
 
 		    })
 

@@ -56,7 +56,9 @@ app.AddTrackers = Backbone.View.extend({
     showProfile : function( ev ){
 
         $('#heading').fadeIn()
-        window.location.hash = 'profile'
+        var adjAccent = $('.active-adj').html() + '-accent'
+        $('.active-adj').addClass(adjAccent)
+        window.location.hash = 'why'
 
     }
 

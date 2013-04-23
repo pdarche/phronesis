@@ -1,12 +1,19 @@
 <script id="landingpage" type="text/x-handlebars-template">
-	<div class="signup-container grid-6">
-		<div id="greeting">
-			<p>hello.</p>
+	<div id="landing_container" class="grid-10">
+		<div class="logo-container grid-6">
+			<h1 id="logo">Phronesis</h1>
+			<h2 id="slogan">improve yourself, improve the world</h2>
 		</div>
-		<div>	
-			<input id="username" class="signup" type="text" placeholder="email"></input>
-			<input id="password" class="signup" type="password" placeholder="password"></input>
-			<button id="signup_button" type="submit">GO!</buttom>
+		<div class="signup-container grid-5">
+			<div id="greeting">
+				<p class="hidden-way-top">hello.</p>
+			</div>
+			<div id="input_container">	
+				<input id="username" class="signup" type="text" placeholder="email"></input>
+				<input id="password" class="signup" type="password" placeholder="password"></input>
+				<input id="re-enter" class="signup" type="password" placeholder="re-enter password"></input>
+				<button id="signup_button" type="submit">sign up</buttom>
+			</div>
 		</div>
 	</div>
 </script>

@@ -261,7 +261,7 @@ p {
 	opacity: 0;
 }
 
-.exploration-heading{
+.exploration-heading, .how-heading{
 	position: relative;
 	color: #333;
 	background-color: #eee;
@@ -284,7 +284,7 @@ p {
 
 /* ACCENTS */
 
-.accent-1 {
+/*.accent-1 {
 	border-bottom: 1px solid hsl(391, 93%, 56%);
 }
 
@@ -294,7 +294,7 @@ p {
 
 .accent-3 {
 	border-bottom: 1px solid hsl(200, 93%, 56%)
-}
+}*/
 
 /* NAV */
 #heading {
@@ -315,7 +315,7 @@ p {
 #nav_adjective_container div, #nav_container div {
 	display: inline-block;
 	color: white;
-	padding: 6px
+	padding: 6px 6px 7px 6px;
 }
 
 #nav_adjective_container p, #nav_container p {
@@ -344,6 +344,8 @@ p {
 }
 
 /**/
+
+/* GRID */
 
 .grid-12 {
 	width: 96%;
@@ -399,6 +401,10 @@ p {
 }
 .row-5 {
 	height: 500px;
+}
+
+.row-6 {
+	height: 615px;
 }
 
 .col{
@@ -458,6 +464,42 @@ row translation values:
 6 row: ;
 
 */
+
+/**/
+
+/* COLORS */
+
+#adjective_container .chosen-adj .sustainable-accent, .sustainable-accent, .adjective .sustainable-accent {
+	background-color: #00B25C;
+	color: white;
+}
+
+#adjective_container .chosen-adj .healthy-accent, .healthy-accent, .adjective .healthy-accent {
+	background-color: #FF8E00;
+	color: white;
+}
+
+#adjective_container .chosen-adj .educated-accent, .educated-accent, .adjective .educated-accent {
+	background-color: #FF4100;
+	color: white;
+}
+
+ {
+	background-color: #00B25C;
+	color: white;	
+}
+
+.healthy-accent {
+	background-color: #FF8E00;
+	color: white;
+}
+
+.educated-accent {
+	background-color: #FF4100;
+	color: white;
+}
+
+/**/
 
 /*   LINE CHART */
 
@@ -524,11 +566,156 @@ row translation values:
 
 /**/
 
-.signup-container {
+/* HOW */
+
+#action_list h2 {
+	padding: 0px 20px;
+}
+
+#how_content .col-1 {
+	margin-left: 30px; 
+}
+
+#how_content  .col-1, #how_content  .col-2, #how_content  .col-3 {
+	float: left;
+	height: 100%;
+}
+/*.col-1 div, .col-2 div, .col-3 div*/
+.how-rect {
+	background-color: white;
+	margin: 0px 15px 15px 0px;
+	opacity: 0;
+	-webkit-transition: all 250ms ease-in;
+}
+
+.how-rect, .col-2 div, .col-3 div {
+	-webkit-transition: all 250ms ease-in;	
+}
+
+
+#action_container {
+	background-color: white;
+	float: left;
+	opacity: 0;
+	-webkit-transition: all 200ms ease-in;
+}
+
+#action_container .action-wrap {
+	display: block;
+	/*padding: 10px;*/
+	font-size: 20px;
+	margin: 10px 20px;
+	border-bottom: 1px solid #333;
+}
+
+#action_container .action-wrap div {
+	font-size: 14px;
+	opacity: 1;
+	padding: 10px 0px 10px 10px;	
+	-webkit-transition : all 200ms ease-in;
+}
+
+#action_container .action-wrap div:hover {
+	cursor:pointer;
+}
+
+#action_container .action-wrap .chosen-action {
+	font-size: 18px;
+	padding-right: 10px;
+}
+
+#count_container, .current-status .vis-container {
 	position: relative;
-	top: 150px;
+	float: left;
+	height: 100%;
+}
+
+#count_container {
+	margin: 20px;
+}
+
+#count_container h3 {
+	margin: 0px
+}
+
+#trigger_map {
+	width: 100%;
+	height: 200px;
+	margin: 10px 0px;	
+}
+
+.trigger-container {
+	margin: 10px;
+	/*background-color: #eee;*/
+	height: 50%;
+	/*padding: 10px;*/
+}
+
+.trigger-container ul {
+	list-style-type: none;
+	padding: 0px
+}
+
+.trigger-container li {
+	display: inline-block;
+	margin-right: 10px;
+}
+
+#spatial_trigger_control_container input {
+	-webkit-appearance: none;
+	background-color: #eee;
+	border: 0px;
+}
+
+#space_trigger_distance{
+	width: 40px;
+}
+
+/**/
+
+#landing_container {
+	position: relative;
+	display: block;
+	padding: 10px;
+	margin: 0px auto;
+	height: 100%;
+}
+
+.logo-container {
+	position: absolute;
+	top: 190px;
+}
+
+.logo-container h1{
+	display: inline-block;
+	font-size: 120px;
+	margin: 10px
+}
+
+.logo-container h1{
+	display: inline-block;
+	font-size: 105px;
+	margin: 10px
+}
+
+.logo-container h2{
+	text-align: center;
+	font-size: 30px;
+	margin: 0px
+}
+
+.signup-container {
+	position: absolute;
+	left: 55%;
+	top: 50px;
+	display: inline-block;
 	margin: 0px auto;
 	padding: 20px;
+}
+
+.signup-container p {
+	top: 10px;
+	-webkit-transition: all 500ms cubic-bezier(0.175, 0.885, 0.320, 1.275);
 }
 
 .major text {
@@ -537,25 +724,54 @@ row translation values:
 }
 
 .signup-container #greeting p { 
-	font-size: 80px;
+	position: absolute;
+	font-size: 46px;
 	font-weight: bold;
-	margin: 10px 0px
+	margin:0px;
+	top: 60px;
+}
+
+.signup-container #greeting span { 
+	font-size: 30px
+}
+
+.signup-container #greeting span a { 
+	color: hsl(236, 93%, 66%);
+}
+
+#input_container {
+	position: absolute;
+	top: 115px;
 }
 
 .signup {
 	position: relative;
-	width:260px;
+	width:400px;
 	height: 70px;
 	border: 0px;
 	padding-left: 10px;
-	margin-right: 15px;
+	margin: 10px 10px 10px 0px;
 	font-size: 40px
 }
 
-.accept {
-	position:relative;
+#signup_button {
+	-webkit-appearance: none;
+	height: 30px;
+	width: 80px;
+	background-color: hsl(236, 93%, 66%);
+	color: white;
+}
+
+.accept-top {
+	/*position:relative;*/
 	top: -800px;
 	-webkit-transition: all 500ms cubic-bezier(0.795, -0.600, 0.515, 1.335);
+}
+
+.accept-left {
+	/*position:relative;*/
+	left: -800px;
+	-webkit-transition: all 300ms cubic-bezier(0.795, -0.600, 0.515, 1.335);
 }
 
 .transition-out {
@@ -580,6 +796,10 @@ row translation values:
 
 .hidden-top {
 	top: -100px;
+}
+
+#landing_container .signup-container #greeting .hidden-way-top {
+	top: -200px;
 }
 
 #adjective_container, #tracker_container {
@@ -645,7 +865,7 @@ row translation values:
 	color: hsl(236, 93%, 66%);
 }
 
-.chosen-adj .adjective, .tracker-wrap .chosen-tracker{
+/*.chosen-adj .adjective,*/ .tracker-wrap .chosen-tracker{
 	/*hsl(391, 93%, 56%)*/
 	background-color: hsl(236, 93%, 66%);
 	color: white;
@@ -656,14 +876,15 @@ row translation values:
 	text-align: center;
 }
 
-#adjective_container div[class*="chosen-adj-"] .adjective {
+/*#adjective_container div[class*="chosen-adj-"] .adjective {
 	color: #333;
 	background-color: #ccc;
-}
+}*/
 
-#adjective_container div[class*="chosen-adj-"] .active-adj {
-	background-color: hsl(236, 93%, 66%);
-	color: white;
+#adjective_container div[class*="chosen-adj-"] .inactive {
+	/*background-color: hsl(236, 93%, 66%);*/
+	background-color: #ccc;
+	color: #333;
 }
 
 .hidden-left {
@@ -685,12 +906,22 @@ row translation values:
 	border-bottom: 1px solid #ccc;
 	width: 300px;
 	font-size: 18px;
+	-webkit-transition: all 250ms ease-in;
 }
 
 .adjective-attribute:hover{
 	cursor: pointer;
-	background-color: hsl(236, 93%, 66%);
 	color: white;
+}
+
+#attribute_details {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 600px;
+	height: 95%;
+	margin: 10px;
+	background-color: #eee;
 }
 
 .tracker {
@@ -741,12 +972,12 @@ rect {
 	margin: 15px
 }
 
-#range {
+/*#range {
 	margin: 15px;
 	text-align: center;
 	border: 1px solid #BBB;
 	padding: 10px;
-}
+}*/
 
 #date_range {
 	text-align: left;
@@ -760,7 +991,11 @@ rect {
 	margin: 0px 0px 10px 15px
 }
 
-#range p {
+#stats_container {
+	padding: 10px
+}
+
+#stats_container p {
 	margin: 5px 0px 10px 0px;
 }
 
@@ -872,6 +1107,13 @@ rect {
 	display: inline-block;	
 }
 
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
 path {
 	fill: none;
 	stroke: black;
@@ -879,14 +1121,46 @@ path {
 
 .line {
     fill: none;
-    stroke: steelblue;
+    /*stroke: steelblue;*/
 }
 
 .histogram-container rect {
-	fill : steelblue;
+	/*fill : steelblue;*/
 	stroke: white;
 	fill-opacity : 1;	
 }
+
+.descriptive-stats div{
+	display: inline-block;
+}
+
+/*#range {
+	float: left;
+}
+
+#range div{
+	display: inline-block;
+	margin-top: 10px;
+	text-align: center;
+}*/
+
+/*#mean {
+	display: block;
+	width: 200px;
+	margin: 30px auto;
+	float: left;
+}
+
+#mean p {
+	font-size: 140px;
+	margin: 5px;
+	text-align: center;
+}
+
+#mean h5 {
+	margin: 5px;
+	text-align: center;
+}*/
 
 .destroy {
 	display: inline-block;
@@ -899,3 +1173,15 @@ path {
 	background-color: rgb(200,200,200);
 	color: white;
 }
+
+/* css for timepicker */
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+.ui-timepicker-div dl { text-align: left; }
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+
+.ui-timepicker-rtl{ direction: rtl; }
+.ui-timepicker-rtl dl { text-align: right; }
+.ui-timepicker-rtl dl dd { margin: 0 65px 10px 10px; }

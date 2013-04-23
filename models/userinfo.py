@@ -151,6 +151,15 @@ class ZeoUserInfo(EmbeddedDocument):
 	zeo_username = StringField()
 	zeo_password = StringField()
 
+class UserAdjectives(EmbeddedDocument):
+	first_priority = StringField()
+	first_priority_specifics = ListField(StringField)
+	second_priority = StringField()
+	second_priority_specifics = ListField(StringField)
+	third_priority = StringField()
+	third_priority_specifics = ListField(StringField)
+	
+
 class User(Document):
 	user_since = StringField()
 	username = StringField()
@@ -167,4 +176,4 @@ class User(Document):
 	google_user_info = EmbeddedDocumentField(GoogleUserInfo)
 	openpaths_user_info = EmbeddedDocumentField(OpenPathsUserInfo)
 	zeo_user_info = EmbeddedDocumentField(ZeoUserInfo)
-
+	adjectives = EmbeddedDocumentField(UserAdjectives)

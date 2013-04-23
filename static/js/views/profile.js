@@ -9,16 +9,29 @@ app.ProfileView = Backbone.View.extend({
         $.when( $.getJSON('v1/users/pdarche') )    
         .done(
             function(data){
-                var facebook_user_info = {
-                    'facebook_first_name' : data.facebook_user_info.facebook_first_name,
-                    'facebook_last_name' : data.facebook_user_info.facebook_last_name,
-                    'facebook_name' : data.facebook_user_info.facebook_name,
-                    'facebook_picture' : data.facebook_user_info.facebook_picture
+
+                if ( data.facebook_user_info !== null ) {          
+                    var facebook_user_info = {
+                        'facebook_first_name' : data.facebook_user_info.facebook_first_name,
+                        'facebook_last_name' : data.facebook_user_info.facebook_last_name,
+                        'facebook_name' : data.facebook_user_info.facebook_name,
+                        'facebook_picture' : data.facebook_user_info.facebook_picture
+                    } 
+                } else {
+
+                    facebook_user_info = undefined
+
                 }
 
-                var flickr_user_info = {
-                    'flickr_nsid' : data.flickr_user_info.flickr_nsid,
-                    'flickr' : data.flickr_user_info.flickr_user_url
+                if ( data.flickr_user_info !== null ) {
+                    var flickr_user_info = {
+                        'flickr_nsid' : data.flickr_user_info.flickr_nsid,
+                        'flickr' : data.flickr_user_info.flickr_user_url
+                    }
+                } else {
+
+                    flickr_user_info = undefined
+
                 }
 
                 var foursquare_user_info = {
@@ -52,15 +65,29 @@ app.ProfileView = Backbone.View.extend({
                     'created_at' : data.openpaths_user_info.created_at
                 }
 
-                var twitter_user_info = {
-                    'twitter_location' : data.twitter_user_info.twitter_location,
-                    'twitter_name' : data.twitter_user_info.twitter_name,
-                    'twitter_profile_image_url' : data.twitter_user_info.twitter_profile_image_url,
-                    'twitter_time_zone' : data.twitter_user_info.twitter_time_zone
+                if ( data.twitter_user_info !== null ) {
+                    var twitter_user_info = {
+                        'twitter_location' : data.twitter_user_info.twitter_location,
+                        'twitter_name' : data.twitter_user_info.twitter_name,
+                        'twitter_profile_image_url' : data.twitter_user_info.twitter_profile_image_url,
+                        'twitter_time_zone' : data.twitter_user_info.twitter_time_zone
+                    }
+                } else {
+                    twitter_user_info = undefined
                 }
 
                 var zeo_user_info = {
                     'created_at' : data.zeo_user_info.created_at
+                }
+
+
+                var adjectives = {
+                    "first_priority" : data.adjectives.first_priority,
+                    "first_priority_specifics" : data.adjectives.first_priority_specifics,
+                    "second_priority" : data.adjectives.second_priority,
+                    "second_priority_specifics" : data.adjectives.second_priority_specifics,
+                    "third_priority" : data.adjectives.third_priority_specifics,
+                    "third_priority_specifics" : data.adjectives.third_priority_specifics
                 }
 
                 self.model = new app.User()
@@ -77,7 +104,8 @@ app.ProfileView = Backbone.View.extend({
                     'openpaths_user_info' : openpaths_user_info,
                     'time_zone' : data.time_zone,
                     'twitter_user_info' : twitter_user_info,
-                    'zeo_user_info' : zeo_user_info
+                    'zeo_user_info' : zeo_user_info,
+                    'adjectives' : adjectives
                 })
 
                 if ( !($.isFunction(this.template)) ){

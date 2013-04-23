@@ -52,7 +52,9 @@ app.DefineView = Backbone.View.extend({
     events : {
 
         "click .adjective-wrap" : "toggleAdjective",
-        "click .adjective-attribute" : "toggleSpecifics"
+        "click .adjective-attribute" : "toggleSpecifics",
+        "mouseover .adjective-attribute" : "addAccent",
+        "mouseout .adjective-attribute" : "removeAccent"
 
     },
 
@@ -60,8 +62,31 @@ app.DefineView = Backbone.View.extend({
 
         var self = this
 
-        $(ev.target).parent().hasClass('chosen-adj') ? $(ev.target).parent().removeClass('chosen-adj') : 
-                                                       $(ev.target).parent().addClass('chosen-adj');
+        var accentClass = $(ev.target).html() + '-accent'
+
+        if ( $(ev.target).parent().hasClass('chosen-adj') ){
+
+            $(ev.target).parent().removeClass('chosen-adj')
+
+        } else {
+
+            if ( user.attributes.adjectives.first_priority === null ){
+
+                user.attributes.adjectives.first_priority = $(ev.target).html()
+
+            } else if (user.attributes.adjectives.second_priority === null ){
+
+                user.attributes.adjectives.second_priority = $(ev.target).html()
+
+            } else {
+
+                user.attributes.adjectives.third_priority = $(ev.target).html()
+
+            }
+
+            $(ev.target).parent().addClass('chosen-adj').children().addClass(accentClass);
+
+        }
 
         if ( $('.chosen-adj').length === 3 ){
 
@@ -94,9 +119,8 @@ app.DefineView = Backbone.View.extend({
 
     expandChosen : function(){
 
-
         this.$el.undelegate('.adjective-wrap', 'click')
-        $('.adjective-wrap').not('.chosen-adj').remove() 
+        $('.adjective-wrap').not('.chosen-adj').remove()
         $('#instructions p').html("These are <span id='three'>big</span> categories. More <span>precisely...</span>")
         //unbind adjective choice
         this.toggleSpecifics()
@@ -105,14 +129,12 @@ app.DefineView = Backbone.View.extend({
 
     toggleSpecifics : function(){
 
-        console.log("is this where things are happening?")
-
         var self = this,
             activeAdj = '.chosen-adj-'+ this.state,
             adjName = $(activeAdj).find('div').html()
 
-        $('.active-adj').removeClass('active-adj')
-        $('.chosen-adj').eq(this.state).find('.adjective').addClass('active-adj')
+        $('.inactive').removeClass('inactive')
+        $('.chosen-adj').not(activeAdj).find('.adjective').addClass('inactive')
 
         var specific = new app.AdjectiveSpecifics({ 
             el : $('#adjective_specifics'),
@@ -124,6 +146,22 @@ app.DefineView = Backbone.View.extend({
         if (this.state === 4){
             setTimeout( self.showTrackers, 500)
         }
+
+    },
+
+    addAccent : function( ev ){
+
+        var accentClass = $('.adjective').not('.inactive').attr('class').split(" ")[1]
+        $(ev.target).addClass(accentClass).css({"padding-left" : "40px"})
+
+    },
+
+    removeAccent : function( ev ){
+        
+        // console.log(ev.target)
+        var toRemoveClass = $(ev.target).attr('class').split(" ")[1]
+        $('.adjective-attribute').removeClass(toRemoveClass).css({"padding-left" : "10px"})
+
     },
 
     showGrid : function(){
