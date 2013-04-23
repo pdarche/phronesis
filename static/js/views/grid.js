@@ -35,7 +35,7 @@ app.GridView = Backbone.View.extend({
     events : {
 
         "click .exploration-heading" : "expandContainer",
-        "click .expanded" : "contractContainer"
+        // "click .expanded" : "contractContainer"
 
     },
 
@@ -43,45 +43,68 @@ app.GridView = Backbone.View.extend({
 
         var self = this
 
-        // $.when( 
-        //     $.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000&created_at__lte=1365375284')
-        // )
-        // .done(
-        //     function( data ){
+        var hist = new app.Histogram({ el : $('.histogram'), model : { "data" : self.model } })
 
-                var hist = new app.Histogram({ el : $('.histogram'), model : { "data" : self.model } })
+        var line = new app.LineChart({ el : $('.line-chart'), model : { "data" : self.model } })
 
-                var line = new app.LineChart({ el : $('.line-chart'), model : { "data" : self.model } })
+        var scatter = new app.ScatterPlot({ el : $('.scatter-plot'), model : { "data" : self.model } })
 
-                var scatter = new app.ScatterPlot({ el : $('.scatter-plot'), model : { "data" : self.model } })
+        var descriptiveStats = new app.DescriptiveStats({ el : $('.descriptive-stats'), model : { "data" : self.model } })
 
-                var descriptiveStats = new app.DescriptiveStats({ el : $('.descriptive-stats'), model : { "data" : self.model } })
+        var subsets = new app.Subsets({ el : $('.subsets'), model : { "data" : self.model } })
 
-                var subsets = new app.Subsets({ el : $('.subsets'), model : { "data" : self.model } })
+        var map = new L.Map('map');
 
-                var map = new L.Map('map');
+        // create the tile layer with correct attribution
+        var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 12});       
 
-                // create the tile layer with correct attribution
-                var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-                var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 12});       
+        // start the map in South-East England
+        map.setView(new L.LatLng(51.3, 0.7),9);
+        map.addLayer(osm);
 
-                // start the map in South-East England
-                map.setView(new L.LatLng(51.3, 0.7),9);
-                map.addLayer(osm);
-
-        //     }
-
-        // )
 
     },
-
+    // note should this functionality be in a route?
     expandContainer : function( ev ){
 
-        var clicked = $(ev.target).parent()
-        $('.test-div').not(clicked).hide().queue(function(){
-            clicked.addClass('expanded') 
-        })
+        var clicked = $(ev.target).parent(),
+            viewName = $(ev.target).html()
+
+        if ( clicked.hasClass('expanded') ) {
+
+            this.contractContainer()
+
+        } else {
+
+            $('.test-div').not(clicked).hide().queue(function(){
+                clicked.addClass('expanded')
+            })
+
+            this.createExpandedView( viewName )
+
+        }
         
+    },
+
+    createExpandedView : function( viewName ) {
+
+        switch(viewName){
+            case "Time":
+                var timeseries = new app.TimeseriesView({
+                    el : $('.line-chart')
+                })
+                break;
+            case "Space":
+                break;
+            case "Two Variables":
+                break;
+            case "Descriptive Statistics":
+                break
+            case "Subsets":
+                break
+        }
+
     },
 
     contractContainer : function( ev ){
