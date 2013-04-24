@@ -1172,6 +1172,10 @@ path {
 	background-color: #eee;
 }
 
+/*#temporal_view	 {
+	background-color: white;
+}*/
+
 #temporal_view #timeseries_content_container #controls_container ul {
 	padding: 0px
 }
@@ -1179,7 +1183,7 @@ path {
 #temporal_view #timeseries_content_container #controls_container li {
 	list-style-type: none;
 	display: inline-block;
-	background-color: white;
+	/*background-color: white;*/
 	padding: 10px;
 	font-size: 14px;
 	font-weight: bold;
@@ -1188,6 +1192,38 @@ path {
 #temporal_view #timeseries_content_container #controls_container li:hover {
 	cursor: pointer
 }
+
+#temporal_view #timeseries_content_container #controls_container #attribute_drop {
+	width: 200px;
+}
+
+#temporal_view #timeseries_content_container #controls_container button {
+
+}
+
+.attribute-container {
+	background-color: white;
+	margin: 5px;
+}
+
+#temporal_view #timeseries_content_container #controls_container .attribute-name {
+	display: inline-block;
+	font-size: 14px;
+	margin: 5px 10px 5px 5px;
+}
+
+#temporal_view #timeseries_content_container #controls_container .remove-attribute {
+	display: inline-block;
+	margin: 5px 10px 5px 5px;
+	font-size: 14px;
+}
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
 /**/
 
 /*#range {
