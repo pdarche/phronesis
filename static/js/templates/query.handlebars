@@ -1,11 +1,11 @@
 <script id="query_template" type="text/x-handlebars-template">
-<div class="query-options">
-	<select>
+<li class="query-options">
+	<select class="query-parameter">
 		{{#each attribute}}
 			<option class="obj_attr" value="{{this}}">{{this}}</option>
 		{{/each}}
 	</select>
-	<select>
+	<select class="query-filter">
 		<option class="query_filter" value="ne">not equal to</option>
 		<option class="query_filter" value="lt">less than</option>
 		<option class="query_filter" value="lte">less than or equal to</option>
@@ -28,8 +28,8 @@
 		<option class="query_filter" value="iendswith">ends with (ins)</option>
 		<option class="query_filter" value="match">match</option>
 	</select>
-	<input type="text" name="query_text" id="query_text"/>
+	<input type="text" name="query_text" class="query-text"/>
 	</select>
-	<div class="remove">remove</div>
-</div>
+	<div class="remove-filter">remove</div>
+</li>
 </script>

@@ -69,11 +69,14 @@ app.GridView = Backbone.View.extend({
     expandContainer : function( ev ){
 
         var clicked = $(ev.target).parent(),
-            viewName = $(ev.target).html()
+            viewName = $(ev.target).html(),
+            self = this
 
         if ( clicked.hasClass('expanded') ) {
 
-            this.contractContainer()
+            this.contractContainer()        
+            self.removeExpandedView( viewName )  
+            
 
         } else {
 
@@ -93,6 +96,35 @@ app.GridView = Backbone.View.extend({
             case "Time":
                 var timeseries = new app.TimeseriesView({
                     el : $('.line-chart')
+                })
+                break;
+            case "Space":
+                var geospatial = new app.GeospatialView({
+                    el : $('.space')
+                })
+                break;
+            case "Two Variables":
+                break;
+            case "Descriptive Statistics":
+                break
+            case "Subsets":
+                break
+        }
+
+    },
+
+    removeExpandedView : function( viewName ){
+
+        var self = this
+
+        switch(viewName){
+            case "Time":
+                $('#timeseries_content_container').remove()
+                .delay(1100).queue(function(){
+                    var line = new app.LineChart({ 
+                        el : $('.line-chart'), 
+                        model : { "data" : self.model } 
+                    }) 
                 })
                 break;
             case "Space":

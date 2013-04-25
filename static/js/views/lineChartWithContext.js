@@ -8,11 +8,6 @@ app.LineChartWithContext = Backbone.View.extend({
 
     },
 
-    render : function() {
-
-
-    },
-
     events : {
 
 
