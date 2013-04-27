@@ -70,6 +70,8 @@ app.TimeseriesView = Backbone.View.extend({
             $.when( $.getJSON(url) )
              .done( 
                 function(data){
+                    console.log(data)
+                    data.sort(function(a,b) { return parseInt(a.created_at) - parseInt(b.created_at) } );
                     self[dataType] ? null : self[dataType] = data
                     $('#attribute_drop option').remove()
                     self.populateAttributeDrop( data[0] )
