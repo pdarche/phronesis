@@ -1,0 +1,45 @@
+<script id="geospatial_view" type="x-handlebars-template">
+	<div id="geospatial_content_container">
+		<div id="vis_container"></div>
+		<div id="controls_container">
+			<!--<div id="chart_kind_container">
+				<h3>Chart Type</h3>
+				<ul id="chart_type_list">
+					<li id="line_chart" class="chart-type">Line</li>
+					<li id="area_chart" class="chart-type">Area</li>
+					<li id="stream_chart" class="chart-type">Stream</li>
+					<li id="small_multiple_chart" class="chart-type">Small Multiples</li>
+				</ul>
+			</div>-->
+			<div id="data_type_container">
+				<h3>Data Type</h3>
+				<ul id="data_type_list">
+					<li id="nutrition" class="data-type">Nutrition</li>				
+					<li id="location" class="data-type">Location</li>	
+				</ul>
+			</div>
+			<!--<div id="attributes_container">
+				<h3>Filters</h3>
+				<select id="attribute_drop"></select>
+				<button id="add_attribute">Add Attribute</button>
+				<ul id="attribute_list">
+				</ul>
+			</div>-->
+			<div id="timespan_container">
+				<h3>Date Range</h3>
+				<input type="text" class="timespan-input" id="start_date" placeholder="start date"/>
+				<input type="text" class="timespan-input" id="end_date" placeholder="end date"/>
+			</div>
+			<div id="filter_container">
+				<h3>Filter Query</h3>
+				<button id="add_filter">Add Filter</button>
+				<ul id="filter_list">
+				</ul>
+			</div>
+			<div id="button_container">
+				<button id="submit_query">Submit Query</button>
+				<button id="clear_map">Clear Map</button>
+			</div>
+		</div>
+	</div>
+</script>
