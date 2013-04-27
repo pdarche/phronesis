@@ -102,9 +102,11 @@ def iterator(n):
 
 fin_list = []
 for i,p in enumerate(iterator(len(unique_dates))):
-	z_d = "%s-%s-%s" % (z[p[0]].start_date.year, 
-		z[p[0]].start_date.month, z[p[0]].start_date.day)
-	z_date = datetime.strptime(z_d, '%Y-%m-%d')
+	if p[0] != len(zeo_records):
+		z_d = "%s-%s-%s" % (z[p[0]].start_date.year, # DANGER : THIS MAY BE WRONG
+			z[p[0]].start_date.month, z[p[0]].start_date.day)
+		z_date = datetime.strptime(z_d, '%Y-%m-%d')
+	
 	f_date = datetime.strptime(f[p[1]].created_at, '%Y-%m-%d')
 	if z_date == f_date:
 		new_record = { "date" : unique_dates[i], "zeo" : z[p[0]], "fitbit" : f[p[1]] }
@@ -115,7 +117,7 @@ for i,p in enumerate(iterator(len(unique_dates))):
 	elif z_date < f_date:
 		new_record = { "date" : unique_dates[i], "zeo" : z[p[0]], "fitbit" : None }
 		fin_list.append(new_record)
-		if p0 != len(z) - 1:
+		if p0 != len(zeo_records) - 1:
 			p0 += 1
 
 	elif z_date > f_date:
@@ -127,7 +129,8 @@ for i,p in enumerate(iterator(len(unique_dates))):
 			print "switchin over"
 			new_record = { "date" : unique_dates[i], "zeo" : z[p[0]], "fitbit" : None }
 			fin_list.append(new_record)
-			p0 += 1
+			if p0 != len(zeo_records) - 1: #DANGER : REEVALUATE THIS
+				p0 += 1
 
 	print p0, p1
 

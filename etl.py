@@ -131,33 +131,34 @@ if op_locations != None:
 flkr_locations = last_flkr()
 if flkr_locations != None:
 	for flkr_location in flkr_locations:
-		if 	flkr_location.info.location != None:
-			loc = location.Location(
-				phro_created_at = int(time.time()),
-				username = "pdarche",
-				created_at = int(flkr_location.info.date_uploaded),
-				source = "Flickr",
-				# source_id = op_location.null,
-				loc = [flkr_location.info.location.lon, flkr_location.info.location.lat],
-				alt = None,
-				accuracy = flkr_location.info.location.accuracy,
-				venue_name = None,
-				address = None,
-				cross_street = None,
-				neighborhood = flkr_location.info.location.neighborhood,
-				postal_code = None,
-				city = None,
-				locality = flkr_location.info.location.locality,
-				county = flkr_location.info.location.county,
-				state = flkr_location.info.location.region,
-				country = None,
-				cc = None
-			)
+		if 	flkr_location.info != None:
+			if flkr_location.info.location != None:
+				loc = location.Location(
+					phro_created_at = int(time.time()),
+					username = "pdarche",
+					created_at = int(flkr_location.info.date_uploaded),
+					source = "Flickr",
+					# source_id = op_location.null,
+					loc = [flkr_location.info.location.lon, flkr_location.info.location.lat],
+					alt = None,
+					accuracy = flkr_location.info.location.accuracy,
+					venue_name = None,
+					address = None,
+					cross_street = None,
+					neighborhood = flkr_location.info.location.neighborhood,
+					postal_code = None,
+					city = None,
+					locality = flkr_location.info.location.locality,
+					county = flkr_location.info.location.county,
+					state = flkr_location.info.location.region,
+					country = None,
+					cc = None
+				)
 
-			if loc.save():
-				print "location saved",
-			else:
-				print "location not saved"
+				if loc.save():
+					print "location saved",
+				else:
+					print "location not saved"
 				
 		# if 	flkr_location.info.location != None:
 		# 	print "location obj: %s lat: %s lon: %s" % (flkr_location.info.location,
