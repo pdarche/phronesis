@@ -69,7 +69,7 @@ class Application(tornado.web.Application):
 			(r"/v1/data/(.*)", h.DataHandler),
 			(r"/v1/ref/(.*)", h.RefHandler),
 			(r"/test", n.FlickrRequest),
-			# (r"/settings", h.PrintAppSettings),
+			(r"/settings", h.PrintAppSettings),
 		]
 
 		settings = dict(

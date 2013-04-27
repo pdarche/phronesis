@@ -262,9 +262,7 @@ class FlickrMixin(tornado.auth.OAuthMixin):
         url_elems.append(self._FLICKR_BASE_URL)
         url_elems.append("&".join("%s=%s" % (k, str(v)) for k, v in sorted(args.items())))             
         url = "&".join(e for e in url_elems)
-        
 
-        print url
         # Add the OAuth resource request signature if web have credentials
         if access_token:
             all_args = dict()
@@ -443,7 +441,6 @@ class FoursquareMixin(object):
 
         if all_args: 
             url += "?" + urllib.urlencode(all_args)
-            print "there are some args" + url
 
         callback = self.async_callback(self._on_foursquare_request, callback)
         if post_args is not None:

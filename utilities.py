@@ -336,15 +336,15 @@ def scrape_chipotle():
 
 class NutritionEtl():
     def last_meal(self):
-        last_nutr = nutrition.NutritionRecord.objects(username="pdarche")
+        last_nutr = nutrition.NutritionRecord.objects()
 
         if len(last_nutr) == 0:
-            meals = flickr.FlickrPhoto.objects(username="pdarche")
+            meals = flickr.FlickrPhoto.objects()
             return meals
         else:
-            last_record = nutrition.NutritionRecord.objects(username="pdarche").order_by("-created_at")
+            last_record = nutrition.NutritionRecord.objects().order_by("-created_at")
             latest = last_record[0].created_at
-            new_records = nutrition.NutritionRecord.objects(created__gte=latest)
+            new_records = nutrition.NutritionRecord.objects(created_at__gte=latest)
 
             if len(new_records) == 0:
                 print "all updated"
@@ -356,57 +356,58 @@ class NutritionEtl():
         meals = self.last_meal()
         if meals != None:
             for pic in meals:
-                ref_info = nutrition.FlickrRefInfo(
-                        photo_id = pic.photo_id,
-                        farm = pic.info.farm,
-                        server = pic.info.server,
-                        secret = pic.info.secret
+                if pic.info != None:
+                    ref_info = nutrition.FlickrRefInfo(
+                            photo_id = pic.photo_id,
+                            farm = pic.info.farm,
+                            server = pic.info.server,
+                            secret = pic.info.secret
+                        )
+
+                    dates = nutrition.FlickrDates(
+                            taken = pic.info.dates.taken,
+                            last_update = pic.info.dates.last_update,
+                            taken_granularity = pic.info.dates.taken_granularity,
+                            posted = pic.info.dates.posted
+                        )
+
+                    meal = nutrition.NutritionRecord(
+                        phro_created_at = int(time.time()),
+                        username = "pdarche",
+                        created_at = int(time.mktime(time.strptime(pic.info.dates.taken,'%Y-%m-%d %H:%M:%S'))),
+                        flkr_ref_info = ref_info,
+                        flkr_dates = dates,
+                        meal_item_name = pic.title,
+                        img_url = "http://farm%s.staticflickr.com/%s/%s_%s_q.jpg" % (pic.info.farm, pic.server, pic.photo_id, pic.secret),
+                        meal = None, #there will be some analysis of the title to extract a meal
+                        venue = None, #there will be a guess of venue based on chekcins
+                        venue_category = None, #there will be a guess of venue_category based on chekcins
+                        from_loc = [ pic.info.location.lon, pic.info.location.lat ] if pic.info.location != None else None,
+                        eaten_loc = None, #there will be a guess of venue based on chekcins
+                        unit = None,
+                        calories = None,
+                        calories_from_fat = None,
+                        total_fat = None,
+                        saturated_fat = None,
+                        trans_fat = None,
+                        cholesterol = None,
+                        sodium = None,
+                        total_carbs = None,
+                        dietary_fiber = None,
+                        sugar = None,
+                        protein = None,
+                        vit_a = None,
+                        vit_c = None,
+                        calcium = None,
+                        iron = None,
+                        source = None,
+                        ingredients = None
                     )
 
-                dates = nutrition.FlickrDates(
-                        taken = pic.info.dates.taken,
-                        last_update = pic.info.dates.last_update,
-                        taken_granularity = pic.info.dates.taken_granularity,
-                        posted = pic.info.dates.posted
-                    )
-
-                meal = nutrition.NutritionRecord(
-                    phro_created_at = int(time.time()),
-                    username = "pdarche",
-                    created_at = int(time.mktime(time.strptime(pic.info.dates.taken,'%Y-%m-%d %H:%M:%S'))),
-                    flkr_ref_info = ref_info,
-                    flkr_dates = dates,
-                    meal_item_name = pic.title,
-                    img_url = "http://farm%s.staticflickr.com/%s/%s_%s_q.jpg" % (pic.info.farm, pic.server, pic.photo_id, pic.secret),
-                    meal = None, #there will be some analysis of the title to extract a meal
-                    venue = None, #there will be a guess of venue based on chekcins
-                    venue_category = None, #there will be a guess of venue_category based on chekcins
-                    from_loc = [ pic.info.location.lon, pic.info.location.lat ] if pic.info.location != None else None,
-                    eaten_loc = None, #there will be a guess of venue based on chekcins
-                    unit = None,
-                    calories = None,
-                    calories_from_fat = None,
-                    total_fat = None,
-                    saturated_fat = None,
-                    trans_fat = None,
-                    cholesterol = None,
-                    sodium = None,
-                    total_carbs = None,
-                    dietary_fiber = None,
-                    sugar = None,
-                    protein = None,
-                    vit_a = None,
-                    vit_c = None,
-                    calcium = None,
-                    iron = None,
-                    source = None,
-                    ingredients = None
-                )
-
-                if meal.save():
-                    print "meal saved"
-                else:
-                    print "meal didn't save"
+                    if meal.save():
+                        print "meal saved"
+                    else:
+                        print "meal didn't save"
             
 # m = NutritionEtl()
 # m.create_new_meals()

@@ -614,12 +614,15 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 		oAuthToken = self.get_secure_cookie('flickr_oauth_token')
 		oAuthSecret = self.get_secure_cookie('flickr_oauth_secret')
 		# userID = self.get_secure_cookie('flickr_user_id')
+		print "is there a secret %r" % oAuthSecret
 
 		if self.get_argument('oauth_token', None):			
+			print "got request token"
 			self.get_authenticated_user(self.async_callback(self._flickr_on_auth))
 			return
 
 		elif oAuthToken and oAuthSecret:
+				print "got acces and secret"
 				accessToken = {
 					'key': 		oAuthToken,
 					'secret':	oAuthSecret
@@ -632,7 +635,6 @@ class FlickrHandler(tornado.web.RequestHandler, mixins.FlickrMixin):
 				)
 				return
 
-		print "redirecting"
 		self.authorize_redirect('http://localhost:8000/v1/flickr')
 
 	def _flickr_on_auth(self, user):
@@ -1126,6 +1128,9 @@ class FitbitImportHandler(BaseHandler, mixins.FitbitMixin):
 
 	def _on_imported(self, data):
 
+		print " activities stuff thing"
+		print self.activities[1]
+
 		self.body.append(data)
 
 		dates = self.activities[0]["activities-steps"]
@@ -1271,22 +1276,44 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 		user_id = user_info["user_id"]
 		access_token = user_info["access_token"]
 
-		# self.foursquare_request(
-		#     path="/users/self/checkins",
-		#     args= { "limit" : 250 },
-		#     callback=self.async_callback(self._on_imported),
-		#     access_token=access_token
-		# )
 
-		response = yield tornado.gen.Task(
-			self.foursquare_request,
+		#NOTE : THIS IS SO FUCKING JANKY.  THIS NEEDS TO BE DONE WITH TORNADO.GEN 
+		self.foursquare_request(
 		    path="/users/self/checkins",
 		    args= { "limit" : 250 },
+		    callback=self.async_callback(self._on_imported),
 		    access_token=access_token
 		)
 
-		print response
-		self.finish()
+		self.foursquare_request(
+		    path="/users/self/checkins",
+		    args= { "offset" : 250, "limit" : 250 },
+		    callback=self.async_callback(self._on_imported),
+		    access_token=access_token
+		)
+
+		self.foursquare_request(
+		    path="/users/self/checkins",
+		    args= { "offset" : 500, "limit" : 250 },
+		    callback=self.async_callback(self._on_imported),
+		    access_token=access_token
+		)
+
+		self.foursquare_request(
+		    path="/users/self/checkins",
+		    args= { "offset" : 750, "limit" : 250 },
+		    callback=self.async_callback(self._on_last_imported),
+		    access_token=access_token
+		)
+		
+		# response = yield tornado.gen.Task(
+		# 	self.foursquare_request,
+		#     path="/users/self/checkins",
+		#     args= { "limit" : 250 },
+		#     access_token=access_token
+		# )
+
+		# response = { "derp" : "derp" }
 		
 	def _on_test(self, checkins):
 		self.write(json.dumps(checkins))
@@ -1414,9 +1441,131 @@ class FoursquareImportHandler(BaseHandler, mixins.FoursquareMixin):
 			else:
 				print "checkin didn't save"
 
-		self.write( "success" )
-		self.finish()
 
+	def _on_last_imported(self, checkins):
+		user_info = self.get_fs_user_info()
+		user_id = user_info["user_id"]
+		
+		checkins = checkins["response"]["checkins"]["items"]
+
+		for index, checkin in enumerate(checkins):
+
+			if "stats" in checkin["venue"].keys():
+				print "has venue stats"	
+				venue_stats =models.foursquare.VenueStats(
+					checkins_count = checkin["venue"]["stats"]["checkinsCount"] if "checkinsCount" in checkin["venue"]["stats"].keys() else None,
+					users_count = checkin["venue"]["stats"]["usersCount"] if "userCount" in checkin["venue"]["stats"].keys() else None,
+					tips_count = checkin["venue"]["stats"]["tipsCount"] if "tipsCount" in checkin["venue"]["stats"].keys() else None
+				)
+
+			else:
+				venue_stats = None
+
+			if "beenHere" in checkin.keys():
+				print "has venue been here"
+				been_here = models.foursquare.VenueBeenHere(
+					count = checkin["beenHere"]["count"] if "count" in checkin["beenHere"].keys() else None,
+					marked = checkin["beenHere"]["marked"] if "marked" in checkin["beenHere"].keys() else None
+				)
+
+			else:
+				been_here = None
+			
+			if "likes" in checkin["venue"].keys():	
+				print "has venue likes"
+				likes = models.foursquare.VenueLikes(
+					type = checkin["venue"]["type"] if "type" in checkin["venue"].keys() else None,
+					count = checkin["venue"]["count"] if "count" in checkin["venue"].keys() else None,
+					summry = checkin["venue"]["summary"] if "summary" in checkin["venue"].keys() else None
+				)
+
+			else:
+				likes = None
+
+			if "contact" in checkin["venue"].keys():
+				print "has venue contact"	
+				contact  = models.foursquare.VenueContact(
+					phone = checkin["venue"]["contact"]["phone"] if "phone" in checkin["venue"]["contact"].keys() else None,
+					formatted_phone = checkin["venue"]["contact"]["formattedPhone"] if "formattedPhone" in checkin["venue"]["contact"].keys() else None,
+					twitter = checkin["venue"]["contact"]["twitter"] if "twitter" in checkin["venue"]["contact"].keys() else None,
+					facebook = checkin["venue"]["contact"]["facebook"] if "facebook" in checkin["venue"]["contact"].keys()
+					 else None
+				)
+
+			else :
+				contact = None
+
+			if "menu" in checkin["venue"].keys():
+				print "has venue menu"
+				venue_menu = models.foursquare.VenueMenu(
+					url = checkin["venue"]["menu"]["url"] if "url" in checkin["venue"]["menu"].keys() else None,
+					mobileUrl = checkin["venue"]["menu"]["mobileUrl"] if "url" in checkin["venue"]["menu"].keys() else None,
+					type = checkin["venue"]["menu"]["mobileUrl"] if "type" in checkin["venue"]["menu"].keys() else None
+				)
+
+			else:
+				venue_menu = None
+
+			if "location" in checkin["venue"].keys():
+				print "has venue location"
+				location = models.foursquare.VenueLocation(
+					address = checkin["venue"]["location"]["address"] if "address" in checkin["venue"]["location"].keys() else None,
+					cross_street = checkin["venue"]["location"]["crossStreet"] if "crossStreet" in checkin["venue"]["location"].keys() else None,
+					lat = checkin["venue"]["location"]["lat"] if "lat" in checkin["venue"]["location"].keys() else None,
+					lng = checkin["venue"]["location"]["lng"] if "lng" in checkin["venue"]["location"].keys() else None,
+					postal_code = checkin["venue"]["location"]["postalCode"] if "postalCode" in checkin["venue"]["location"].keys() else None,
+					city = checkin["venue"]["location"]["city"] if "city" in checkin["venue"]["location"].keys() else None,
+					state = checkin["venue"]["location"]["state"] if "state" in checkin["venue"]["location"].keys() else None,
+					country = checkin["venue"]["location"]["country"] if "country" in checkin["venue"]["location"].keys() else None,
+					cc = checkin["venue"]["location"]["cc"] if "cc" in checkin["venue"]["location"].keys() else None
+				)
+			
+			else:
+				location = None
+
+			if "venue" in checkin.keys():
+				print "has venue"
+				venue = models.foursquare.Venue(
+					venue_id = checkin["venue"]["id"] if "venueId" in checkin["venue"].keys() else None,
+					name = checkin["venue"]["name"] if "name" in checkin["venue"].keys() else None,
+					contact = contact,
+					location = location,
+					cannonical_url = checkin["venue"]["cannonicalUrl"] if "cannonicalUrl" in checkin["venue"].keys() else None,
+					categories = None, #LIST FIELD!!
+					verified = checkin["venue"]["verified"] if "verified" in checkin["venue"].keys() else None,
+					stats = venue_stats,
+					url = checkin["venue"]["url"] if "url" in checkin["venue"].keys() else None,
+					likes = likes,
+					like = checkin["venue"]["like"] if "like" in checkin["venue"].keys() else None,				
+					menu = venue_menu,
+				)
+
+			else:
+				print "doesn't have venue"
+				venue = None
+
+			checkIn = models.foursquare.CheckIn(				
+				id = objectid.ObjectId(),
+				phro_created_at = int(time.time()),
+				username = self.get_secure_cookie("username"),
+				record_created_at = checkin["createdAt"],
+				fs_id = checkin["id"],
+				fs_created_at = checkin["createdAt"],
+				fs_type = checkin["type"],
+				fs_timezone_offset = checkin["timeZoneOffset"],
+				fs_timezone = checkin["timeZone"],
+				fs_venue = venue,
+				fs_like = checkin["like"],
+				fs_likes = None
+			)
+
+			if checkIn.save():
+				print "checkin saved"
+			else:
+				print "checkin didn't save"
+
+		self.write("success")
+		self.finish()
 
 	# def _on_test(self, checkins):
 	# 	self.write( checkins )
@@ -1514,15 +1663,78 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 			api_key=self.settings["flickr_consumer_key"],
 			nojsoncallback="1", 
 			method="flickr.photos.getWithGeoData",
+			per_page = 500,
 			access_token=access_token,
-			callback=self.async_callback(self._on_geo)
+			callback=self.async_callback(self._on_geo_one)
 		)
 
-	def _on_geo(self, data):
+	
+	def _on_geo_one(self, data):
 		username = self.get_secure_cookie("username")
 		user = models.userinfo.User.objects(username=username)[0]
 		access_token = user["flickr_user_info"]["flickr_access_token"]
+		
+		print "pages are %r" % data
 		self.geo = data
+
+		for photo in self.geo["photos"]["photo"]:
+			pic = models.flickr.FlickrPhoto(
+				phro_created_at = int(time.time()),
+				username = self.get_secure_cookie("username"),
+				photo_id = photo["id"],
+				owner = photo["owner"],
+				secret = photo["secret"],
+				server = photo["server"],
+				farm = photo["farm"],
+				title = photo["title"],
+				is_public = photo["ispublic"],
+				is_friend = photo["isfriend"],
+				is_family = photo["isfamily"],
+				has_geo = True
+			)
+
+			if pic.save():
+				print "geo saved"
+			else:
+				print "geo not saved"
+
+		self.flickr_request(
+			format="json",
+			api_key=self.settings["flickr_consumer_key"],
+			nojsoncallback="1", 
+			method="flickr.photos.getWithoutGeoData",
+			access_token=access_token,
+			callback=self.async_callback(self._on_geo_two)
+		)
+
+	def _on_geo_two(self, data):
+		username = self.get_secure_cookie("username")
+		user = models.userinfo.User.objects(username=username)[0]
+		access_token = user["flickr_user_info"]["flickr_access_token"]
+		
+		print "pages are %r" % data
+		self.geo = data
+
+		for photo in self.geo["photos"]["photo"]:
+			pic = models.flickr.FlickrPhoto(
+				phro_created_at = int(time.time()),
+				username = self.get_secure_cookie("username"),
+				photo_id = photo["id"],
+				owner = photo["owner"],
+				secret = photo["secret"],
+				server = photo["server"],
+				farm = photo["farm"],
+				title = photo["title"],
+				is_public = photo["ispublic"],
+				is_friend = photo["isfriend"],
+				is_family = photo["isfamily"],
+				has_geo = True
+			)
+
+			if pic.save():
+				print "geo saved"
+			else:
+				print "geo not saved"
 
 		self.flickr_request(
 			format="json",
@@ -1533,7 +1745,6 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 			callback=self.async_callback(self._on_non_geo)
 		)
 
-	# @tornado.gen.engine
 	def _on_non_geo(self, data):
 		username = self.get_secure_cookie("username")
 		user = models.userinfo.User.objects(username=username)[0]
@@ -1560,36 +1771,11 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 			else:
 				print "non-geo not saved"
 
-		for photo in self.geo["photos"]["photo"]:
-			pic = models.flickr.FlickrPhoto(
-				phro_created_at = int(time.time()),
-				username = self.get_secure_cookie("username"),
-				photo_id = photo["id"],
-				owner = photo["owner"],
-				secret = photo["secret"],
-				server = photo["server"],
-				farm = photo["farm"],
-				title = photo["title"],
-				is_public = photo["ispublic"],
-				is_friend = photo["isfriend"],
-				is_family = photo["isfamily"],
-				has_geo = True
-			)
-
-			if pic.save():
-				print "geo saved"
-			else:
-				print "geo not saved"
-
-			self.write("success")
-			self.finish()			
+		self.write("success")
+		self.finish()
 
 	def push_to_ar(self, photo):
 		self.photos.append(photo)
-
-	def _on_photos(self, data):
-		self.write( json.dumps(data) )
-		self.finish()
 
 
 class LogoutHandler(tornado.web.RequestHandler):
@@ -1618,13 +1804,15 @@ class DocumentationHandler(tornado.web.RequestHandler):
 class PrintAppSettings(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		key = models.AppSettings.objects[0].zeo_consumer_key,
-		secret = models.AppSettings.objects[0].zeo_consumer_secret
+		key = models.models.AppSettings.objects[0],
+		for k in key[0]:
+			print "%s, %s" % (k, key[0][k])
+		# secret = models.models.AppSettings.objects[0]
 
-		data = { "key" : key, "secret" : secret }
+		# data = { "key" : key, "secret" : secret }
 
-		self.write( json.dumps( data ))
-		self.finish()
+		# self.write(json.dumps(data))
+		# self.finish()
 
 
 class PresentationHandler(BaseHandler):
@@ -1827,6 +2015,7 @@ class DumpHandler(BaseHandler):
 			"physicalActivity" : physact.PhysicalActivity,
 			"sleep" : models.sleep.SleepRecord,
 			"location" : loc.Location,
+			"nutrition" : nutrition.NutritionRecord,
 			"zeo" : models.zeo.ZeoSleepRecord,
 			"flickr" : models.flickr.FlickrPhoto,
 			"fitbit_activity" : models.fitbit.FitbitPhysicalActivity,
@@ -1836,8 +2025,9 @@ class DumpHandler(BaseHandler):
 		}
 
 		objs = paths[input].objects()
+		print len(objs)
 		objs = json.dumps(objs, default=encode_model)
-		self.write(objs)		
+		self.write( objs )
 
 
 
@@ -1858,7 +2048,7 @@ class RemoveHandler(BaseHandler):
 			"openpaths" : models.openpaths.OpenPathsLocation
 		}
 
-		objs = paths[input].objects(username=username)
+		objs = paths[input].objects() #username=username
 		objs.delete()
 		self.write(str(len(objs)) + " records")
 

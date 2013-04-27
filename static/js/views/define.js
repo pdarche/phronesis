@@ -133,7 +133,9 @@ app.DefineView = Backbone.View.extend({
             activeAdj = '.chosen-adj-'+ this.state,
             adjName = $(activeAdj).find('div').html()
 
+        $('.inactive').parent().removeClass('no-shadow')
         $('.inactive').removeClass('inactive')
+        $('.chosen-adj').not(activeAdj).addClass('no-shadow')
         $('.chosen-adj').not(activeAdj).find('.adjective').addClass('inactive')
 
         var specific = new app.AdjectiveSpecifics({ 
