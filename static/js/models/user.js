@@ -66,5 +66,91 @@ app.User = Backbone.Model.extend({
                 console.log("the user model has changed")
                 // model.save()
             })
+        
         }
 });
+
+
+app.Adjectives = Backbone.Model.extend({
+
+    defaults : {
+        first_priority : undefined,
+        first_priority_specifics : [],
+        second_priority : undefined,
+        second_priority_specifics : [],
+        third_priority : undefined,
+        third_priority_specifics : []
+    },
+    initialize : function(){
+
+        this.on("change:first_priority", function(model){
+            
+            var prevAdj = $('#adjective_1').html(),
+                prevClass = prevAdj + "-accent",
+                newAdj = this.get('first_priority'),
+                newAccent = newAdj + "-accent",
+                newClasses = newAdj + " " + newAccent
+
+            $('#adjective_1').removeClass(prevAdj).removeClass(prevClass)        
+
+            console.log("the first priority has changed")
+            console.log("the new first priority", newAdj)
+
+            if ( newAdj !== null ){
+
+                $('#adjective_1').addClass(newAdj)
+                $('#adjective_1').html( newAdj )
+
+            }
+
+        })
+
+        this.on("change:second_priority", function(model){
+            
+            var prevAdj = $('#adjective_2').html(),
+                prevClass = prevAdj + "-accent",
+                newAdj = this.get('second_priority'),
+                newAccent = newAdj + "-accent",
+                newClasses = newAdj + " " + newAccent
+            
+            $('#adjective_2').removeClass(prevAdj)
+                .removeClass(prevClass)
+            
+            if ( newAdj !== null ){
+
+                $('#adjective_2').addClass(newAdj)
+                $('#adjective_2').html( newAdj )
+
+            }
+            console.log("the second priority has changed")
+
+        })
+
+        this.on("change:third_priority", function(model){
+            
+            var prevAdj = $('#adjective_3').html(),
+                prevClass = prevAdj + "-accent",            
+                newAdj = this.get('third_priority'),
+                newAccent = newAdj + "-accent",
+                newClasses = newAdj + " " + newAccent
+
+            $('#adjective_3').removeClass(prevAdj)
+                .removeClass(prevClass)
+            
+            if ( newAdj !== null ){
+
+                $('#adjective_3').addClass(newAdj)
+                $('#adjective_3').html( newAdj )
+
+            }
+
+            console.log("the thrid priority has changed")
+
+        })
+
+    }
+
+})
+
+
+

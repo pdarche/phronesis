@@ -5,7 +5,6 @@ app.GridView = Backbone.View.extend({
     initialize : function() {
 
         var self = this
-
         if ( !($.isFunction(this.template)) ){
 
             $.get('/static/js/templates/grid.handlebars', function(tmpl){

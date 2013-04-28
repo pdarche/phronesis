@@ -45,6 +45,7 @@ class Application(tornado.web.Application):
 			(r"/v1/signup", h.SignUpHandler),
 			(r"/v1/login", h.LoginHandler),
 			(r"/v1/logout", h.LogoutHandler),
+			(r"/logout", h.LogoutHandler),
 			(r"/v1/presentation", h.PresentationHandler),			
 			(r"/v1/remove", h.RemoveUserHandler),
 			(r"/v1/users/(\w+)", h.UserInfoHandler),

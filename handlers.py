@@ -39,7 +39,11 @@ class BaseHandler(tornado.web.RequestHandler):
 
 class MainHandler(BaseHandler): 
 	def get(self):
-		self.render( "index.html" )
+		username = self.get_secure_cookie('username')
+		if username != None:
+			self.render('index.html', username = username)
+		else:
+			self.render( "index.html", username = "" )
 
 class SignUpHandler(tornado.web.RequestHandler):
 	def post(self):
@@ -105,6 +109,12 @@ class LoginHandler(tornado.web.RequestHandler):
 		# username = self.get_secure_cookie("user")
 		# self.render('login.html', response=username)
 		self.write( "redirect to login")
+
+
+class LogoutHandler(tornado.web.RequestHandler):
+	def get(self):
+		self.clear_all_cookies()
+		self.redirect('/')
 
 
 class UserInfoHandler(BaseHandler):
@@ -1777,11 +1787,6 @@ class FlickrImportHandler(BaseHandler, mixins.FlickrMixin):
 	def push_to_ar(self, photo):
 		self.photos.append(photo)
 
-
-class LogoutHandler(tornado.web.RequestHandler):
-	def get(self):
-		self.clear_all_cookies()
-		self.write('loggged out, yo\n')
 
 class RemoveUserHandler(tornado.web.RequestHandler):
 	def post(self):

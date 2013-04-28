@@ -41,14 +41,14 @@ $(document).ready(function(){
 				
 				} else if ( window.location.hash === '#why') {
 
-					$.when( 
-						$.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000&created_at__lte=1365375284')
-					 )
-					 .done( function(data){
+					checkUserStatus()
 
-					 	var why = new app.GridView({ el : $('#content_container'), model : data })
-
-					 })
+					// $.when( 
+					// 	$.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000&created_at__lte=1365375284')
+					//  )
+					//  .done( function(data){
+					//  	var why = new app.GridView({ el : $('#content_container'), model : data })
+					//  })
 
 				} else {					
 	            	var activeAdj = $('.active-adj').html(),
@@ -95,6 +95,8 @@ $(document).ready(function(){
 		    })
 
 		    app_router.on('route:why', function(){
+
+		    	checkUserStatus()
 
 		    	// var why = new app.GridView({ el : $('#content_container')})
 	    		$.when(

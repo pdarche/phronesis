@@ -59,41 +59,46 @@ app.WhatView = Backbone.View.extend({
         var self = this
 
         if ( $('.chosen-adj').length < 3 ){
+            
+            console.log("fewer than three")
 
             if ( $(ev.target).parent().hasClass('chosen-adj') ){
 
                 $(ev.target).parent().removeClass('chosen-adj')
                 var adj = $(ev.target).html(),
-                    selector = '.' + adj
-
+                    selector = '.' + adj,
+                    accentClass = adj + " " + "-accent",
+                    newPriority = {}
+                
                 self.index = $(selector).index()
-                console.log("the index is", self.index)
-                $(selector).html("")
-                $(selector).removeClass(adj)                
+                newPriority[priorities[self.index]] = undefined
+                user.get('adjectives').set(newPriority)
+                               
 
             } else {
 
                 $(ev.target).parent().addClass('chosen-adj')
                 var adj = $(ev.target).html(),
-                    selector = '.' + adj
+                    selector = '.' + adj,
+                    newPriority = {}
 
-                console.log(self.index)
-                $('.nav-adjective').eq(self.index).addClass(adj)
-                $('.nav-adjective').eq(self.index).html(adj)
-                self.index++
+                self.index = $(selector).index()
+                newPriority[priorities[self.index]] = adj
+                user.get('adjectives').set( newPriority )
 
             }
 
         } else {
-
+                console.log("three or more")
+                
                 $(ev.target).parent().removeClass('chosen-adj')
                 var adj = $(ev.target).html(),
-                    selector = '.' + adj
-
+                    selector = '.' + adj,
+                    newPriority = {}
+                
                 self.index = $(selector).index()
-                console.log("the index is", self.index)
-                $(selector).html("")
-                $(selector).removeClass(adj)
+                newPriority[priorities[self.index]] = undefined
+                user.get('adjectives').set(newPriority)
 
         }
 

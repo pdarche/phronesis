@@ -225,7 +225,6 @@ app.LineChart = Backbone.View.extend({
             .style("opacity", 0)
 
         circles.on('mouseover',function(obj){
-            console.log(obj)
             d3.select(this)
                 .style('opacity', 1)
                 .style('fill', accent)

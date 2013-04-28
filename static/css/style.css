@@ -724,6 +724,11 @@ row translation values:
 	display: inline-block;
 	margin: 0px auto;
 	padding: 20px;
+	-webkit-transition: all 250ms ease-in;
+}
+
+.signin {
+	top:100px;
 }
 
 .signup-container p {

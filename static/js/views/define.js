@@ -5,6 +5,10 @@ app.DefineView = Backbone.View.extend({
 
     initialize : function() {
 
+        var username = $('#phro_username').html()
+        // username === "" ? window.location = 'http://localhost:8000' : null
+        console.log("username is", username)
+
         var self = this
 
         if ( !($.isFunction(this.template)) ){
@@ -60,9 +64,8 @@ app.DefineView = Backbone.View.extend({
 
     toggleAdjective : function(ev){
 
-        var self = this
-
-        var accentClass = $(ev.target).html() + '-accent'
+        var self = this,
+            accentClass = $(ev.target).html() + '-accent'
 
         if ( $(ev.target).parent().hasClass('chosen-adj') ){
 
@@ -70,17 +73,17 @@ app.DefineView = Backbone.View.extend({
 
         } else {
 
-            if ( user.attributes.adjectives.first_priority === null ){
+            if ( user.get('adjectives').get('first_priority') === null ){
 
-                user.attributes.adjectives.first_priority = $(ev.target).html()
+                user.get('adjectives').set({ first_priority : $(ev.target).html() })
 
-            } else if (user.attributes.adjectives.second_priority === null ){
+            } else if ( user.get('adjectives').get('second_priority') === null ){
 
-                user.attributes.adjectives.second_priority = $(ev.target).html()
+                user.get('adjectives').set({ second_priority : $(ev.target).html() })
 
             } else {
 
-                user.attributes.adjectives.third_priority = $(ev.target).html()
+                user.get('adjectives').set({ third_priority : $(ev.target).html() })                
 
             }
 
@@ -91,13 +94,6 @@ app.DefineView = Backbone.View.extend({
         if ( $('.chosen-adj').length === 3 ){
 
             $('#adjective_specifics').fadeIn()
-
-            $('.chosen-adj').each(function(i, obj){
-                var selector = '#adjective_' + (i + 1),
-                    adjective = $(obj).find('.adjective').html()
-
-                $(selector).html(adjective).addClass(adjective)
-            })
 
             $('#adjective_container').isotope({
                     layoutMode : 'straightDown',

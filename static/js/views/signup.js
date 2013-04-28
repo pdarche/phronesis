@@ -4,6 +4,9 @@ var app = app || {};
 app.Login = Backbone.View.extend({
 
     initialize: function(){
+
+        var username = $('#phro_username').html()
+        username !== "" ? window.location = 'http://localhost:8000/#profile' : null
         
         if ( !($.isFunction(this.template)) ){
 
@@ -13,7 +16,6 @@ app.Login = Backbone.View.extend({
                 self.render();
                 $('#greeting p').removeClass('hidden-way-top')
                 setTimeout(self.updateGreeting, 1800)
-
             })
 
         } else {
@@ -43,15 +45,15 @@ app.Login = Backbone.View.extend({
 
     signup : function() {
 
-        this.accept()
-        // var self = this,
-        //     username = $('#username').val(),
-        //     password = $('#password').val(),
-        //     postData = { username : username, password : password }
+        // this.accept()
+        var self = this,
+            username = $('#username').val(),
+            password = $('#password').val(),
+            postData = { username : username, password : password }
 
-        // $.post('v1/login', postData, function(res){
-        //     res === "success" ? self.accept() : self.reject
-        // })
+        $.post('v1/login', postData, function(res){
+            res === "success" ? self.accept() : self.reject
+        })
 
     },
 
@@ -59,6 +61,7 @@ app.Login = Backbone.View.extend({
 
         ev.preventDefault()
         $('#re-enter').fadeOut()
+        $('.signup-container').addClass('signin')
         $('#signup_button').html("sign in")
 
     },
@@ -126,7 +129,7 @@ app.Login = Backbone.View.extend({
                     'created_at' : data.openpaths_user_info.created_at
                 }
 
-            if ( data.twitter_user_info !== null ) {
+                if ( data.twitter_user_info !== null ) {
                     var twitter_user_info = {
                         'twitter_location' : data.twitter_user_info.twitter_location,
                         'twitter_name' : data.twitter_user_info.twitter_name,
@@ -141,14 +144,14 @@ app.Login = Backbone.View.extend({
                     'created_at' : data.zeo_user_info.created_at
                 }
 
-                var adjectives = {
-                    "first_priority" : data.adjectives.first_priority,
-                    "first_priority_specifics" : data.adjectives.first_priority_specifics,
-                    "second_priority" : data.adjectives.second_priority,
-                    "second_priority_specifics" : data.adjectives.second_priority_specifics,
-                    "third_priority" : data.adjectives.third_priority,
-                    "third_priority_specifics" : data.adjectives.third_priority_specifics
-                }
+                var adjectives = new app.Adjectives({
+                    first_priority : data.adjectives.first_priority,
+                    first_priority_specifics : data.adjectives.first_priority_specifics,
+                    second_priority : data.adjectives.second_priority,
+                    second_priority_specifics : data.adjectives.second_priority_specifics,
+                    third_priority : data.adjectives.third_priority,
+                    third_priority_specifics : data.adjectives.third_priority_specifics
+                })  
 
                 window.user = new app.User()
                 user.set({
@@ -167,11 +170,13 @@ app.Login = Backbone.View.extend({
                     'zeo_user_info' : zeo_user_info,
                     'adjectives' : adjectives
                 })
-            })
 
-        $('.signup-container').addClass('accept-top')
-        $('.logo-container').delay(500).addClass('accept-left')
-        setTimeout( self.move, 500)
+                var username = user.get('username')
+                $('#phro_username').text( username )
+                $('.signup-container').addClass('accept-top')
+                $('.logo-container').addClass('accept-left')
+                setTimeout( self.move, 500)
+            })
 
     },
 
