@@ -1,0 +1,26 @@
+<script id="current_spatial_triggers" type="x-handlebars-template">
+	<div class="trigger-container" id="spatial_triggers">
+		<div id="spatial_trigger_control_container">
+			<div id="trigger_map"></div>
+			<h4>Current Triggers</h4>
+			{{#each currentTriggers}}
+				<div class="current-trigger">
+					<div class="trigger-top">
+						<div class="trigger-wrap">
+						<h4 class="trigger-heading-specific">When I'm</h4>
+						<p class="trigger-distance">{{trigger_distance}} miles</p>
+						</div>
+						<div class="trigger-wrap">
+						<h4 class="trigger-heading-specific">from</h4>
+						<p class="trigger-location">{{trigger_location}}</p>
+						</div>
+						<div class="trigger-wrap">
+						<h4 class="trigger-heading-specific">remind me to</h4>
+						<p class="trigger-text">{{trigger_text}}</p>
+						</div>
+					</div>
+				</div>
+			{{/each}}
+		</div>
+	</div>
+</script>

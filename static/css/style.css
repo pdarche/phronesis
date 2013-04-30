@@ -520,7 +520,7 @@ row translation values:
 }
 
 .label {
-	font-weight: bold
+	/*font-weight: bold*/
 }
 
 /* MAP */
@@ -644,11 +644,28 @@ row translation values:
 }
 
 #count_container {
+	width: 30%;
 	margin: 20px;
+	text-align: center;
 }
 
 #count_container h3 {
 	margin: 0px
+}
+
+#trigger_heading {
+	padding: 0px;
+}
+
+#trigger_heading li {
+	list-style-type: none;
+	display: inline-block;
+	margin: 5px 0px 5px 5px;
+	padding: 5px
+}
+
+#trigger_heading li h3{
+	margin: 0px;
 }
 
 #trigger_map {
@@ -682,6 +699,30 @@ row translation values:
 
 #space_trigger_distance{
 	width: 40px;
+}
+
+.current-trigger p {
+	font-size: 16px;
+	margin: 0px
+}
+
+.current-trigger {
+	margin: 0px 0px 10px 0px;
+}
+
+#spatial_trigger_control_container .trigger-top .trigger-wrap {
+	display: inline-block;
+	margin-right: 10px;
+
+}
+
+#spatial_trigger_control_container .trigger-heading-specific {
+	font-size: 12px;
+	margin: 2px;
+}
+
+#spatial_trigger_control_container h4{
+	margin-bottom: 5px;
 }
 
 /**/
@@ -1234,6 +1275,14 @@ path {
   stroke: #fff;
   fill-opacity: .125;
   shape-rendering: crispEdges;
+}
+
+.timespan-input {
+	width: 170px;
+	height: 30px;
+	font-size: 20px;
+	margin-right: 10px
+
 }
 
 /* TEMPORAL EXPANDED VIEW */

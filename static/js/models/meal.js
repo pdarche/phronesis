@@ -53,7 +53,7 @@
 
 var Meals = Backbone.Collection.extend({
     model: Meal,
-    url : '/v1/data/pdarche/body/nutrition'
+    url : '/v1/data/pdarche/body/nutrition?created_at__gte=1359349200'
 });
 
 

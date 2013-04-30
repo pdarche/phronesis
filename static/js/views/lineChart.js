@@ -52,12 +52,27 @@ app.LineChart = Backbone.View.extend({
             mean = ddv.mean,
             median = ddv.median,
             mode = ddv.mode,
-            sd = ddv.sd
+            sd = ddv.sd,
+            contextData = 45
 
 
         var round2 = d3.format(".02r");
 
         var classSelector = '.line-chart'
+
+        var drag = d3.behavior.drag()
+            .origin(Object)
+            .on("drag", dragmove);
+
+        function dragmove(d) {
+          console.log(d3.mouse(this)[1])
+          console.log("d is", y(d))          
+          d3.select(this)
+              // .attr("transform", "translate(0," + (y(d) - mouse[1]) + ")" )
+              // .attr("y", d.y = Math.max(radius, Math.min(height - radius, d3.event.y)));
+        }        
+
+        console.log("drag is", drag)
 
         var margin = {top: 60, right: 30, bottom: 20, left: 50},
             w = this.$el.width() - margin.left - margin.right,
@@ -165,6 +180,8 @@ app.LineChart = Backbone.View.extend({
               .data([mean])
                 .attr("id", "mean")
                 .attr("transform", "translate(0," + y(mean) + ")")
+                .call(drag)
+
 
         meanLine.append("line")
              .attr("id", "mean_line")
@@ -188,6 +205,47 @@ app.LineChart = Backbone.View.extend({
             .attr("x", 5)
             .attr("dy", 20)
             .style("font-size", 10)
+
+        meanLine.append("text")
+            .text("+7% of developing CVD")
+            .attr("id", "increase_text")
+            .attr("x", w - 430)
+            .attr("dy", -7)
+            .style("font-size", 40)
+            .style("fill", "red")
+            .style('fill-opacity', .4)
+
+        var contextLine = vis.append("svg:g")
+              .data([contextData])
+                .attr("id", "context")
+                .attr("transform", "translate(0," + y(contextData) + ")")
+                .on('mousedown', function(d){
+                    console.log(d3.mouse(this))
+                })
+
+        contextLine.append("line")
+             .attr("id", "mean_line")
+             .attr("x1", 0 )
+             .attr("x2", w)
+             .attr("y1", 0)
+             .attr("y1", 0)
+             .style("stroke", "#444")
+             .style("stroke-width", "1px")
+
+        contextLine.append("text")
+            .text(function(d){ return "goal"})
+            .attr("id", "mean_text")
+            .attr("x", -25)
+            .attr("dy", 3)
+            .style("font-size", 10)
+
+        // contextLine.append("text")
+        //     .text(function(d){ return "stdev: " + round2(sd)})
+        //     .attr("id", "sd_text")
+        //     .attr("x", 5)
+        //     .attr("dy", 20)
+        //     .style("font-size", 10)
+
 
         var path = vis.append("g").selectAll("path.line")
             .data([data])
@@ -254,7 +312,9 @@ app.LineChart = Backbone.View.extend({
             dataType = this.getDataType(),
             x, y, title
 
-        _.each( this.model.data, function(obj){
+        var sorted = this.model.data.sort(function(a,b) { return parseInt(a.created_at) - parseInt(b.created_at) } );
+
+        _.each( sorted, function(obj){
 
             if ( dataType === "mins_very_active" ){
                 var datum = { x: obj.created_at, y : obj[dataType] }

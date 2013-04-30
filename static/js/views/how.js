@@ -73,14 +73,23 @@ app.HowView = Backbone.View.extend({
 
     toggleTriggers : function(){
 
-        console.log("toggling")
+        if ( $('.col-2').hasClass('grid-6') ){
 
-        $('.col-2').hasClass('grid-6') ? $('.col-2').removeClass('grid-6').addClass('grid-3') :
-                                        $('.col-2').addClass('grid-6').removeClass('grid-3')
+            $('.col-2').removeClass('grid-6').addClass('grid-3')
+            $('.col-3').removeClass('grid-3').addClass('grid-6')
+            $('svg').hide() 
+            $('#count_container').css('width', '265px')
 
+        } else {
 
-        $('.col-3').hasClass('grid-3') ? $('.col-3').removeClass('grid-3').addClass('grid-6') :
-                                        $('.col-3').addClass('grid-3').removeClass('grid-6')                                        
+            $('.col-2').addClass('grid-6').removeClass('grid-3')
+            $('.col-3').addClass('grid-3').removeClass('grid-6')
+            $('svg').fadeIn()
+            $('#count_container').css('width', '30%')
+
+        }
+
+                                              
 
     }
 
