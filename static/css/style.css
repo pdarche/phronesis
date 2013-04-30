@@ -985,9 +985,11 @@ row translation values:
 	top: 0px;
 	right: 0px;
 	width: 600px;
-	height: 95%;
+	height: 88%;
 	margin: 10px;
 	background-color: #eee;
+	overflow-y: auto;
+	padding:15px; 
 }
 
 .tracker {

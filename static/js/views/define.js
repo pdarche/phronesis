@@ -152,6 +152,15 @@ app.DefineView = Backbone.View.extend({
         var accentClass = $('.adjective').not('.inactive').attr('class').split(" ")[1]
         $(ev.target).addClass(accentClass).css({"padding-left" : "40px"})
 
+        $('#attribute_details').empty()
+        $.when( $.get('/static/js/templates/tempCVDinfo.handlebars') )
+         .done( function(data){
+            console.log("the data is ", data)
+            var source = $(data).html()
+            var template = Handlebars.compile( source );
+            $('#attribute_details').append(template)
+         })
+
     },
 
     removeAccent : function( ev ){
