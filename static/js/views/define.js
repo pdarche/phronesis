@@ -80,8 +80,20 @@ app.DefineView = Backbone.View.extend({
 
             if ( user.get('traits').get('firstPriority') === undefined ){
 
-                user.get('traits').set({ firstPriority : new Trait({ name : traitName }) })
-                user.get('traits').get('firstPriority').get('traitSpecifics').fetch()                
+                user.get('traits').set({ firstPriority : new Trait({ name : traitName }) })                
+                user.get('traits').get('firstPriority').get('traitSpecifics').fetch().then(
+                    function(){
+                        _.each( user.get('traits').get('firstPriority').get('traitSpecifics').models, function( model ){
+                            model.get('recommendedBehaviors').fetch().then(
+                                function(){
+                                    _.each( model.get('recommendedBehaviors').models, function( subModel ){
+                                        console.log("the subModel is", subModel)
+                                    })
+                                }
+                            )
+                        })
+                    }
+                )     
 
             } else if ( user.get('traits').get('secondPriority') === undefined ){
 
@@ -131,38 +143,39 @@ app.DefineView = Backbone.View.extend({
 
     },
 
-    toggleSpecifics : function(){
+    toggleSpecifics : function( ev ){
 
         var self = this,
             activeAdj = '.chosen-adj-'+ this.state,
             adjName = $(activeAdj).find('div').html(),
             collection = undefined
-            priority = this.state !== 0 ? this.priorities[this.state - 1] : null
+            priority = this.priorities[this.state]
             
         $('.inactive').parent().removeClass('no-shadow')
         $('.inactive').removeClass('inactive')
         $('.chosen-adj').not(activeAdj).addClass('no-shadow')
         $('.chosen-adj').not(activeAdj).find('.adjective').addClass('inactive')
 
-        // for ( key in user.get('traits').attributes ){
+        if ( ev !== undefined ){
+            var newPriorityName = this.priorities[this.state-1][1]
+            var traitSpecific = $(ev.target).attr('id')
+            var newPriority = {}
+            newPriority[newPriorityName] = traitSpecific
+            user.get('traits').set(newPriority)
 
-        //     if ( user.get('traits').attributes[key] !== undefined ) {
-                
-        //          if ( user.get('traits').attributes[key].get('name') === adjName ){
-        //             collection = user.get('traits').get(key).get('traitSpecifics') 
-        //          }
-        //     }
+            // set new trait specific priority
+            // fetch models for that trait specific
+        }
 
-        // }
+        if (this.state !== 3) {
 
-        if ( this.state !== 0 ){
-            collection = user.get('traits').get(priority[0]).get('traitSpecifics')
-            // user.get('traits').set({ priority[1] : })
+            collection = user.get('traits').get(priority[0]).get('traitSpecifics')            
 
             var specific = new app.AdjectiveSpecifics({ 
                 el : $('#adjective_specifics'),
                 collection : collection
             })
+
         }
 
         this.state++

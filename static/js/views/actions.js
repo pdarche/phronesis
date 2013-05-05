@@ -28,9 +28,20 @@ app.ActionsView = Backbone.View.extend({
 
         this.$el.empty()
 
+        var dataz = []
+        _.each( this.collection.get('recommendedBehaviors').models, function(model){
+            var rec_habit_key = model.attributes.rec_habit_key,
+                rec_habit = model.attributes.rec_habit,
+                datum = { "rec_habit" : rec_habit, "rec_habit_key" : rec_habit_key }
+
+            dataz.push(datum)
+        })
+
+        console.log("the data going to the templtate is ", dataz)
+
         var source = $(this.template).html();
         var template = Handlebars.compile( source );
-        this.$el.append( template( { "actions" : this.model.actions, "actions_heading" : this.model.actions_heading }) );
+        this.$el.append( template( { "habits" : dataz } ) );
         $('#action_list').hide().fadeIn()
 
     }

@@ -2,9 +2,9 @@
 	<div>
 		<h2>{{actions_heading}}</h2>
 	</div>
-	{{#each actions}}
+	{{#each habits}}
 		<div class="action-wrap">
-			<div id="{{ this }}" class="action">{{ this }}</div>
+			<div id="{{ rec_habit_key }}" class="action">{{ rec_habit }}</div>
 		</div>
 	{{/each}}
 </script>

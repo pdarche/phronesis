@@ -24,10 +24,16 @@ app.AdjectiveSpecifics = Backbone.View.extend({
     },
 
     render : function() {
-        var specifics = this.collection.pluck('as_heading')
+        var data = []
+        _.each(this.collection.models, function( model ){
+            var as_heading = model.attributes.as_heading,
+                trait_specific = model.attributes.trait_specific
+            data.push( { "as_heading" : as_heading, "trait_specific" : trait_specific })
+        })  
+
         var source = $(this.template).html()
         var template = Handlebars.compile( source );
-        this.$el.html( template( { "attributes" : specifics} ) )
+        this.$el.html( template( { "attributes" : data } ) )
 
        $('#adjective_specifics').delay(500).css({ 
             "opacity" : 1,

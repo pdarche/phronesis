@@ -12,11 +12,19 @@ app.HowView = Backbone.View.extend({
                 self.template = tmpl
                 self.render()
 
-                var activeAdj = $('#adjective_1').html()
-                
+                var activeAdj = $('#adjective_1').html(),
+                    activeSpecific = user.get('traits').get('firstPriorityActiveSpecific'),
+                    activeSpecificCollection
+
+                _.each( user.get('traits').get('firstPriority').get('traitSpecifics').models, function( model ){
+                    model.attributes.trait_specific === activeSpecific ? activeSpecificCollection = model : null
+                })
+
+                console.log("active specific model is", activeSpecificCollection)
+
                 var actions = new app.ActionsView({ 
                         el : $('#action_list'),
-                        model : adj[activeAdj]
+                        collection : activeSpecificCollection
                     })
 
                 var currentStatus = new app.CurrentStatusView({ 

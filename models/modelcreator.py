@@ -22,15 +22,15 @@ traits = [
 	"responsible", "educated", "wise"
 ]
 
-# for trait in traits:
-# 	newTrait = healthy.Trait(
-# 			trait = trait	
-# 	)
+for trait in traits:
+	newTrait = healthy.Trait(
+			trait = trait	
+	)
 
-# 	if newTrait.save():
-# 		print "saved new trait"
-# 	else:
-# 		print "didn't save"
+	# if newTrait.save():
+	# 	print "saved new trait"
+	# else:
+	# 	print "didn't save"
 
 
 trait_specifics = [
@@ -95,10 +95,10 @@ for rh in reco_habits:
 		rec_habit_key = rh["rhk"]
 	)
 
-	if newRh.save():
-		print "new hr saved"
-	else:
-		print "new rh didn't save"
+	# if newRh.save():
+	# 	print "new hr saved"
+	# else:
+	# 	print "new rh didn't save"
 
 
 actions = [

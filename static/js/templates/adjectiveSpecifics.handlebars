@@ -1,6 +1,6 @@
 <script id="adjective_specifics" type="x-handlebars-template">
 	{{#each attributes}}
-		<div class="adjective-attribute">{{ this }}</div>
+		<div class="adjective-attribute" id="{{ trait_specific }}">{{ as_heading }}</div>
 	{{/each}}
 	<div id="attribute_details"></div>
 </script>

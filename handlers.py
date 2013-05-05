@@ -2064,7 +2064,12 @@ class RemoveHandler(BaseHandler):
 			"fitbit_activity" : models.fitbit.FitbitPhysicalActivity,
 			"fitbit_sleep" : models.fitbit.FitbitSleep,
 			"foursquare" : models.foursquare.CheckIn,
-			"openpaths" : models.openpaths.OpenPathsLocation
+			"openpaths" : models.openpaths.OpenPathsLocation,
+			"traits" : healthy.Trait,
+			"traitSpecifics" : healthy.TraitSpecific,
+			"recommendedHabits" : healthy.RecommendedHabit,
+			"currentStatuses" : healthy.CurrentStatus,
+			"actionsToTake" : healthy.ActionToTake
 		}
 
 		objs = paths[input].objects() #username=username

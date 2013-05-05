@@ -227,8 +227,8 @@ var CurrentStatus = Backbone.RelationalModel.extend({
 
 var Action = Backbone.RelationalModel.extend({
     defaults : {
-
-    }, 
+        pizza : undefined
+    },
     initialize : function(){
         console.log("initializing an action")
     }
@@ -252,31 +252,31 @@ var TraitSpecifics = Backbone.Collection.extend({
 var RecommendedBehaviors = Backbone.Collection.extend({
     model : RecommendedBehavior,
     url : function(){
-        console.log("the parent's name is ", this.parentTrait,get('name'))
-        return '/v1/ref/traits/traitSpecifics/recommendedHabit?for_trait=' + this.parentTrait.get('name')
+        console.log("the parent's name is ", this.parentSpecific.get('trait_specific'))
+        return '/v1/ref/traits/traitSpecifics/recommendedHabit?for_trait_specific=' + this.parentSpecific.get('trait_specific')
     },
     initialize : function() {
-        console.log("initializing recommendedBehaviors")
+        // console.log("initializing recommendedBehaviors")
     }
 })
 
 var Actions = Backbone.Collection.extend({
     model : Action,
     url : function(){        
-        return '/v1/ref/traits/traitSpecifics/recommendedHabit/actionsToTake?for_trait=' + this.parentTrait.get('name')
+        return '/v1/ref/traits/traitSpecifics/recommendedHabit/actionsToTake?for_trait_specific=' + this.parentTrait.get('name')
     },
     initialize : function() {
-        console.log("initializing actions to take")
+        // console.log("initializing actions to take")
     }
 })
 
-var Actions = Backbone.Collection.extend({
-    model : Action,
+var CurrentStatuses = Backbone.Collection.extend({
+    model : CurrentStatus,
     url : function(){        
         return '/v1/ref/traits/traitSpecifics/recommendedHabit/currentStatus?for_trait=' + this.parentTrait.get('name')
     },
     initialize : function() {
-        console.log("initializing trait specifics")
+        // console.log("initializing current statuses")
     }
 })
 
