@@ -144,16 +144,13 @@ app.Login = Backbone.View.extend({
                     'created_at' : data.zeo_user_info.created_at
                 }
 
-                var adjectives = new app.Adjectives({
-                    first_priority : data.adjectives.first_priority,
-                    first_priority_specifics : data.adjectives.first_priority_specifics,
-                    second_priority : data.adjectives.second_priority,
-                    second_priority_specifics : data.adjectives.second_priority_specifics,
-                    third_priority : data.adjectives.third_priority,
-                    third_priority_specifics : data.adjectives.third_priority_specifics
+                var traits = new app.Traits({
+                    firstPriority : data.adjectives.first_priority,
+                    secondPriority : data.adjectives.second_priority,
+                    thirdPriority : data.adjectives.third_priority,
                 })  
 
-                window.user = new app.User()
+                window.user = new User()
                 user.set({
                     'date_of_birth' : data.date_of_birth,
                     'username' : data.username,
@@ -168,7 +165,7 @@ app.Login = Backbone.View.extend({
                     'time_zone' : data.time_zone,
                     'twitter_user_info' : twitter_user_info,
                     'zeo_user_info' : zeo_user_info,
-                    'adjectives' : adjectives
+                    'traits' : traits
                 })
 
                 var username = user.get('username')

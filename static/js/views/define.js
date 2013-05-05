@@ -2,6 +2,11 @@ var app = app || {};
 
 app.DefineView = Backbone.View.extend({
     state : 0,
+    priorities : [  
+        [ "firstPriority", "firstPriorityActiveSpecific" ],
+        [ "secondPriority", "secondPriorityActiveSpecific" ],
+        [ "thirdPriority", "thirdPriorityActiveSpecific" ]
+    ],
 
     initialize : function() {
 
@@ -63,27 +68,30 @@ app.DefineView = Backbone.View.extend({
     },
 
     toggleAdjective : function(ev){
-
         var self = this,
+            traitName = $(ev.target).html(),
             accentClass = $(ev.target).html() + '-accent'
 
         if ( $(ev.target).parent().hasClass('chosen-adj') ){
-
+        
             $(ev.target).parent().removeClass('chosen-adj')
-
+        
         } else {
 
-            if ( user.get('adjectives').get('first_priority') === null ){
+            if ( user.get('traits').get('firstPriority') === undefined ){
 
-                user.get('adjectives').set({ first_priority : $(ev.target).html() })
+                user.get('traits').set({ firstPriority : new Trait({ name : traitName }) })
+                user.get('traits').get('firstPriority').get('traitSpecifics').fetch()                
 
-            } else if ( user.get('adjectives').get('second_priority') === null ){
+            } else if ( user.get('traits').get('secondPriority') === undefined ){
 
-                user.get('adjectives').set({ second_priority : $(ev.target).html() })
+                user.get('traits').set({ secondPriority : new Trait({ name : traitName }) })
+                user.get('traits').get('secondPriority').get('traitSpecifics').fetch()
 
-            } else {
+            } else if ( user.get('traits').get('thirdPriority') === undefined ){
 
-                user.get('adjectives').set({ third_priority : $(ev.target).html() })                
+                user.get('traits').set({ thirdPriority : new Trait({ name : traitName }) })
+                user.get('traits').get('thirdPriority').get('traitSpecifics').fetch()       
 
             }
 
@@ -127,17 +135,35 @@ app.DefineView = Backbone.View.extend({
 
         var self = this,
             activeAdj = '.chosen-adj-'+ this.state,
-            adjName = $(activeAdj).find('div').html()
-
+            adjName = $(activeAdj).find('div').html(),
+            collection = undefined
+            priority = this.state !== 0 ? this.priorities[this.state - 1] : null
+            
         $('.inactive').parent().removeClass('no-shadow')
         $('.inactive').removeClass('inactive')
         $('.chosen-adj').not(activeAdj).addClass('no-shadow')
         $('.chosen-adj').not(activeAdj).find('.adjective').addClass('inactive')
 
-        var specific = new app.AdjectiveSpecifics({ 
-            el : $('#adjective_specifics'),
-            model : adj[adjName]
-        })
+        // for ( key in user.get('traits').attributes ){
+
+        //     if ( user.get('traits').attributes[key] !== undefined ) {
+                
+        //          if ( user.get('traits').attributes[key].get('name') === adjName ){
+        //             collection = user.get('traits').get(key).get('traitSpecifics') 
+        //          }
+        //     }
+
+        // }
+
+        if ( this.state !== 0 ){
+            collection = user.get('traits').get(priority[0]).get('traitSpecifics')
+            // user.get('traits').set({ priority[1] : })
+
+            var specific = new app.AdjectiveSpecifics({ 
+                el : $('#adjective_specifics'),
+                collection : collection
+            })
+        }
 
         this.state++
 
@@ -155,7 +181,6 @@ app.DefineView = Backbone.View.extend({
         $('#attribute_details').empty()
         $.when( $.get('/static/js/templates/tempCVDinfo.handlebars') )
          .done( function(data){
-            console.log("the data is ", data)
             var source = $(data).html()
             var template = Handlebars.compile( source );
             $('#attribute_details').append(template)

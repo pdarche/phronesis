@@ -24,6 +24,7 @@ import models.physact as physact
 import models.sleep as sleep
 import models.mypyramid as pyramid
 import models.nutrition as nutrition
+import models.healthy as healthy
 
 #python mongo hooks
 from pymongo import *
@@ -1843,7 +1844,14 @@ class DataHandler(BaseHandler):
 			"body/physicalActivity" : physact.PhysicalActivity,
 			"body/sleep" : models.sleep.SleepRecord,
 			"body/nutrition" : nutrition.NutritionRecord,
-			"body/location" : loc.Location
+			"body/location" : loc.Location,
+			"traits/healthy" : None,
+			"traits/sustainable" : None,
+			"traits/educated" : None, 
+			"traitSpecific/cardiovascular" : None,
+			"traitSpecific/musculoskelatal" : None, 
+			"traitSpecific/respirator" : None,
+			"traitSpecific/mental" : None
 		}
 
 		if order_by != None:
@@ -1894,7 +1902,8 @@ class DataHandler(BaseHandler):
 		doc = nutrition.NutritionRecord.objects( #GENERALIZE
 					id=objectid.ObjectId(id_str))[0]
 
-		docDict = json.loads(json.dumps(doc, default=encode_model)) # this is a hack
+		# this is a hack
+		docDict = json.loads(json.dumps(doc, default=encode_model))
 
 		diff = DictDiffer(objDict, docDict)
 		changedKeys = list(diff.changed())
@@ -1969,10 +1978,15 @@ class RefHandler(BaseHandler):
 		kw = keyword_args(params)
 
 		paths = { 
-			"nutrition/des" : nutrition.SR25FoodDescription,
-			"nutrition/sr25" : nutrition.SR25Abbrev,
-			"nutrition/mypyramid" : pyramid.MyPyramidReferenceInfo,
-			"nutrition/standard_label" : nutrition.StandardNutritionLabelMealItem
+			# "nutrition/des" : nutrition.SR25FoodDescription,
+			# "nutrition/sr25" : nutrition.SR25Abbrev,
+			# "nutrition/mypyramid" : pyramid.MyPyramidReferenceInfo,
+			# "nutrition/standard_label" : nutrition.StandardNutritionLabelMealItem,			
+			"traits" : healthy.Trait,
+			"traits/traitSpecifics" : healthy.TraitSpecific,
+			"traits/traitSpecifics/recommendedHabit" : healthy.RecommendedHabit,
+			"traits/traitSpecifics/recommendedHabit/currentStatus" : healthy.CurrentStatus,
+			"traits/traitSpecifics/recommendedHabit/actionsToTake" : healthy.ActionToTake
 		}
 
 		if order_by != None:

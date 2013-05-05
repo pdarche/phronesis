@@ -1,6 +1,6 @@
 var app = app || {};
 
-app.User = Backbone.Model.extend({
+var User = Backbone.Model.extend({
         defaults: {
             date_of_birth : undefined,
             username : undefined,
@@ -51,14 +51,7 @@ app.User = Backbone.Model.extend({
             zeo_user_info : {
                 created_at : undefined
             },
-            adjectives : {
-                first_priority : undefined,
-                first_priority_specifics : undefined,
-                second_priority : undefined,
-                second_priority_specifics : undefined,
-                third_priority : undefined,
-                third_priority_specifics : undefined
-            }
+            traits : undefined
         },
         initialize: function(){
 
@@ -70,24 +63,23 @@ app.User = Backbone.Model.extend({
         }
 });
 
-
-app.Adjectives = Backbone.Model.extend({
+app.Traits = Backbone.Model.extend({
 
     defaults : {
-        first_priority : undefined,
-        first_priority_specifics : [],
-        second_priority : undefined,
-        second_priority_specifics : [],
-        third_priority : undefined,
-        third_priority_specifics : []
+        firstPriority : undefined,
+        firstPriorityActiveSpecific : undefined,
+        secondPriority : undefined,
+        secondPriorityActiveSpecific : undefined,
+        thirdPriority : undefined,
+        thirdPriorityActiveSpecific : undefined 
     },
     initialize : function(){
-
-        this.on("change:first_priority", function(model){
+        console.log("jsut initialzed user traits")
+        this.on("change:firstPriority", function(model){
             
             var prevAdj = $('#adjective_1').html(),
                 prevClass = prevAdj + "-accent",
-                newAdj = this.get('first_priority'),
+                newAdj = this.get('firstPriority').get('name'),
                 newAccent = newAdj + "-accent",
                 newClasses = newAdj + " " + newAccent
 
@@ -105,11 +97,11 @@ app.Adjectives = Backbone.Model.extend({
 
         })
 
-        this.on("change:second_priority", function(model){
+        this.on("change:secondPriority", function(model){
             
             var prevAdj = $('#adjective_2').html(),
                 prevClass = prevAdj + "-accent",
-                newAdj = this.get('second_priority'),
+                newAdj = this.get('secondPriority').get('name'),
                 newAccent = newAdj + "-accent",
                 newClasses = newAdj + " " + newAccent
             
@@ -126,11 +118,11 @@ app.Adjectives = Backbone.Model.extend({
 
         })
 
-        this.on("change:third_priority", function(model){
+        this.on("change:thirdPriority", function(model){
             
             var prevAdj = $('#adjective_3').html(),
                 prevClass = prevAdj + "-accent",            
-                newAdj = this.get('third_priority'),
+                newAdj = this.get('thirdPriority').get('name'),
                 newAccent = newAdj + "-accent",
                 newClasses = newAdj + " " + newAccent
 
@@ -152,5 +144,139 @@ app.Adjectives = Backbone.Model.extend({
 
 })
 
+var Trait = Backbone.RelationalModel.extend({
+    relations : [{
+        type : Backbone.HasMany,
+        key : 'traitSpecifics',
+        relatedModel : 'TraitSpecific',
+        collectionType : 'TraitSpecifics',
+        collectionOptions : function(m){
+            return {
+                parentTrait : m.get('name')
+            }
+        },
+        // autoFetch : true,
+        reverseRelation : {
+            key : 'parentTrait',
+            includeInJSON: 'id'
+        }
+    }]
+})
 
+var TraitSpecific = Backbone.RelationalModel.extend({
+    relations : [{
+        type : Backbone.HasMany,
+        key : 'recommendedBehaviors',
+        relatedModel : 'RecommendedBehavior',
+        collectionType : 'RecommendedBehaviors',
+        // autoFetch : true,
+        reverseRelation : {
+            key : 'parentSpecific',
+            includeInJSON : 'id'
+        }
+    }],
+    defaults : {
+        info : undefined,
+        activeRecommendedBehavior : undefined
+    },
+    initialize : function(){
+
+    }
+})
+
+var RecommendedBehavior = Backbone.RelationalModel.extend({
+    relations : [{
+        type : Backbone.HasMany,
+        key : 'actions',
+        relatedModel : 'Action',
+        collectionType : 'Actions',
+        // autoFetch : true,
+        reverseRelation : {
+            key : 'parentBehavior',
+            includeInJSON : 'id'
+        }
+    },
+    {
+        type : Backbone.HasMany,
+        key : 'currentStatus',
+        relatedModel : 'CurrentStatus',
+        collectionType : 'CurrentStatuses',
+        // autoFetch : true,
+        reverseRelation : {
+            key : 'parentBehavior',
+            includeInJSON : 'id'
+        }
+    }],
+    defaults : {
+        dataTypes: undefined,
+        triggers : [] 
+    },
+    initialize : function(){
+
+    }
+})
+
+var CurrentStatus = Backbone.RelationalModel.extend({
+    defaults : {
+
+    }, 
+    initialize : function(){
+        console.log("initializing an action")
+    }
+})
+
+var Action = Backbone.RelationalModel.extend({
+    defaults : {
+
+    }, 
+    initialize : function(){
+        console.log("initializing an action")
+    }
+})
+
+// collections
+var Traits = Backbone.Collection.extend({
+    model : Trait,
+    initialize : function() {
+        console.log("initializing trait")
+    }
+})
+
+var TraitSpecifics = Backbone.Collection.extend({
+    model : TraitSpecific,
+    url : function(){
+        return '/v1/ref/traits/traitSpecifics?for_trait=' + this.parentTrait.get('name')
+    }
+})
+
+var RecommendedBehaviors = Backbone.Collection.extend({
+    model : RecommendedBehavior,
+    url : function(){
+        console.log("the parent's name is ", this.parentTrait,get('name'))
+        return '/v1/ref/traits/traitSpecifics/recommendedHabit?for_trait=' + this.parentTrait.get('name')
+    },
+    initialize : function() {
+        console.log("initializing recommendedBehaviors")
+    }
+})
+
+var Actions = Backbone.Collection.extend({
+    model : Action,
+    url : function(){        
+        return '/v1/ref/traits/traitSpecifics/recommendedHabit/actionsToTake?for_trait=' + this.parentTrait.get('name')
+    },
+    initialize : function() {
+        console.log("initializing actions to take")
+    }
+})
+
+var Actions = Backbone.Collection.extend({
+    model : Action,
+    url : function(){        
+        return '/v1/ref/traits/traitSpecifics/recommendedHabit/currentStatus?for_trait=' + this.parentTrait.get('name')
+    },
+    initialize : function() {
+        console.log("initializing trait specifics")
+    }
+})
 

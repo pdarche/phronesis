@@ -17,17 +17,17 @@ app.AdjectiveSpecifics = Backbone.View.extend({
 
         } else {
 
-            console.log("gots the template")
+            console.log("gots the template")    
 
         }
 
     },
 
     render : function() {
-
+        var specifics = this.collection.pluck('as_heading')
         var source = $(this.template).html()
         var template = Handlebars.compile( source );
-        this.$el.html( template( this.model ) )
+        this.$el.html( template( { "attributes" : specifics} ) )
 
        $('#adjective_specifics').delay(500).css({ 
             "opacity" : 1,
