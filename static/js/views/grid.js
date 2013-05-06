@@ -84,11 +84,13 @@ app.GridView = Backbone.View.extend({
 
         } else {
 
+            console.log("this bitch has been clicked!")
+
             // console.log("firing")
             $('.test-div').not(clickedSelector).hide()
             //.queue(function(){
             //     console.log("ishould be firing")
-                clickedDiv.addClass('expanded')
+            clickedDiv.addClass('expanded')
             // })
 
             console.log("view name is ", viewName)

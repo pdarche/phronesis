@@ -138,10 +138,10 @@ for aa in actions:
 
 
 csus = [
-	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "url" : "/v1/data/pdarche/body/physicalActivity", "attr" : "mins_highly_active", "rhk" : "vaff" },
-	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit saturated fat intake to 20g per day", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "saturated_fat", "rhk" : "sfg" },
-	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit sodium intake to 2400mg per day", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "sodium", "rhk" : "smg" },
-	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit alchohol consumption to one drink", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "drink", "rhk" : "lac" },
+	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "url" : "/v1/data/pdarche/body/physicalActivity", "attr" : "mins_very_active", "rhk" : "vaff", "chart_title" : "Days Over 45 Minutes", "heading" : "Minutes Very Active" },
+	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit saturated fat intake to 20g per day", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "saturated_fat", "rhk" : "sfg", "chart_title" : "Days Under 20g of Saturated Fat", "heading" : "Grams of Saturated Fat" },
+	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit sodium intake to 2400mg per day", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "sodium", "rhk" : "smg", "chart_title" : "Days Under 2400mg of Sodium", "heading" : "Milligrams of Sodium" },
+	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit alchohol consumption to one drink", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "drink", "rhk" : "lac", "chart_title" : "Days at One Drik or Less", "heading" : "Number of Drinks" },
 ]
 
 for cs in csus:
@@ -151,13 +151,15 @@ for cs in csus:
 		for_rec_habit = cs["for_rh"],
 		for_rec_habit_key = cs["rhk"],
 		data_url = cs["url"],
-		attr = cs["attr"]
+		attr = cs["attr"],
+		heading = cs["heading"],
+		chart_title = cs["chart_title"]
 	)
 
-	# if newCS.save():
-	# 	print "cs saved"
-	# else:
-	# 	print "cs didn't save"
+	if newCS.save():
+		print "cs saved"
+	else:
+		print "cs didn't save"
 
 # vaffm = u.HabitInfo(
 # 		url = '/veryActiveFortyFive',

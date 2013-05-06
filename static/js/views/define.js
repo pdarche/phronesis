@@ -87,7 +87,8 @@ app.DefineView = Backbone.View.extend({
                             model.get('recommendedBehaviors').fetch().then(
                                 function(){
                                     _.each( model.get('recommendedBehaviors').models, function( subModel ){
-                                        console.log("the subModel is", subModel)
+                                        subModel.get('actions').fetch()
+                                        subModel.get('currentStatus').fetch()
                                     })
                                 }
                             )

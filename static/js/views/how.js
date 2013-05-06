@@ -14,13 +14,18 @@ app.HowView = Backbone.View.extend({
 
                 var activeAdj = $('#adjective_1').html(),
                     activeSpecific = user.get('traits').get('firstPriorityActiveSpecific'),
-                    activeSpecificCollection
+                    activeHabitKey = $('.chosen-action').attr('id'),
+                    activeSpecificCollection,
+                    activeHabitCollection
 
                 _.each( user.get('traits').get('firstPriority').get('traitSpecifics').models, function( model ){
                     model.attributes.trait_specific === activeSpecific ? activeSpecificCollection = model : null
+                    _.each( model.get('recommendedBehaviors').models, function( recHabit ){
+                        recHabit.attributes.rec_habit_key === "vaff" ? activeHabitCollection = recHabit : null
+                    })
                 })
 
-                console.log("active specific model is", activeSpecificCollection)
+                console.log("active specific model is", activeHabitCollection)
 
                 var actions = new app.ActionsView({ 
                         el : $('#action_list'),
@@ -28,12 +33,18 @@ app.HowView = Backbone.View.extend({
                     })
 
                 var currentStatus = new app.CurrentStatusView({ 
-                        el : $('#current_status_content')
+                        el : $('#current_status_content'),
+                        model : activeHabitCollection.get('currentStatus')
                     })
 
                 var triggers = new app.TriggersView({ 
                         el : $('#triggers_content')
                     })
+
+                var actions = new app.ActionsToTakeView({
+                        el : $('#actions_content'),
+                        model : activeHabitCollection.get('actions')
+                })
 
                 $('#action_container, .how-rect, .action-wrap').css('opacity', 1)
                 //this should change with global heading
@@ -76,6 +87,29 @@ app.HowView = Backbone.View.extend({
         var accentClass = $('.active-adj').html() + "-accent"
         $('.chosen-action').removeClass(accentClass).removeClass('chosen-action')
         $(ev.target).addClass(accentClass + ' chosen-action')
+
+        var recHabitKey = $(ev.target).attr('id'),
+            activeHabitCollection
+
+        _.each( user.get('traits').get('firstPriority').get('traitSpecifics').models, function( model ){
+            _.each( model.get('recommendedBehaviors').models, function( recHabit ){
+                recHabit.attributes.rec_habit_key === recHabitKey ? activeHabitCollection = recHabit : null
+            })
+        })
+
+        var currentStatus = new app.CurrentStatusView({ 
+            el : $('#current_status_content'),
+            model : activeHabitCollection.get('currentStatus')
+        })
+
+        var triggers = new app.TriggersView({ 
+            el : $('#triggers_content')
+        })
+
+        var actions = new app.ActionsToTakeView({
+                el : $('#actions_content'),
+                model : activeHabitCollection.get('actions')
+        })        
 
     },
 

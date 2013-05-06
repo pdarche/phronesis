@@ -17,7 +17,6 @@ app.TriggersView = Backbone.View.extend({
                 self.template = tmpl
                 self.render( currentSpatialTriggers )
                 var accentClass = $('.active-adj').html() + "-accent"
-                $('.action').eq(0).addClass(accentClass + ' chosen-action')
 
                 $('#spatial_trigger_heading').addClass(accentClass)
 
@@ -43,9 +42,6 @@ app.TriggersView = Backbone.View.extend({
                 }).addTo(map);
                 map.addLayer(osm);
 
-                console.log(chipotle)
-                console.log(itp)
-
             })
 
         } else {
@@ -60,7 +56,7 @@ app.TriggersView = Backbone.View.extend({
 
         var source = $(this.template).html();
         var template = Handlebars.compile( source );
-        this.$el.append( template({ "currentTriggers" : data }) );
+        this.$el.html( template({ "currentTriggers" : data }) );
 
     }
 

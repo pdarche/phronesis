@@ -65,6 +65,7 @@ $(document).ready(function(){
 
 		    app_router.on('route:index', function() {
 		        
+		        $('#content_container').undelegate()
 				var login = new app.Login({ el : $('#content_container') })
 
 		    })
@@ -78,18 +79,21 @@ $(document).ready(function(){
 
 		    app_router.on('route:landingpage', function(){
 
+		    	$('#content_container').undelegate()
 		    	var landingpage = new app.LandingPage({ el : $('#content_container')})
 
 		    })
 
 		    app_router.on('route:query', function(){
 
+		    	$('#content_container').undelegate()
 		    	var query = new app.QueryView({ el : $('#content_container')})
 
 		    })
 
 			app_router.on('route:define', function(){
 
+				$('#content_container').undelegate()
 		    	var define = new app.DefineView({ el : $('#content_container')})
 
 		    })

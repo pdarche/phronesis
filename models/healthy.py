@@ -30,6 +30,8 @@ class CurrentStatus(Document):
 	for_rec_habit_key = StringField()
 	data_url = StringField()
 	attr = StringField()
+	heading = StringField()
+	chart_title = StringField()
 
 
 class ActionToTake(Document):

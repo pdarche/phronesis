@@ -208,8 +208,8 @@ var RecommendedBehavior = Backbone.RelationalModel.extend({
         }
     }],
     defaults : {
-        dataTypes: undefined,
-        triggers : [] 
+        // dataTypes: undefined,
+        // triggers : [] 
     },
     initialize : function(){
 
@@ -262,21 +262,23 @@ var RecommendedBehaviors = Backbone.Collection.extend({
 
 var Actions = Backbone.Collection.extend({
     model : Action,
-    url : function(){        
-        return '/v1/ref/traits/traitSpecifics/recommendedHabit/actionsToTake?for_trait_specific=' + this.parentTrait.get('name')
+    url : function(){
+        console.log("fetching with parent behavior ", this.parentBehavior.get('rec_habit_key'))
+        return '/v1/ref/traits/traitSpecifics/recommendedHabit/actionsToTake?for_rec_habit_key=' + this.parentBehavior.get('rec_habit_key')
     },
     initialize : function() {
-        // console.log("initializing actions to take")
+        console.log("initializing actions to take")
     }
 })
 
 var CurrentStatuses = Backbone.Collection.extend({
     model : CurrentStatus,
-    url : function(){        
-        return '/v1/ref/traits/traitSpecifics/recommendedHabit/currentStatus?for_trait=' + this.parentTrait.get('name')
+    url : function(){
+        console.log("fetching with parent behavior ", this.parentBehavior.get('rec_habit_key'))
+        return '/v1/ref/traits/traitSpecifics/recommendedHabit/currentStatus?for_rec_habit_key=' + this.parentBehavior.get('rec_habit_key')
     },
     initialize : function() {
-        // console.log("initializing current statuses")
+        console.log("initializing current statuses")
     }
 })
 

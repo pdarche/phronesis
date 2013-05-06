@@ -11,8 +11,9 @@ app.ActionsView = Backbone.View.extend({
             $.get('/static/js/templates/howPartial.handlebars', function(tmpl){
                 self.template = tmpl
                 self.render()
+
                 var accentClass = $('.active-adj').html() + "-accent"
-                $('.action').eq(0).addClass(accentClass + ' chosen-action')
+                $('#vaff').addClass(accentClass + " chosen-action")
 
             })
 
@@ -36,8 +37,6 @@ app.ActionsView = Backbone.View.extend({
 
             dataz.push(datum)
         })
-
-        console.log("the data going to the templtate is ", dataz)
 
         var source = $(this.template).html();
         var template = Handlebars.compile( source );

@@ -4,29 +4,29 @@ app.CurrentStatusView = Backbone.View.extend({
 
     initialize : function() {
 
+        console.log("model is", this.model.models[0].attributes)
+        this.config = this.model.models[0].attributes
+
         var self = this
+        console.log("the config is", self.config)
 
         if ( !($.isFunction(this.template)) ){
                 
             $.when( 
-                $.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000&created_at__lte=1365375284'),
+                $.getJSON( self.config.data_url ),
                 $.get('/static/js/templates/currentStatus.handlebars')
              )
              .done(
                 function( data, tmpl ){
-                    console.log(data)
                     self.template = tmpl[0]
                     self.model = data[0]
                     var preppedData = self.prepData( self )
-                        console.log("the prepped data is ", preppedData)
-
-                    self.render( { "mean" : preppedData.mean }  )                      
+                    self.render( { "mean" : preppedData.mean, "heading" : self.config.heading }  )                      
                     self.renderChart( preppedData, self ) 
                 }
              )
                     
             var accentClass = $('.active-adj').html() + "-accent"
-            $('.action').eq(0).addClass(accentClass + ' chosen-action')
 
         } else {
 
@@ -37,8 +37,6 @@ app.CurrentStatusView = Backbone.View.extend({
     },
 
     render : function( model ) {
-
-        console.log( "the incoming data is ", model )
 
         var source = $(this.template).html();
         var template = Handlebars.compile( source );
@@ -74,7 +72,7 @@ app.CurrentStatusView = Backbone.View.extend({
             data = returnedData.data
             values = returnedData.vals,
             dates = returnedData.dates,
-            title = returnedData.title
+            title = self.config.chart_title
 
         var round2 = d3.format(".02r");
         var classSelector = '.current-status'
@@ -187,20 +185,10 @@ app.CurrentStatusView = Backbone.View.extend({
 
         _.each( self.model, function(obj){
 
-            if ( dataType === "steps" ){
-                var datum = { x: obj.created_at, y : obj[dataType] }
-                vals.push(obj[dataType])
+            var datum = { x: obj.created_at, y : obj[self.config.attr] }
+                vals.push(obj[self.config.attr])
                 x = "dates",
                 y = "minutes",
-                title = "Over or Under 10,000 Steps"
-            } else if ( dataType === "power" ) {
-                var powerUsage = Math.floor(Math.random() * 2000) + 3000
-                var datum = { x: obj.created_at, y : powerUsage }
-                vals.push(powerUsage)
-                x = "dates",
-                y = "watts",
-                title = "Average Watts Per Day"
-            }
 
             data.push(datum)
             dates.push(obj.created_at)
@@ -235,7 +223,7 @@ app.CurrentStatusView = Backbone.View.extend({
 
         switch(activeAdj){
             case "healthy":
-                console.log("steps")
+                // console.log("steps")
                 dataType = "steps"
                 break
             case "sustainable":
@@ -260,4 +248,9 @@ app.CurrentStatusView = Backbone.View.extend({
 
     },
 
+})
+
+Handlebars.registerHelper('round2', function(v){
+    console.log("rounding this mother", v)
+    return Math.round(v*10)/10
 })

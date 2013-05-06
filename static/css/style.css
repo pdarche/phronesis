@@ -643,6 +643,11 @@ row translation values:
 	height: 100%;
 }
 
+#current_status_p {
+	margin: 0px;
+	font-size: 90px;
+}
+
 #count_container {
 	width: 30%;
 	margin: 20px;
@@ -916,6 +921,21 @@ row translation values:
 	background-color: white;
 	-webkit-transition: all 500ms ease-in;
 	box-shadow: 2px 0px 10px gray;
+}
+
+#trait_specifics_container {
+	/*width : 400px;*/
+	background-color: white;
+	padding: 5px;
+	box-shadow: 2px 0px 10px gray;
+}
+
+.trait-specific {
+	font-size: 16px;
+	padding: 5px;
+	margin: 2px;
+	/*border-bottom: 1px solid #ccc;*/
+	z-index: 10;
 }
 
 .not-active {
