@@ -42,13 +42,14 @@ $(document).ready(function(){
 				} else if ( window.location.hash === '#why') {
 
 					checkUserStatus()
+					$('#content_container').undelegate('click')
 
-					// $.when( 
-					// 	$.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000&created_at__lte=1365375284')
-					//  )
-					//  .done( function(data){
-					//  	var why = new app.GridView({ el : $('#content_container'), model : data })
-					//  })
+					$.when( 
+						$.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000')
+					 )
+					 .done( function(data){
+					 	var why = new app.GridView({ el : $('#content_container'), model : data })
+					 })
 
 				} else {					
 	            	var activeAdj = $('.active-adj').html(),
@@ -65,7 +66,7 @@ $(document).ready(function(){
 
 		    app_router.on('route:index', function() {
 		        
-		        $('#content_container').undelegate()
+		        $('#content_container').undelegate('click')
 				var login = new app.Login({ el : $('#content_container') })
 
 		    })
@@ -79,7 +80,7 @@ $(document).ready(function(){
 
 		    app_router.on('route:landingpage', function(){
 
-		    	$('#content_container').undelegate()
+		    	$('#content_container').undelegate('click')
 		    	var landingpage = new app.LandingPage({ el : $('#content_container')})
 
 		    })
@@ -93,18 +94,19 @@ $(document).ready(function(){
 
 			app_router.on('route:define', function(){
 
-				$('#content_container').undelegate()
+				$('#content_container').undelegate('click')
 		    	var define = new app.DefineView({ el : $('#content_container')})
 
 		    })
 
 		    app_router.on('route:why', function(){
 
+		    	$('#content_container').undelegate('click')
 		    	checkUserStatus()
 
 		    	// var why = new app.GridView({ el : $('#content_container')})
 	    		$.when(
-					$.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000&created_at__lte=1365375284')
+					$.getJSON('v1/data/pdarche/body/physicalActivity?created_at__gte=1357020000') //&created_at__lte=1365375284
 				 )
 				 .done( function(data){
 
@@ -116,12 +118,14 @@ $(document).ready(function(){
 
 		   	app_router.on('route:what', function(){
 
+		   		$('#content_container').undelegate('click')
 		    	var what = new app.WhatView({ el : $('#content_container')})
 
 		    })
 
 			app_router.on('route:how', function(){
 
+				$('#content_container').undelegate('click')
 		    	var how = new app.HowView({ el : $('#content_container') })
 
 		    })

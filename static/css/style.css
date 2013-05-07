@@ -275,6 +275,9 @@ p {
 	-webkit-transition: all 500ms ease-in;
 }
 
+.how-heading:hover {
+	cursor: pointer;
+}
 
 #content_container .expanded{
 	-webkit-transform : translate3d(0px, 0px, 0px);
@@ -500,6 +503,11 @@ row translation values:
 	color: white;
 }
 
+#chart_kind_list .healthy-accent, #chart_type_list .healthy-accent {
+	background-color: #FF8E00;
+	color: white;
+}
+
 #chart_kind_list .healthy-accent, #data_type_list .healthy-accent {
 	background-color: #FF8E00;
 	color: white;
@@ -618,7 +626,7 @@ row translation values:
 	/*padding: 10px;*/
 	font-size: 20px;
 	margin: 10px 20px;
-	border-bottom: 1px solid #333;
+	border-bottom: 1px solid #ccc;
 }
 
 #action_container .action-wrap div {
@@ -679,6 +687,12 @@ row translation values:
 	margin: 10px 0px;	
 }
 
+#add_trigger_map_thing {
+	width: 100%;
+	height: 350px;
+	margin: 10px 0px;	
+}
+
 .trigger-container {
 	margin: 10px;
 	/*background-color: #eee;*/
@@ -696,11 +710,46 @@ row translation values:
 	margin-right: 10px;
 }
 
-#spatial_trigger_control_container input {
+.trigger-input-wrap {
+	display: inline-block;
+	margin: 0px 20px 10px 0px;
+}
+
+.trigger-input-wrap p {
+	margin: 0px;
+}
+
+.trigger-input {
+	width: 180px;
+	height: 30px;
+	font-size: 20px;
+}
+
+#trigger_distance input {
+	width: 100px;
+}
+
+#add_trigger_text {
+	position: absolute;
+}
+
+#trigger_distance p, #trigger_location p {
+	margin-bottom: 5px;
+}
+
+#new_trigger_submit {
+	-webkit-appearance: none;
+	height: 25px;
+	width: 320px;
+	/*background-color: hsl(236, 93%, 66%);*/
+	color: white;
+}
+
+/*#spatial_trigger_control_container input {
 	-webkit-appearance: none;
 	background-color: #eee;
 	border: 0px;
-}
+}*/
 
 #space_trigger_distance{
 	width: 40px;
@@ -728,6 +777,14 @@ row translation values:
 
 #spatial_trigger_control_container h4{
 	margin-bottom: 5px;
+}
+
+.action-to-take {
+	padding: 10px;
+	margin: 10px;
+	font-size: 20px;
+	border-bottom: 1px solid #eee;
+	width: 250px;
 }
 
 /**/
@@ -1323,8 +1380,18 @@ path {
 	height: 94%;
 	padding: 15px;
 	float: left;
-	background-color: #eee;
+	/*background-color: #eee;*/
 	margin-right: 10px;
+	border: 1px solid #ccc;
+}
+
+#temporal_view #timeseries_content_container #vis_container p {
+	margin: 23% auto;
+	font-size: 50px;
+	color: #ccc;
+	text-align: center;
+	width: 415px;
+	font-weight: bold;
 }
 
 #temporal_view #timeseries_content_container #controls_container {
@@ -1341,16 +1408,17 @@ path {
 }*/
 
 #temporal_view #timeseries_content_container #controls_container ul {
-	padding: 0px
+	padding: 0px;
 }
 
-#temporal_view #timeseries_content_container #controls_container li {
+ .line-chart li {
 	list-style-type: none;
 	display: inline-block;
-	/*background-color: white;*/
+	background-color: white;
 	padding: 10px;
 	font-size: 14px;
 	font-weight: bold;
+	margin: 0px 4px;
 }
 
 #temporal_view #timeseries_content_container #controls_container li:hover {

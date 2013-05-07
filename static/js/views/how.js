@@ -109,7 +109,7 @@ app.HowView = Backbone.View.extend({
         var actions = new app.ActionsToTakeView({
                 el : $('#actions_content'),
                 model : activeHabitCollection.get('actions')
-        })        
+        })       
 
     },
 
@@ -122,6 +122,12 @@ app.HowView = Backbone.View.extend({
             $('svg').hide() 
             $('#count_container').css('width', '265px')
 
+            console.log("firing new trigger")
+
+            var addTrigger = new app.AddTriggerView({
+                el : $('#triggers_content')
+            })
+
         } else {
 
             $('.col-2').addClass('grid-6').removeClass('grid-3')
@@ -129,9 +135,11 @@ app.HowView = Backbone.View.extend({
             $('svg').fadeIn()
             $('#count_container').css('width', '30%')
 
-        }
+            var triggers = new app.TriggersView({ 
+                el : $('#triggers_content')
+            })
 
-                                              
+        }
 
     }
 

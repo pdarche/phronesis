@@ -7,13 +7,13 @@ app.CurrentStatusView = Backbone.View.extend({
         console.log("model is", this.model.models[0].attributes)
         this.config = this.model.models[0].attributes
 
-        var self = this
-        console.log("the config is", self.config)
-
+        var self = this,
+            url = self.config.data_url + "?created_at__gte=1357020000" // note : hardcodign for presentation 
+        
         if ( !($.isFunction(this.template)) ){
-                
+            
             $.when( 
-                $.getJSON( self.config.data_url ),
+                $.getJSON( url ),
                 $.get('/static/js/templates/currentStatus.handlebars')
              )
              .done(
@@ -21,7 +21,7 @@ app.CurrentStatusView = Backbone.View.extend({
                     self.template = tmpl[0]
                     self.model = data[0]
                     var preppedData = self.prepData( self )
-                    self.render( { "mean" : preppedData.mean, "heading" : self.config.heading }  )                      
+                    self.render( { "mean" : preppedData.mean, "heading" : self.config.heading, "goal" : self.config.goal }  )                      
                     self.renderChart( preppedData, self ) 
                 }
              )
@@ -139,14 +139,14 @@ app.CurrentStatusView = Backbone.View.extend({
                 })
                 .attr("cy", function(d) { 
                     var yPos
-                    d.y >= 10000 ? yPos = -10 : yPos = 30
+                    d.y >= Number(self.config.goal) ? yPos = -10 : yPos = 30
                     return yPos; 
                 })
                 .attr("r", 4)
                 // .attr("fill", accent)
                 .attr("fill", function(d){
                     var stroke
-                    d.y >= 10000 ? stroke = "green" : stroke = "red"
+                    d.y >= Number(self.config.goal) ? stroke = "green" : stroke = "red"
                     return stroke;   
                 })
             // .style("opacity", 0)
@@ -252,5 +252,19 @@ app.CurrentStatusView = Backbone.View.extend({
 
 Handlebars.registerHelper('round2', function(v){
     console.log("rounding this mother", v)
-    return Math.round(v*10)/10
+    var number = round(v)
+    return number
 })
+
+Handlebars.registerHelper('checkGoal', function(mean, units, goal){
+    var diff = Number(mean) - goal
+    if ( diff < 0 ){
+        return round(diff) + " " + units + " under your goal"
+    } else {
+        return round(diff) + " " + units +  + " above your goal"
+    }
+})
+
+var round = function( num ){
+    return Math.round(num*10)/10
+}

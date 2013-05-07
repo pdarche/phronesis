@@ -46,6 +46,22 @@ class MainHandler(BaseHandler):
 		else:
 			self.render( "index.html", username = "" )
 
+# class BSHandler(BaseHandler): 
+# 	def post(self):
+# 		# username = self.get_secure_cookie('username')
+# 		user = models.userinfo.User.objects(username='pdarche')[0]
+# 		adjectives = models.userinfo.UserAdjectives(
+# 				first_priority = "healthy",
+# 				first_priority_specific = "cardiovascular",
+# 				second_priority = "sustainable",
+# 				second_priority_specific = "carbon",
+# 				third_priority = "educated",
+# 				third_priority_specific = "mathematical",
+# 			)
+
+# 		user.update(set__adjectives=adjectives)
+
+
 class SignUpHandler(tornado.web.RequestHandler):
 	def post(self):
 		username = self.get_argument('username')
@@ -1986,7 +2002,8 @@ class RefHandler(BaseHandler):
 			"traits/traitSpecifics" : healthy.TraitSpecific,
 			"traits/traitSpecifics/recommendedHabit" : healthy.RecommendedHabit,
 			"traits/traitSpecifics/recommendedHabit/currentStatus" : healthy.CurrentStatus,
-			"traits/traitSpecifics/recommendedHabit/actionsToTake" : healthy.ActionToTake
+			"traits/traitSpecifics/recommendedHabit/actionsToTake" : healthy.ActionToTake,
+			"traits/traitSpecifics/recommendedHabit/triggers" : healthy.Trigger
 		}
 
 		if order_by != None:
@@ -2025,6 +2042,28 @@ class RefHandler(BaseHandler):
 			del params["limit"]
 
 		return limit
+
+	def post(self, input):
+		print input
+		print self.request.arguments
+		params = self.request.arguments 
+
+		paths = {
+			"traits/traitSpecifics/recommendedHabit/triggers" : healthy.Trigger
+		}
+
+		trigger = healthy.Trigger(
+			username = "pdarche",
+			triggerd_distance = float(params["trigger_distance"][0]),
+			trigger_location = params["trigger_location"][0],
+			trigger_text = params["trigger_text"][0],
+			for_rec_habit_key = params["for_rec_habit_key"][0]
+		)
+
+		if trigger.save():
+			print "saved"
+		else:
+			print "didn't save"
 
 class DumpHandler(BaseHandler):
 	@tornado.web.authenticated

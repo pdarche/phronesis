@@ -1,9 +1,7 @@
 
 var checkUserStatus = function(){
-	
+
 	var username = $('#phro_username').html()
-        
-    
 
     if ( username !== "" && typeof(user) === "undefined" ) {
 		console.log("username but no user object")
@@ -12,7 +10,9 @@ var checkUserStatus = function(){
           .done(
             function(data){
 
-        if ( data.facebook_user_info !== null ) {          
+            	console.log("the data is", data)
+
+        		if ( data.facebook_user_info !== null ) {          
                     var facebook_user_info = {
                         'facebook_first_name' : data.facebook_user_info.facebook_first_name,
                         'facebook_last_name' : data.facebook_user_info.facebook_last_name,
@@ -29,7 +29,7 @@ var checkUserStatus = function(){
                     var flickr_user_info = {
                         'flickr_nsid' : data.flickr_user_info.flickr_nsid,
                         'flickr' : data.flickr_user_info.flickr_user_url
-                    }
+                	}
                 } else {
 
                     flickr_user_info = undefined
@@ -82,16 +82,26 @@ var checkUserStatus = function(){
                     'created_at' : data.zeo_user_info.created_at
                 }
 
-                var adjectives = new app.Adjectives({
-                    first_priority : data.adjectives.first_priority,
-                    first_priority_specifics : data.adjectives.first_priority_specifics,
-                    second_priority : data.adjectives.second_priority,
-                    second_priority_specifics : data.adjectives.second_priority_specifics,
-                    third_priority : data.adjectives.third_priority,
-                    third_priority_specifics : data.adjectives.third_priority_specifics
-                })	
+                // var traits = new app.Traits({
+                //     firstPriority : undefined,
+                //     firstPriorityActiveSpecific : data.adjectives.first_priority_specific,
+                //     secondPriority : new Trait({ name : "sustainable" }),
+                //     secondPriorityActiveSpecific : data.adjectives.second_priority_specific,
+                //     thirdPriority : new Trait({ name : "educated" }),
+                //     thirdPriorityActiveSpecific : data.adjectives.third_priority_specific
+                // })
 
-                window.user = new app.User()
+				var traits = new app.Traits()
+
+                traits.set({ firstPriority : new Trait({ name : "healthy" }) })     
+                traits.set({ firstPriorityActiveSpecific : "cardiovascular"})
+                traits.set({ secondPriority : new Trait({ name : "sustainable" }) })
+                traits.set({ secondPriorityActiveSpecific : "carbon" })
+                traits.set({ thirdPriority : new Trait({ name : "educated" }) })
+                traits.set({ secondPriorityActiveSpecific : "mathematical" })
+
+                window.user = new User()
+
                 user.set({
                     'date_of_birth' : data.date_of_birth,
                     'username' : data.username,
@@ -106,10 +116,29 @@ var checkUserStatus = function(){
                     'time_zone' : data.time_zone,
                     'twitter_user_info' : twitter_user_info,
                     'zeo_user_info' : zeo_user_info,
-                    'adjectives' : adjectives
+                    'traits' : traits
                 })
+
+                user.get('traits').get('firstPriority').get('traitSpecifics').fetch().then(
+                    function(){
+                        _.each( user.get('traits').get('firstPriority').get('traitSpecifics').models, function( model ){
+                            model.get('recommendedBehaviors').fetch().then(
+                                function(){
+                                    _.each( model.get('recommendedBehaviors').models, function( subModel ){
+                                        subModel.get('actions').fetch()
+                                        subModel.get('currentStatus').fetch()
+                                    })
+                                }
+                            )
+                        })
+                    }
+                )
            
         })
+
+
+		$('#heading').fadeIn()
+		$('#adjective_1').addClass("healthy-accent")
 
     } else if ( username === "" ) {
     	window.location = '/'

@@ -71,6 +71,7 @@ class Application(tornado.web.Application):
 			(r"/v1/ref/(.*)", h.RefHandler),
 			(r"/test", n.FlickrRequest),
 			(r"/settings", h.PrintAppSettings),
+			# (r"/bs", h.BSHandler),
 		]
 
 		settings = dict(

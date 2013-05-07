@@ -29,11 +29,11 @@ app.LineChartWithContext = Backbone.View.extend({
 
         var parseDate = d3.time.format("%b %Y").parse;
 
-        var brushed = function(){
-              console.log("firing brush function")
+        var brushed = function(){              
               x.domain(brush.empty() ? x2.domain() : brush.extent());
               focus.select("path").attr("d", line);
               focus.select(".x.axis").call(xAxis);
+              focus.select(".y.axis").call(yAxis);
         }
 
         var x = d3.time.scale().range([0, width]),
@@ -65,7 +65,7 @@ app.LineChartWithContext = Backbone.View.extend({
                     var date = new Date(d.date * 1000)
                     return x2(date)
                     })
-                .y(function(d) { return y2(d.value) })
+                .y(function(d) { return y2(d.value) })   
 
         var svg = d3.select("#vis_container").append("svg")
             .attr("width", width + margin.left + margin.right)
@@ -120,6 +120,18 @@ app.LineChartWithContext = Backbone.View.extend({
             .selectAll("rect")
               .attr("y", -5)
               .attr("height", height2 + 22);
+
+        var grays = svg.selectAll(".gray-line")
+             .data(y.ticks(10), function(d) { return d })
+           
+        grays.enter().insert("line")
+             .attr("x1", 20)
+             .attr("x2", width - 20)
+             .attr("y1", y)
+             .attr("y2", y)
+             .attr("class", "gray-line")
+             .style("stroke", "#bbb")     
+
 
 
     },

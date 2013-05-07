@@ -4,6 +4,8 @@ app.GridView = Backbone.View.extend({
 
     initialize : function() {
 
+        $('#why').addClass('active-view')
+
         var self = this
         if ( !($.isFunction(this.template)) ){
 
@@ -55,10 +57,10 @@ app.GridView = Backbone.View.extend({
 
         // create the tile layer with correct attribution
         var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 12});
+        var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 20});
 
-        // start the map in South-East England
-        map.setView(new L.LatLng(51.3, 0.7),9);
+        map.setView(new L.LatLng(40.72944585471527,-73.99366021156311), 12);
+        marker = L.marker([40.72944585471527, -73.99366021156311]).addTo(map),
         map.addLayer(osm);
 
 

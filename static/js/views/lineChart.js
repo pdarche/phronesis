@@ -207,7 +207,13 @@ app.LineChart = Backbone.View.extend({
             .style("font-size", 10)
 
         meanLine.append("text")
-            .text("+7% of developing CVD")
+            .text(function(){
+                if ( $('.active-adj').html() === "healthy" ) {
+                    return "+7% of developing CVD"
+                } else {
+                    return "4.6 tons of C02"
+                }
+            })
             .attr("id", "increase_text")
             .attr("x", w - 430)
             .attr("dy", -7)

@@ -32,6 +32,7 @@ class CurrentStatus(Document):
 	attr = StringField()
 	heading = StringField()
 	chart_title = StringField()
+	goal = IntField()
 
 
 class ActionToTake(Document):
@@ -42,16 +43,22 @@ class ActionToTake(Document):
 	action = StringField()	
 
 
+# class Trigger(Document):
+# 	username = StringField()
+# 	for_action = StringField()
+# 	for_rec_habit = StringField()
+# 	for_trait_specific = StringField()
+# 	for_trait = StringField()
+# 	activation_time = IntField()
+# 	location = GeoPointField()
+# 	is_recurring = BooleanField()
+
 class Trigger(Document):
 	username = StringField()
-	for_action = StringField()
-	for_rec_habit = StringField()
-	for_trait_specific = StringField()
-	for_trait = StringField()
-	activation_time = IntField()
-	location = GeoPointField()
-	is_recurring = BooleanField()
-
+	trigger_distance = FloatField()
+	trigger_location = StringField()
+	trigger_text = StringField()
+	for_rec_habit_key = StringField()
 
 # class CardiovascularHabits(Document):
 # 	trait = StringField()

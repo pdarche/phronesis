@@ -153,11 +153,11 @@ class ZeoUserInfo(EmbeddedDocument):
 
 class UserAdjectives(EmbeddedDocument):
 	first_priority = StringField()
-	first_priority_specifics = ListField(StringField)
+	first_priority_specific = StringField()
 	second_priority = StringField()
-	second_priority_specifics = ListField(StringField)
+	second_priority_specific = StringField()
 	third_priority = StringField()
-	third_priority_specifics = ListField(StringField)
+	third_priority_specific = StringField()
 	
 
 class User(Document):
@@ -177,3 +177,6 @@ class User(Document):
 	openpaths_user_info = EmbeddedDocumentField(OpenPathsUserInfo)
 	zeo_user_info = EmbeddedDocumentField(ZeoUserInfo)
 	adjectives = EmbeddedDocumentField(UserAdjectives)
+
+
+

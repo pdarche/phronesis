@@ -74,7 +74,7 @@ app.Traits = Backbone.Model.extend({
         thirdPriorityActiveSpecific : undefined 
     },
     initialize : function(){
-        console.log("jsut initialzed user traits")
+        console.log("just initialzed user traits")
         this.on("change:firstPriority", function(model){
             
             var prevAdj = $('#adjective_1').html(),

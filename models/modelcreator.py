@@ -103,8 +103,8 @@ for rh in reco_habits:
 
 actions = [
 	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "take the stairs", "rhk" : "vaff" },
-	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "walk an extra subway stop", "rhk" : "vaff" },
-	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "try jogging", "rhk" : "vaff" },
+	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "Walk to the Bedford station", "rhk" : "vaff" },
+	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "jog at McCarren Park", "rhk" : "vaff" },
 	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "play an organized sport", "rhk" : "vaff" },
 
 	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "quit smoking", "action" : "use the patch", "rhk" : "qs"},
@@ -138,10 +138,10 @@ for aa in actions:
 
 
 csus = [
-	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "url" : "/v1/data/pdarche/body/physicalActivity", "attr" : "mins_very_active", "rhk" : "vaff", "chart_title" : "Days Over 45 Minutes", "heading" : "Minutes Very Active" },
-	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit saturated fat intake to 20g per day", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "saturated_fat", "rhk" : "sfg", "chart_title" : "Days Under 20g of Saturated Fat", "heading" : "Grams of Saturated Fat" },
-	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit sodium intake to 2400mg per day", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "sodium", "rhk" : "smg", "chart_title" : "Days Under 2400mg of Sodium", "heading" : "Milligrams of Sodium" },
-	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit alchohol consumption to one drink", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "drink", "rhk" : "lac", "chart_title" : "Days at One Drik or Less", "heading" : "Number of Drinks" },
+	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "url" : "/v1/data/pdarche/body/physicalActivity", "attr" : "mins_very_active", "rhk" : "vaff", "chart_title" : "Days Over 45 Minutes", "heading" : "Minutes Very Active", "goal" : 45 },
+	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit saturated fat intake to 20g per day", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "saturated_fat", "rhk" : "sfg", "chart_title" : "Days Under 20g of Saturated Fat", "heading" : "Grams of Saturated Fat", "goal" : 20 },
+	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit sodium intake to 2400mg per day", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "sodium", "rhk" : "smg", "chart_title" : "Days Under 2400mg of Sodium", "heading" : "Milligrams of Sodium", "goal" : 2400 },
+	{ "for_trait" : "healthy" , "for_trait_specific" : "cardiovascular", "for_rh" : "limit alchohol consumption to one drink", "url" : "/v1/data/pdarche/body/nutrition", "attr" : "drink", "rhk" : "lac", "chart_title" : "Days at One Drik or Less", "heading" : "Number of Drinks", "goal" : 1 },
 ]
 
 for cs in csus:
@@ -153,13 +153,35 @@ for cs in csus:
 		data_url = cs["url"],
 		attr = cs["attr"],
 		heading = cs["heading"],
-		chart_title = cs["chart_title"]
+		chart_title = cs["chart_title"],
+		goal = cs["goal"]
 	)
 
-	if newCS.save():
-		print "cs saved"
+	# if newCS.save():
+	# 	print "cs saved"
+	# else:
+	# 	print "cs didn't save"
+
+
+triggers =  [
+    {"trigger_distance" : .05, "trigger_location" : "ITP", "trigger_text" : "take the stairs", "for_rec_habit_key" : "vaff"},
+    {"trigger_distance" : .05, "trigger_location" : "Chipotle", "trigger_text" : "leave off the cheese", "for_rec_habit_key" : "sfg"}
+]
+
+for t in triggers:
+	trig = healthy.Trigger(
+		username = "pdarche",
+		trigger_distance = t["trigger_distance"],
+		trigger_location = t["trigger_location"],
+		trigger_text = t["trigger_text"],
+		for_rec_habit_key = t["for_rec_habit_key"]
+	)
+
+	if trig.save():
+		print "trigger saved"
 	else:
-		print "cs didn't save"
+		print "didn't save"
+
 
 # vaffm = u.HabitInfo(
 # 		url = '/veryActiveFortyFive',

@@ -80,7 +80,7 @@ app.DefineView = Backbone.View.extend({
 
             if ( user.get('traits').get('firstPriority') === undefined ){
 
-                user.get('traits').set({ firstPriority : new Trait({ name : traitName }) })                
+                user.get('traits').set({ firstPriority : new Trait({ name : traitName }) })           
                 user.get('traits').get('firstPriority').get('traitSpecifics').fetch().then(
                     function(){
                         _.each( user.get('traits').get('firstPriority').get('traitSpecifics').models, function( model ){
