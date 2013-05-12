@@ -1000,6 +1000,13 @@ row translation values:
 	color: #333
 }
 
+.expanded-trait {
+	top: 0px;
+	left: 50px;
+	width: 1280px;
+	height: 500px;
+}
+
 #three {
 	color: hsl(236, 93%, 66%);
 }

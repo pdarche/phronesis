@@ -4,6 +4,8 @@ app.WhatView = Backbone.View.extend({
 
     index : undefined,
     highlighedtTrait : undefined,
+    cachedTranslate : undefined,
+    priorityList : ["firstPriority", "secondPriority", "thirdPriority"],
 
     initialize : function() {
 
@@ -41,10 +43,12 @@ app.WhatView = Backbone.View.extend({
 
         $('#instructions').removeClass('hidden-top')
 
-        $('.nav-adjective').each(function(){
+        $('.nav-adjective').each(function(i){
             var selector = '#' + $(this).html(),
-                accentClass = $(this).html() + "-accent"
-            $(selector).parent().addClass('chosen-adj').children().addClass(accentClass)
+                accentClass = $(this).html() + "-accent",
+                priorityClass = "priority-" + (i + 1) 
+
+            $(selector).parent().addClass('chosen-adj').children().addClass(accentClass + ' ' + priorityClass)
         })
 
     },
@@ -52,12 +56,12 @@ app.WhatView = Backbone.View.extend({
     events : {
 
         "click .adjective" : "toggleAdjective",
-        "mouseover .chosen-adj" : "showSpecifics",
+        // "mouseover .chosen-adj" : "showSpecifics",
         "click #adjective_container" : "removeSpecifics",
-        "mouseover .trait-specific" : "highlightTrait",
-        "mouseout .trait-specific" : "removeHighlight",
-        "click .trait-specific" : "toggleTraitSpecific"
-        // "mouseout .chosen-adj" : "removeSpecifics"
+        "mouseover .adjective-wrap, .more-info" : "showInfo",
+        "mouseout .more-info" : "hideInfo",
+        "click .more-info" : "expandTrait",
+        "dblclick .adjective-wrap" : "contractTrait"
 
     },
 
@@ -96,16 +100,16 @@ app.WhatView = Backbone.View.extend({
             }
 
         } else {
-                console.log("three or more")
-                
-                $(ev.target).parent().removeClass('chosen-adj')
-                var adj = $(ev.target).html(),
-                    selector = '.' + adj,
-                    newPriority = {}
-                
-                self.index = $(selector).index()
-                newPriority[priorities[self.index]] = undefined
-                user.get('adjectives').set(newPriority)
+            console.log("three or more")
+            
+            $(ev.target).parent().removeClass('chosen-adj')
+            var adj = $(ev.target).html(),
+                selector = '.' + adj,
+                newPriority = {}
+            
+            self.index = $(selector).index()
+            newPriority[priorities[self.index]] = undefined
+            user.get('adjectives').set(newPriority)
 
         }
 
@@ -177,6 +181,73 @@ app.WhatView = Backbone.View.extend({
         
         $('#trait_specifics_container').remove()
 
+    },
+
+    showInfo : function( ev ){
+
+        console.log("showing")
+
+        var target = $(ev.target),
+            more = target.next()
+
+        more.css({ display : "block"})
+
+    },
+
+    hideInfo : function( ev ){
+        
+        console.log("hiding")
+        $('.more-info').css({ display : "none"})
+
+    },
+
+    expandTrait : function( ev ){    
+
+        console.log("expanding trait")
+
+        var target = $(ev.target).prev(),
+            targetParent = target.parent(),
+            targetClass = target.attr('class'),
+            traitName = target.html(),
+            more = target.next(),
+            activeTrait
+
+        if ( targetParent.hasClass('chosen-adj') && 
+            !(targetParent.hasClass('expanded-trait'))) {
+
+            $('#adjective_container').css({ height : '100%' })
+            activeTraitSpecifics = this.returnTraitObject( targetClass )
+
+            this.cachedTranslate = targetParent.css('-webkit-transform')
+            console.log("the current translate3d location is", this.cachedTranslate)
+            $('#instructions').hide()
+            $('.adjective-wrap').not(targetParent).hide()
+            targetParent.addClass('expanded-trait').css({ '-webkit-transform' : 'translate3d(0px,0px,0px)'})
+
+        }
+
+    },
+
+    contractTrait : function(){
+
+        var expandedTrait = $('.expanded-trait')
+        $('#adjective_container').css({ height : '400px' })
+        $('#instructions').show()
+        expandedTrait.removeClass('expanded-trait')
+                     .css({"-webkit-transform" : this.cachedTranslate})
+        $('.adjective-wrap').fadeIn()
+
+    },
+
+    returnTraitObject : function( targetClass ){
+
+        var classes = targetClass.split(" "),
+            priorityClass = classes[classes.length - 1],
+            priorityIndex = Number(priorityClass.split("-")[1]) - 1,
+            priorityString = this.priorityList[priorityIndex],
+            priorityObject = user.get('traits').get(priorityString)
+
+        return priorityObject
     },
 
     highlightTrait : function( ev ){
