@@ -5,7 +5,10 @@ app.WhatView = Backbone.View.extend({
     index : undefined,
     highlighedtTrait : undefined,
     cachedTranslate : undefined,
-    priorityList : ["firstPriority", "secondPriority", "thirdPriority"],
+    priorityList : [ "firstPriority", "secondPriority", "thirdPriority" ],
+    activeTraitName : undefined,
+    activeTraitSpecifics : undefined,
+    activeSpecificName : undefined,
 
     initialize : function() {
 
@@ -56,12 +59,12 @@ app.WhatView = Backbone.View.extend({
     events : {
 
         "click .adjective" : "toggleAdjective",
-        // "mouseover .chosen-adj" : "showSpecifics",
         "click #adjective_container" : "removeSpecifics",
         "mouseover .adjective-wrap, .more-info" : "showInfo",
         "mouseout .more-info" : "hideInfo",
         "click .more-info" : "expandTrait",
-        "dblclick .adjective-wrap" : "contractTrait"
+        "dblclick .adjective-wrap" : "contractTrait",
+        "click .expanded-trait-specific" : "toggleExpandedTraitSpecificInfo"
 
     },
 
@@ -185,13 +188,12 @@ app.WhatView = Backbone.View.extend({
 
     showInfo : function( ev ){
 
-        console.log("showing")
-
         var target = $(ev.target),
-            more = target.next()
+            more = target.next(),
+            expanded = $('.expanded-trait')
 
-        more.css({ display : "block"})
-
+        expanded.length === 0 ? more.css({ display : "block" }) : null
+        
     },
 
     hideInfo : function( ev ){
@@ -203,26 +205,32 @@ app.WhatView = Backbone.View.extend({
 
     expandTrait : function( ev ){    
 
-        console.log("expanding trait")
-
         var target = $(ev.target).prev(),
             targetParent = target.parent(),
             targetClass = target.attr('class'),
             traitName = target.html(),
-            more = target.next(),
-            activeTrait
+            activeSpecificNameSelector,
+            activeSpecificAccent = traitName + '-specific-accent',
+            more = target.next()
 
         if ( targetParent.hasClass('chosen-adj') && 
             !(targetParent.hasClass('expanded-trait'))) {
 
-            $('#adjective_container').css({ height : '100%' })
-            activeTraitSpecifics = this.returnTraitObject( targetClass )
+            $('#instructions, .more-info').hide()
+            $('#adjective_container, .expanded-trait').css({ "height" : '100%' })
+            console.log("this goddam thing should be 100%")
+            $('.expanded-trait').css({ "background-color" : "#eee", "height" : '100%' })
 
+            this.activeTraitName = traitName
+            this.activeTraitSpecifics = this.returnTraitObject( targetClass )[0]
+            this.activeSpecificName = this.returnTraitObject( targetClass )[1]
+            activeSpecificNameSelector = '#' + user.get('traits').get(this.activeSpecificName)
             this.cachedTranslate = targetParent.css('-webkit-transform')
-            console.log("the current translate3d location is", this.cachedTranslate)
-            $('#instructions').hide()
             $('.adjective-wrap').not(targetParent).hide()
-            targetParent.addClass('expanded-trait').css({ '-webkit-transform' : 'translate3d(0px,0px,0px)'})
+            targetParent.addClass('expanded-trait')
+                        .css({ '-webkit-transform' : 'translate3d(0px,0px,0px)'})
+
+            this.addTraitSpecifics( activeSpecificNameSelector, activeSpecificAccent )    
 
         }
 
@@ -231,11 +239,54 @@ app.WhatView = Backbone.View.extend({
     contractTrait : function(){
 
         var expandedTrait = $('.expanded-trait')
+        
         $('#adjective_container').css({ height : '400px' })
         $('#instructions').show()
+        
         expandedTrait.removeClass('expanded-trait')
                      .css({"-webkit-transform" : this.cachedTranslate})
+        
         $('.adjective-wrap').fadeIn()
+
+    },
+
+    addTraitSpecifics : function( activeSpecificNameSelector, activeSpecificAccent ){
+
+        var self = this
+        $.when( $.get('/static/js/templates/defineTraitSpecifics.handlebars') )
+         .done( function(tmpl) {
+            self.renderTraitSpecifics( tmpl, self )
+            $(activeSpecificNameSelector).addClass(activeSpecificAccent)
+            // $('.expanded-trait').css({ height : '1'})
+         })
+
+    },
+
+    renderTraitSpecifics : function( tmpl, self ){
+
+        var source = $(tmpl).html(),
+            template = Handlebars.compile( source ),
+            specifics = _.zip( self.activeTraitSpecifics.get('traitSpecifics').pluck('as_heading'), 
+                               self.activeTraitSpecifics.get('traitSpecifics').pluck('trait_specific'))
+            $('.expanded-trait').append( template( { "specifics" : specifics } ) )
+            self.addTraitSpecificInfo( self )
+    },
+
+    addTraitSpecificInfo : function( self ){
+
+        $.when( $.get('/static/js/templates/tempCVDInfo.handlebars') )
+         .done( function(tmpl){
+            self.renderTraitSpcificInfo( tmpl )
+         })
+
+    },
+
+    renderTraitSpcificInfo : function( tmpl ){
+
+        var source = $(tmpl).html(),
+            template = Handlebars.compile( source )
+
+        $('#trait_specific_info_conatiner').append( template )
 
     },
 
@@ -245,9 +296,10 @@ app.WhatView = Backbone.View.extend({
             priorityClass = classes[classes.length - 1],
             priorityIndex = Number(priorityClass.split("-")[1]) - 1,
             priorityString = this.priorityList[priorityIndex],
+            prioritySpecificString = priorityString + 'ActiveSpecific',
             priorityObject = user.get('traits').get(priorityString)
 
-        return priorityObject
+        return [ priorityObject, prioritySpecificString ]
     },
 
     highlightTrait : function( ev ){
@@ -259,16 +311,22 @@ app.WhatView = Backbone.View.extend({
 
     },
 
-    highlightTrait : function( ev ){
-
-        var accentClass = this.highlighedtTrait + "-accent"
-        $(ev.target).removeClass(accentClass)
-
-    },
-
     toggleTraitSpecific : function( ev ) {
 
         console.log("the event id is", ev.target)
+
+    },
+
+    toggleExpandedTraitSpecificInfo : function( ev ){
+        var activeTraitSpecificAccent = this.activeTraitName + '-specific-accent',
+            activeTraitSepcificAccentSelector = '.' + activeTraitSpecificAccent
+        
+        console.log("attempting to toggle", activeTraitSepcificAccentSelector)
+        $(activeTraitSepcificAccentSelector).removeClass(activeTraitSpecificAccent)
+        $(ev.target).addClass(activeTraitSpecificAccent)
+
+        $('#trait_specific_info_conatiner').empty()
+
 
     }
 

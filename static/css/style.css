@@ -482,6 +482,10 @@ row translation values:
 	background-color: #FF8E00;
 	color: white;
 }
+#adjective_container .chosen-adj .healthy-specific-accent, .healthy-specific-accent, .adjective .healthy-specific-accent {
+	background-color: hsl(34, 100%, 80%);
+	/*color: white;*/
+}
 
 #adjective_container .chosen-adj .educated-accent, .educated-accent, .adjective .educated-accent {
 	background-color: #FF4100;
@@ -1005,6 +1009,43 @@ row translation values:
 	left: 50px;
 	width: 1280px;
 	height: 500px;
+	background-color: #eee;
+}
+
+.more-info {
+	color: #333 !important;
+	font-size: 16px;
+	font-weight: bold;
+	padding: 5px;
+}
+
+.more-info:hover{
+	cursor: pointer;
+}
+
+#specifics_list {
+	background-color: white;
+	width: 100%;
+	height: 80px;
+	list-style-type: none;	
+	padding: 0px;
+	margin: 0px;
+}
+
+#specifics_list li {
+	display: inline-block;
+	font-size: 24px;
+	font-weight: bold;
+	color: #333;
+	padding: 10px;
+	vertical-align: middle;
+	position: relative;
+	height: 75%;
+	line-height: 250%;
+}
+
+#trait_specific_info_container {
+	padding: 20px
 }
 
 #three {

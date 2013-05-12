@@ -1,0 +1,8 @@
+<script id="define_view_trait_specifics" type="x-handlebars-template">
+	<ul id="specifics_list">
+		{{#each specifics}}
+			<li id="{{ this.[1] }}" class="expanded-trait-specific">{{ this.[1] }}</li>
+		{{/each}}
+	</ul>
+	<div id="trait_specific_info_container"></div>
+</script>
