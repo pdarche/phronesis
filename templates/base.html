@@ -33,6 +33,11 @@
 		<script type="text/javascript" src="{{ static_url("js/vendor/wiki2html.js") }}"></script>
 		<script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
 		<script type="text/javascript" src="{{ static_url("js/vendor/d3.v3.min.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/vendor/skip.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/vendor/three.min.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/vendor/tween.min.js") }}" ></script>
+		<script type="text/javascript" src="{{ static_url("js/vendor/TrackballControls.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/vendor/CSS3DRenderer.js") }}"></script>
 
 		<!-- <script type="text/javascript" src="{{ static_url("js/vendor/date.js") }}"></script> -->
 		<script type="text/javascript" src="{{ static_url("js/charts/line.js") }}"></script>
@@ -59,17 +64,13 @@
 		<script type="text/javascript" src="{{ static_url("js/views/triggers.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/addTrigger.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/currentStatus.js") }}"></script>
+		<script type="text/javascript" src="{{ static_url("js/views/impact.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/profile.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/adjectiveSpecifics.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/addTrackers.js") }}"></script>
 		<script type="text/javascript" src="{{ static_url("js/views/signup.js") }}"></script>
 		
 		<script type="text/javascript" src="{{ static_url("js/main.js") }}"></script>
-
-		<script type="text/javascript" src="{{ static_url("js/vendor/three.min.js") }}"></script>
-		<script type="text/javascript" src="{{ static_url("js/vendor/tween.min.js") }}" ></script>
-		<script type="text/javascript" src="{{ static_url("js/vendor/TrackballControls.js") }}"></script>
-		<script type="text/javascript" src="{{ static_url("js/vendor/CSS3DRenderer.js") }}"></script>
 
 		<!--<script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>-->
 
@@ -82,10 +83,11 @@
 				<div id="adjective_3" class="nav-adjective"><p></p></div>
 			</div>
 			<div id="nav_container">
-				<div id="profile" class="nav-element"><p>pdarche</p></div>
+				<!-- <div id="profile" class="nav-element"><p>pdarche</p></div> -->
 				<div id="what" class="nav-element"><p>Define</p></div>
 				<div id="why" class="nav-element"><p>Explore</p></div>
 				<div id="how" class="nav-element"><p>Improve</p></div>
+				<div id="impact" class="nav-element"><p>Impact</p></div>
 			</div>
 		</div>
 		<div id="content_container"></div>

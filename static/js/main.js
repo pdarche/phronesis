@@ -12,7 +12,8 @@ $(document).ready(function(){
 					"why" : "why",
 					"how" : "how",
 					"profile" : "profile",
-					"addTrackers" : "addTrackers"
+					"addTrackers" : "addTrackers",
+					"impact" : "impact"
 				}
 			});
 
@@ -101,6 +102,7 @@ $(document).ready(function(){
 
 		    app_router.on('route:why', function(){
 
+		    	$('#three').remove()
 		    	$('#content_container').undelegate('click')
 		    	checkUserStatus()
 
@@ -118,6 +120,7 @@ $(document).ready(function(){
 
 		   	app_router.on('route:what', function(){
 
+		   		$('#three').remove()
 		   		$('#content_container').undelegate('click')
 		    	var what = new app.WhatView({ el : $('#content_container')})
 
@@ -125,8 +128,37 @@ $(document).ready(function(){
 
 			app_router.on('route:how', function(){
 
+				$('#three').remove()
 				$('#content_container').undelegate('click')
 		    	var how = new app.HowView({ el : $('#content_container') })
+
+		    })
+
+		    app_router.on('route:impact', function(){
+		    	
+		    	$('#three').remove()
+
+		    	var container = $('#content_container'),
+		    		impact
+				
+				container.undelegate('click')
+				container.empty().hide()
+		  //   	impact = new app.ImpactView({ el : container })
+				init()
+
+				$.when( $.get('/static/js/templates/impactControls.handlebars'))
+				 .done(function(tmpl){
+				 	var source = $(tmpl).html(),
+				 		template = Handlebars.compile( source )
+
+				 	$('#three').append(template)
+
+				 	$('#comparison_group_drop').change(function(){
+
+					 	addCircle()
+
+					 })
+				 })
 
 		    })
 
@@ -340,6 +372,207 @@ $(document).ready(function(){
 			// }
 
 })
+
+var Shaders = {
+	'earth' : {
+		  uniforms: {
+		    'texture': { type: 't', value: THREE.ImageUtils.loadTexture( "/static/img/worldTexture.png" ) }
+		  },
+		  vertexShader: [
+		    'varying vec3 vNormal;',
+		    'varying vec2 vUv;',
+		    'void main(void) {',
+		    'gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+		      'vNormal = normalize( normalMatrix * normal );',
+		      'vUv = uv;',
+		    '}'
+		  ].join('\n'),
+		  fragmentShader: [
+		    'uniform sampler2D texture;',
+		    'varying vec3 vNormal;',
+		    'varying vec2 vUv;',
+		    'void main(void) {',
+		        'vec3 diffuse = texture2D( texture, vUv ).xyz;',
+		        'float intensity = 1.05 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
+		        'vec3 atmosphere = vec3( 0.0, 0.0, 0.0 ) * pow( intensity, 3.0 );',
+		        'gl_FragColor = vec4(diffuse + atmosphere, 1.0);',
+		    '}'
+		  ].join('\n')
+	}
+};
+
+function init(){
+
+	//group to place objects in
+	window.partGroup = new THREE.Object3D()
+	window.earthGroup = new THREE.Object3D()
+	window.group = new THREE.Object3D()
+
+	setupThree()
+	addLights()
+
+	var resolution = 150;
+	var amplitude = 150;
+	var size = 360 / resolution;
+
+	var geometry = new THREE.Geometry();
+	var material = new THREE.LineBasicMaterial( { color: 0xFFFF00, opacity: 1.0} );
+
+	for(var i = 0; i <= resolution; i++) {
+	    var segment = ( i * size ) * Math.PI / 180;
+	    geometry.vertices.push( 
+	    	new THREE.Vertex( 
+	    		new THREE.Vector3( Math.cos( segment ) * amplitude, 0, Math.sin( segment ) * amplitude ) 
+	    	) 
+	    );
+	}
+
+	var line = new THREE.Line( geometry, material );
+	scene.add(line);
+	
+   // background-glow
+    planeGeometry = new THREE.PlaneGeometry( 460, 400, 1 );
+    planeMaterial = new THREE.MeshBasicMaterial({
+		color: 0xFFFFFF,
+		map: THREE.ImageUtils.loadTexture("/static/img/bg.png"),
+		transparent: true,
+		opacity: .6
+		// blending: THREE.AdditiveBlending
+    });
+
+    plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.position.z = -1000
+    plane.scale.x = plane.scale.y = 1.55
+    camera.add(plane);
+
+	//earth object	
+	window.earthRadius = 120
+	var geometry = new THREE.SphereGeometry(earthRadius, 40, 40)
+	var shader = Shaders['earth'];
+	uniforms = shader.uniforms;
+
+	material = new THREE.ShaderMaterial({
+	      uniforms: uniforms,
+	      vertexShader: shader.vertexShader,
+	      fragmentShader: shader.fragmentShader
+	    });
+
+	earth = new THREE.Mesh( geometry, material )
+	earth.position.y = -200
+	earth.matrixAutoUpdate = false
+	earthGroup.add( earth )
+
+
+	//add everything to scene
+	group.add( earthGroup )
+	group.add( partGroup )
+	scene.add( group )
+
+	setTimeout(loop, 500)	
+
+}
+
+function addCircle(){
+	
+	var resolution = 150;
+	var amplitude = 150 + (Math.random() * 200 + 10 );
+	var size = 360 / resolution;
+
+	var geometry = new THREE.Geometry();
+	var material = new THREE.LineBasicMaterial( { color: 0xFFFF00, opacity: 1.0} );
+
+	for(var i = 0; i <= resolution; i++) {
+	    var segment = ( i * size ) * Math.PI / 180;
+	    geometry.vertices.push( 
+	    	new THREE.Vertex( 
+	    		new THREE.Vector3( Math.cos( segment ) * amplitude, 0, Math.sin( segment ) * amplitude ) 
+	    	) 
+	    );
+	}
+
+	var line = new THREE.Line( geometry, material );
+	scene.add(line);
+
+}
+
+
+function loop(){
+
+	group.rotation.y+=.0004
+
+	camera.up = new THREE.Vector3(0, 1, 0)
+	camera.lookAt( scene.position );
+
+	render()
+	
+	//  This function will attempt to call loop() at 60 frames per second.
+	//  See  this Mozilla developer page for details: https://developer.mozilla.org/en-US/docs/DOM/window.requestAnimationFrame
+	window.requestAnimationFrame( loop )
+}
+
+function render(){				
+	renderer.render( scene, camera )
+}
+
+function setupThree(){
+	window.scene = new THREE.Scene()
+
+	WIDTH      = $(window).width(),
+	HEIGHT     = $(window).height() * .8,
+	VIEW_ANGLE = 45,
+	ASPECT     = WIDTH / HEIGHT,
+	NEAR       = 0.1,
+	FAR        = 10000
+	
+	window.camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR )
+	camera.position.set( 100, 75, 400 ) //starting position of camera - this is desregarded in the loop as its using spherical coordinates
+	camera.lookAt( scene.position )
+	scene.add( camera )
+
+	window.renderer = new THREE.WebGLRenderer({ antialias: true })
+	//window.renderer = new THREE.CanvasRenderer({ antialias: true })
+	renderer.setSize( WIDTH, HEIGHT )
+	renderer.shadowMapEnabled = true
+	renderer.shadowMapSoft = true
+
+	//add canvas to div in DOM
+	$('body').prepend('<div id="three"><img src="/static/img/shadow.png" style="position:absolute; top:550px; left:400px;"/></div>')
+	$('#three').css({ "position" : "absolute", "top" : "30px", "left" : "0px" })
+			   .append( renderer.domElement )
+
+}
+
+function addLights(){
+	
+	
+	window.ambient
+	window.directional
+	
+	
+	ambient = new THREE.AmbientLight( 0x666666 )
+	group.add( ambient )	
+	
+	
+	// //  Create a Directional light as pretend sunshine.
+	directional = new THREE.DirectionalLight( 0xCCCCCC, .7 )
+	directional.castShadow = true
+	scene.add( directional )
+
+
+	directional.position.set( 100, 200, 300 )
+	directional.target.position.copy( scene.position )
+	directional.shadowCameraTop     =  1000
+	directional.shadowCameraRight   =  1000
+	directional.shadowCameraBottom  = -1000
+	directional.shadowCameraLeft    = -1000
+	directional.shadowCameraNear    =  600
+	directional.shadowCameraFar     = -600
+	directional.shadowBias          =   -0.0001
+	directional.shadowDarkness      =    0.4
+	directional.shadowMapWidth      = directional.shadowMapHeight = 2048
+
+	// directional.shadowCameraVisible = true
+}
 
 
 Handlebars.registerHelper('ifCond', function(v, options) {

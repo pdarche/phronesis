@@ -285,7 +285,7 @@ app.WhatView = Backbone.View.extend({
 
         var source = $(tmpl).html(),
             template = Handlebars.compile( source )
-
+        
         $('#trait_specific_info_conatiner').append( template )
 
     },
