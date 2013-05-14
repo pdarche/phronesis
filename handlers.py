@@ -2003,7 +2003,8 @@ class RefHandler(BaseHandler):
 			"traits/traitSpecifics/recommendedHabit" : healthy.RecommendedHabit,
 			"traits/traitSpecifics/recommendedHabit/currentStatus" : healthy.CurrentStatus,
 			"traits/traitSpecifics/recommendedHabit/actionsToTake" : healthy.ActionToTake,
-			"traits/traitSpecifics/recommendedHabit/triggers" : healthy.Trigger
+			"traits/traitSpecifics/recommendedHabit/triggers" : healthy.Trigger,
+			"traits/traitSpecifics/studies" : healthy.Study
 		}
 
 		if order_by != None:

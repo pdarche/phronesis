@@ -1,14 +1,14 @@
 <script id="impact_controls" type="x-handlebars-template">
 	<div id="impact_controls_container">
 		<h3>Generalize Your Behavior</h3>
-		<div>
+		<div id="general_container">
 			<p>If everyone</p>
 			<select id="comparison_group_drop">
-				<option id="city">in my city</option>
-				<option id="state">in my state</option>
-				<option id="country">in my country</option>
-				<option id="hemisphere">in my hemisphere</option>
-				<option id="world">the world</option>
+				<option id="city" value="150">in my city</option>
+				<option id="state" value="149">in my state</option>
+				<option id="country value="148">in my country</option>
+				<option id="hemisphere" value="170">in my hemisphere</option>
+				<option id="world" value="400">the world</option>
 			</select>
 			<p>had the same</p>
 			<select id="metric_drop">
@@ -17,6 +17,11 @@
 				<option id="waste">levels of waste</option>
 			</select>
 			<p>as me</p>
+		</div>
+		<div id="impact_slider"></div>
+		<div id="current_impact">
+			<div id="you">{{ impact }}</div>
+			<div id="you">{{ ppm }}</div>
 		</div>
 	</div>
 </script>

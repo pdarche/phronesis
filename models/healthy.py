@@ -40,8 +40,15 @@ class ActionToTake(Document):
 	for_trait_specific = StringField()
 	for_rec_habit = StringField()
 	for_rec_habit_key = StringField()
-	action = StringField()	
+	action = StringField()
 
+class Study(Document):
+	for_trait = StringField()
+	for_trait_specific = StringField()
+	rec_habit = StringField()
+	study_title = StringField()
+	study_authors = ListField(StringField())
+	study_link = StringField()
 
 # class Trigger(Document):
 # 	username = StringField()

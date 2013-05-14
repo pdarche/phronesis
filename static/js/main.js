@@ -68,6 +68,7 @@ $(document).ready(function(){
 		    app_router.on('route:index', function() {
 		        
 		        $('#content_container').undelegate('click')
+		        $('#content_container').show()
 				var login = new app.Login({ el : $('#content_container') })
 
 		    })
@@ -82,6 +83,7 @@ $(document).ready(function(){
 		    app_router.on('route:landingpage', function(){
 
 		    	$('#content_container').undelegate('click')
+		    	$('#content_container').show()
 		    	var landingpage = new app.LandingPage({ el : $('#content_container')})
 
 		    })
@@ -89,6 +91,7 @@ $(document).ready(function(){
 		    app_router.on('route:query', function(){
 
 		    	$('#content_container').undelegate()
+		    	$('#content_container').show()
 		    	var query = new app.QueryView({ el : $('#content_container')})
 
 		    })
@@ -96,6 +99,7 @@ $(document).ready(function(){
 			app_router.on('route:define', function(){
 
 				$('#content_container').undelegate('click')
+				$('#content_container').show()
 		    	var define = new app.DefineView({ el : $('#content_container')})
 
 		    })
@@ -152,6 +156,24 @@ $(document).ready(function(){
 				 		template = Handlebars.compile( source )
 
 				 	$('#three').append(template)
+				 	
+				 	$('#impact_controls_container').mouseover(function(){
+						controls.enabled = false
+					}).mouseleave(function(){
+						controls.enabled = true
+					})
+
+					$('#impact_slider').slider({
+						slide : function(ev, ui){
+							var len = scene.children.length - 1,
+								amp = ui.value / 30
+							scene.remove( scene.children[len] )
+							addCircle( amp )
+						},
+						min : 0,
+						max : 8000,
+						value : 4000,
+					})
 
 				 	$('#comparison_group_drop').change(function(){
 
@@ -410,13 +432,14 @@ function init(){
 
 	setupThree()
 	addLights()
+	addControls()
 
 	var resolution = 150;
-	var amplitude = 150;
+	var amplitude = 170;
 	var size = 360 / resolution;
 
 	var geometry = new THREE.Geometry();
-	var material = new THREE.LineBasicMaterial( { color: 0xFFFF00, opacity: 1.0} );
+	var material = new THREE.LineBasicMaterial( { color: 0x00FF00, opacity: 1.0} );
 
 	for(var i = 0; i <= resolution; i++) {
 	    var segment = ( i * size ) * Math.PI / 180;
@@ -431,7 +454,7 @@ function init(){
 	scene.add(line);
 	
    // background-glow
-    planeGeometry = new THREE.PlaneGeometry( 460, 400, 1 );
+    planeGeometry = new THREE.PlaneGeometry( 400, 400, 1 );
     planeMaterial = new THREE.MeshBasicMaterial({
 		color: 0xFFFFFF,
 		map: THREE.ImageUtils.loadTexture("/static/img/bg.png"),
@@ -472,14 +495,17 @@ function init(){
 
 }
 
-function addCircle(){
+function addCircle( distance ){
 	
 	var resolution = 150;
-	var amplitude = 150 + (Math.random() * 200 + 10 );
+	var amplitude = distance;
 	var size = 360 / resolution;
+	var color;
+
+	distance > 170 ? color = 0xFF0000 : color = 0x00FF00
 
 	var geometry = new THREE.Geometry();
-	var material = new THREE.LineBasicMaterial( { color: 0xFFFF00, opacity: 1.0} );
+	var material = new THREE.LineBasicMaterial( { color: color, opacity: 1.0} );
 
 	for(var i = 0; i <= resolution; i++) {
 	    var segment = ( i * size ) * Math.PI / 180;
@@ -504,7 +530,8 @@ function loop(){
 	camera.lookAt( scene.position );
 
 	render()
-	
+	controls.update()
+
 	//  This function will attempt to call loop() at 60 frames per second.
 	//  See  this Mozilla developer page for details: https://developer.mozilla.org/en-US/docs/DOM/window.requestAnimationFrame
 	window.requestAnimationFrame( loop )
@@ -553,7 +580,7 @@ function addLights(){
 	group.add( ambient )	
 	
 	
-	// //  Create a Directional light as pretend sunshine.
+	// Create a Directional light as pretend sunshine.
 	directional = new THREE.DirectionalLight( 0xCCCCCC, .7 )
 	directional.castShadow = true
 	scene.add( directional )
@@ -572,6 +599,23 @@ function addLights(){
 	directional.shadowMapWidth      = directional.shadowMapHeight = 2048
 
 	// directional.shadowCameraVisible = true
+}
+
+function addControls(){
+
+	window.controls = new THREE.TrackballControls( camera )
+
+	controls.rotateSpeed = 1.0
+	controls.zoomSpeed   = 1.2
+	controls.panSpeed    = 0.8
+
+	controls.noZoom = false
+	controls.noPan  = false
+	controls.staticMoving = true
+	controls.dynamicDampingFactor = 0.3
+	controls.keys = [ 65, 83, 68 ]//  ASCII values for A, S, and D
+
+	controls.addEventListener( 'change', render )
 }
 
 

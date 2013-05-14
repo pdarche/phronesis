@@ -37,7 +37,8 @@ trait_specifics = [
 
 	{ "trait_specific_name" : "cardiovascular", "for_trait" : "healthy", "as_heading" : "improve my cardiovascular health", "info" : ""},
 	{ "trait_specific_name" : "musculoskelatal", "for_trait" : "healthy", "as_heading" : "improve my musculoskelatal health", "info" : "" },
-	{ "trait_specific_name" : "mental_health", "for_trait" : "healthy", "as_heading" : "improve my mental health", "info" : ""},
+	{ "trait_specific_name" : "metabolic", "for_trait" : "healthy", "as_heading" : "improve my metabolic health", "info" : "" },
+	{ "trait_specific_name" : "mental", "for_trait" : "healthy", "as_heading" : "improve my mental health", "info" : ""},
 	{ "trait_specific_name" : "respiratory", "for_trait" : "healthy", "as_heading" : "improve my respiratory health", "info" : ""},
 	
 	{ "trait_specific_name" : "carbon", "for_trait" : "sustainable", "as_heading" : "reduce carbon footprint", "info" : ""},
@@ -177,11 +178,32 @@ for t in triggers:
 		for_rec_habit_key = t["for_rec_habit_key"]
 	)
 
-	if trig.save():
-		print "trigger saved"
-	else:
-		print "didn't save"
+	# if trig.save():
+	# 	print "trigger saved"
+	# else:
+	# 	print "didn't save"
 
+
+studies = [
+	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "study_title" : "Exercise and Cardiovascular Health", "study_authors" : ["Jonathan Myers, PhD"], "study_link" : "http://www.cardiology.org/recentpapers/ptexercpage.pdf"},
+	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "study_title" : "Contributions of epidemiology to exercise science and cardiovascular health", "study_authors" : ["Ralph F. Paffenbarger, jr."], "study_link" : "http://www.setantacollege.com/wp-content/uploads/Journal_db/J.B.%20Wolffe%20memorial%20lecture.pdf" },
+	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "study_title" : "Exercise, fitness, and health: a consensus of current knowledge", "study_authors" : ["Bouchard, C.","Shephard, R. J.", "Stephens, T.", "Sutton, J. R.", "McPherson, B. D."], "study_link" : "http://www.cabdirect.org/abstracts/19921892120.html;jsessionid=FF531A1266FC5787B5914F6CC06C1966"}
+]
+
+for aa in studies:
+	newStudy = healthy.Study(
+		for_trait = aa["for_trait"],
+		for_trait_specific = aa["for_trait_specific"],
+		for_rec_habit = aa["for_rh"],
+		study_title = aa["study_title"],
+		study_authors = aa["study_authors"],
+		study_link = aa["study_link"]
+	)
+
+	if newStudy.save():
+		print "study saved"
+	else: 
+		print "study saved"
 
 # vaffm = u.HabitInfo(
 # 		url = '/veryActiveFortyFive',

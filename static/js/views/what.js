@@ -9,6 +9,10 @@ app.WhatView = Backbone.View.extend({
     activeTraitName : undefined,
     activeTraitSpecifics : undefined,
     activeSpecificName : undefined,
+    templateMapping : { 
+        "cardiovascular" : "tempCVDInfo",
+        "metabolic" : "testMetabolic"
+    },
 
     initialize : function() {
 
@@ -192,14 +196,20 @@ app.WhatView = Backbone.View.extend({
             more = target.next(),
             expanded = $('.expanded-trait')
 
-        expanded.length === 0 ? more.css({ display : "block" }) : null
+        if ( expanded.length === 0 ){        
+            console.log("tryinkg to do this thang", target.parent().css('-webkit-transform'))
+            target.parent().css({ '-webkit-transform' : 'matrix(1, 0, 0, 1, 0, -10)' })
+            $('#adjective_container').css({ overflow : 'visible' })
+            expanded.length === 0 ? more.css({ display : "block" }) : null
+        }
         
     },
 
     hideInfo : function( ev ){
         
-        console.log("hiding")
+        var target = $(ev.target)
         $('.more-info').css({ display : "none"})
+        target.parent().css({ '-webkit-transform' : 'matrix(1, 0, 0, 1, 0, 0)' })
 
     },
 
@@ -217,9 +227,9 @@ app.WhatView = Backbone.View.extend({
             !(targetParent.hasClass('expanded-trait'))) {
 
             $('#instructions, .more-info').hide()
-            $('#adjective_container, .expanded-trait').css({ "height" : '100%' })
-            console.log("this goddam thing should be 100%")
-            $('.expanded-trait').css({ "background-color" : "#eee", "height" : '100%' })
+            $('#adjective_container, .expanded-trait').css({ "height" : '130%' })
+            console.log("this goddam thing should be 130%")
+            $('.expanded-trait').css({ "background-color" : "#eee", "height" : '130%' })
 
             this.activeTraitName = traitName
             this.activeTraitSpecifics = this.returnTraitObject( targetClass )[0]
@@ -269,24 +279,39 @@ app.WhatView = Backbone.View.extend({
             specifics = _.zip( self.activeTraitSpecifics.get('traitSpecifics').pluck('as_heading'), 
                                self.activeTraitSpecifics.get('traitSpecifics').pluck('trait_specific'))
             $('.expanded-trait').append( template( { "specifics" : specifics } ) )
-            self.addTraitSpecificInfo( self )
+            self.addTraitSpecificInfo( self, "tempCVDInfo" )
+
     },
 
-    addTraitSpecificInfo : function( self ){
+    addTraitSpecificInfo : function( self, templateName ){
 
-        $.when( $.get('/static/js/templates/tempCVDInfo.handlebars') )
-         .done( function(tmpl){
-            self.renderTraitSpcificInfo( tmpl )
+        var templateUrl = '/static/js/templates/' + templateName + '.handlebars',
+            dataUrl = '/v1/ref/traits/traitSpecifics/recommendedHabit?for_trait_specific=cardiovascular',
+            studiesUrl = '/v1/ref/traits/traitSpecifics/studies'
+
+        console.log("fetching url", templateUrl)
+
+        $.when( 
+            $.get(templateUrl),
+            $.getJSON(dataUrl),
+            $.getJSON(studiesUrl)
+         )
+         .done( function(tmpl, data, studies){
+            self.renderTraitSpcificInfo( tmpl[0], data[0], studies[0] )
          })
 
     },
 
-    renderTraitSpcificInfo : function( tmpl ){
+    renderTraitSpcificInfo : function( tmpl, data, studies ){
 
         var source = $(tmpl).html(),
-            template = Handlebars.compile( source )
+            spec_template = Handlebars.compile( source ),
+            templateData = { "rec_habits" : data, "studies" : studies }
         
-        $('#trait_specific_info_conatiner').append( template )
+
+        $('.expanded-trait').append( spec_template( templateData ) )
+        $('#trait_specific_info_container').hide().delay(500).fadeIn()
+        $('.expanded-trait').css({ height : '130%'})
 
     },
 
@@ -319,14 +344,16 @@ app.WhatView = Backbone.View.extend({
 
     toggleExpandedTraitSpecificInfo : function( ev ){
         var activeTraitSpecificAccent = this.activeTraitName + '-specific-accent',
-            activeTraitSepcificAccentSelector = '.' + activeTraitSpecificAccent
+            activeTraitSepcificAccentSelector = '.' + activeTraitSpecificAccent,
+            specificName = $(ev.target).html(),
+            templateName = this.templateMapping[specificName]
         
         console.log("attempting to toggle", activeTraitSepcificAccentSelector)
         $(activeTraitSepcificAccentSelector).removeClass(activeTraitSpecificAccent)
         $(ev.target).addClass(activeTraitSpecificAccent)
 
-        $('#trait_specific_info_conatiner').empty()
-
+        $('#trait_specific_info_container').remove()
+        this.addTraitSpecificInfo( this, templateName )
 
     }
 
