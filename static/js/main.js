@@ -166,18 +166,25 @@ $(document).ready(function(){
 					$('#impact_slider').slider({
 						slide : function(ev, ui){
 							var len = scene.children.length - 1,
-								amp = ui.value / 30
+								amp = ( ( ui.value ) / 40 ) + 150,
+								ppmVal = (( ui.value ) / 200) * 89
+								youVal = (ui.value / 2000)
+
 							scene.remove( scene.children[len] )
 							addCircle( amp )
+
+							$('#ppm').html(ppmVal)
+							console.log("youval", youVal)
+							$('#impact_number').html(youVal)
 						},
 						min : 0,
-						max : 8000,
-						value : 4000,
+						max : 4.6 * 2000,
+						value : 4.6 * 2000,
 					})
 
 				 	$('#comparison_group_drop').change(function(){
 
-					 	addCircle()
+					 	addCircle(400)
 
 					 })
 				 })
@@ -434,24 +441,27 @@ function init(){
 	addLights()
 	addControls()
 
-	var resolution = 150;
-	var amplitude = 170;
-	var size = 360 / resolution;
+	// var resolution = 150;
+	// var amplitude = 170;
+	// var size = 360 / resolution;
 
-	var geometry = new THREE.Geometry();
-	var material = new THREE.LineBasicMaterial( { color: 0x00FF00, opacity: 1.0} );
+	// var geometry = new THREE.Geometry();
+	// var material = new THREE.LineBasicMaterial( { color: 0x00FF00, opacity: 1.0} );
 
-	for(var i = 0; i <= resolution; i++) {
-	    var segment = ( i * size ) * Math.PI / 180;
-	    geometry.vertices.push( 
-	    	new THREE.Vertex( 
-	    		new THREE.Vector3( Math.cos( segment ) * amplitude, 0, Math.sin( segment ) * amplitude ) 
-	    	) 
-	    );
-	}
+	// for(var i = 0; i <= resolution; i++) {
+	//     var segment = ( i * size ) * Math.PI / 180;
+	//     geometry.vertices.push( 
+	//     	new THREE.Vertex( 
+	//     		new THREE.Vector3( Math.cos( segment ) * amplitude, 0, Math.sin( segment ) * amplitude ) 
+	//     	) 
+	//     );
+	// }
 
-	var line = new THREE.Line( geometry, material );
-	scene.add(line);
+	addCircle(170)
+	addCircle(190)
+
+	// var line = new THREE.Line( geometry, material );
+	// scene.add(line);
 	
    // background-glow
     planeGeometry = new THREE.PlaneGeometry( 400, 400, 1 );
@@ -491,7 +501,8 @@ function init(){
 	group.add( partGroup )
 	scene.add( group )
 
-	setTimeout(loop, 500)	
+	setTimeout(loop, 500)
+
 
 }
 

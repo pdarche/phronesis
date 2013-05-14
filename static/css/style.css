@@ -1066,7 +1066,7 @@ row translation values:
 	margin: 30px 10px 10px 10px;
 }
 
-#recommended_habits_container, #cardio_studies_container, #overview_container {
+#recommended_habits_container, #cardio_studies_container, #overview_container, #cardio_stats_container {
 	background-color: rgba(255,255,255,.9);
 	padding: 10px;
 }
@@ -1093,9 +1093,13 @@ row translation values:
 
 #recommended_habits_container .study-container h4 {
 	margin: 0px;
-	line-height: 150%;
+	line-height: 200%;
 }
 
+#recommended_habits_container .study-container:hover; {
+	cursor: pointer;
+	background-color: hsl(34, 100%, 80%);
+}
 
 #cardio_studies_container .study-container {
 	display: inline-block;
@@ -1105,7 +1109,7 @@ row translation values:
 	margin: 5px
 }
 
-#cardio_studies_container .study-container h4{
+#cardio_studies_container .study-container h4, #cardio_studies_container .study-container h5{
 	float: left;
 	width: 200px;
 	margin-left: 15px;
@@ -1130,12 +1134,30 @@ row translation values:
 	position: absolute;
 	top: 30px;
 	left: 40px;
-	width: 380px;
+	width: 320px;
 	/*height: 100px;*/
 	padding: 20px;
 	background-color: rgba(255,255,255,.5);
 	border: 1px solid white;
 	/*box-shadow: 0px 2px 10px gray;*/
+}
+
+#current_impact {
+	position: absolute;
+	top: 20px;
+	left: 1000px;
+}
+
+#you, #ppm	 {
+	font-size: 80px
+}
+
+#ppm {
+
+}
+
+#current_impact h3 {
+
 }
 
 #general_container {

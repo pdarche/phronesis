@@ -227,9 +227,9 @@ app.WhatView = Backbone.View.extend({
             !(targetParent.hasClass('expanded-trait'))) {
 
             $('#instructions, .more-info').hide()
-            $('#adjective_container, .expanded-trait').css({ "height" : '130%' })
-            console.log("this goddam thing should be 130%")
-            $('.expanded-trait').css({ "background-color" : "#eee", "height" : '130%' })
+            $('#adjective_container, .expanded-trait').css({ "height" : '160%' })
+            console.log("this goddam thing should be 160%")
+            $('.expanded-trait').css({ "background-color" : "#eee", "height" : '160%' })
 
             this.activeTraitName = traitName
             this.activeTraitSpecifics = this.returnTraitObject( targetClass )[0]
@@ -311,7 +311,9 @@ app.WhatView = Backbone.View.extend({
 
         $('.expanded-trait').append( spec_template( templateData ) )
         $('#trait_specific_info_container').hide().delay(500).fadeIn()
-        $('.expanded-trait').css({ height : '130%'})
+        $('.expanded-trait').css({ height : '160%'})
+
+        $('#vaff').parent().css({ "background-color" : "background-color: hsl(34, 100%, 80%);"})
 
     },
 
