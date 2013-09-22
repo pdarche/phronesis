@@ -16,6 +16,8 @@ import oauth2
 import urllib 
 import urllib2
 
+from passlib.apps import custom_app_context as pwd_context
+
 #mongo and models
 from mongoengine import *
 import models
@@ -42,65 +44,46 @@ class MainHandler(BaseHandler):
 	def get(self):
 		username = self.get_secure_cookie('username')
 		if username != None:
-			self.render('index.html', username = username)
+			self.render('index.html', username=username)
 		else:
-			self.render( "index.html", username = "" )
+			self.render("index.html", username="")
 
 
 class SignUpHandler(tornado.web.RequestHandler):
 	def post(self):
 		username = self.get_argument('username')
 		password = self.get_argument('password')
-		
-		#if the username isn't already taken, create new user object 
-		if len( models.userinfo.User.objects(username=username) ) == 0:
-			
-			adjectives = models.userinfo.UserAdjectives(
-				first_priority = None,
-				first_priority_specifics = None,
-				second_priority = None,
-				second_priority_specifics = None,
-				third_priority = None,
-				third_priority_specifics = None,
-			)
+		hashed_pwd = pwd_context.encrypt(password)
 
+		if len(models.userinfo.User.objects(username=username)) == 0:		
 			newuser = models.userinfo.User(
-				date = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%m:%s"),
 				username = username,
-				password = password,
-				offset_from_utc_millis = None,
-				date_of_birth = None,
-				ftbt_user_info = None,
-				foursquare_user_info = None,
-				flickr_user_info = None,
-				facebook_user_info = None,
-				khanacademy_user_info = None,
-				twitter_user_info = None,
-				google_user_info = None,
-				adjectives = adjectives
+				password = hashed_pwd,
+				adjectives = models.userinfo.UserAdjectives()
 			)
-
 			if newuser.save():
-				response = "all signed up!\n"
+				response = json.dumps({'response':200, 'data':'signed up!'})
 			else:
-				response = "snap, somethin got f'd up\n"		
+				response = {
+					'response':500, 
+					'data':'something went wrong on our end!'
+				}
 		else:
-			response = "that username is not available!\n"
-
-		self.write(response)
+			response = {'response':400, 'data':'username unavailable!'}
+		self.write(json.dumps(response))
 
 
 class LoginHandler(tornado.web.RequestHandler):
 	def post(self):
 		username = self.get_argument('username')
 		password = self.get_argument('password')
+		user = models.userinfo.User.objects(username=username)[0]
+		verify = pwd_context.verify(password, user.password)
 
-		user = models.userinfo.User.objects(username=username)
-
-		if len( user ) == 0 or username == None:
+		if len(user) == 0 or username == None:
 			response = "Der, we don't have a user with that username\n"
-		elif password != user[0].password:
-			response = "Sorry brah, password mismatch\n"
+		elif not verify:
+			response = "Sorry, password mismatch\n"
 		else:
 			self.set_secure_cookie("username", username)
 			response = "success"
@@ -120,22 +103,15 @@ class LogoutHandler(tornado.web.RequestHandler):
 
 
 class UserInfoHandler(BaseHandler):
-	@tornado.web.authenticated
+	# @tornado.web.authenticated
 	def get(self, input):
-		print "input is %s" % input
-		if input == self.current_user:
-			
+		if input == self.current_user:	
 			user = models.userinfo.User.objects(username=input)
-			
-			response = json.dumps(user[0], default=encode_model)			
-
-			print "fb user info %r" % user[0].facebook_user_info
-			print "fb user info %r" % user[0].id
-
-			self.write(response)
+			print user[0]
+			response = {'response':200, 'data': user[0]}
 		else:
-			response
-			self.render('test.html', user=input)
+			response = {'response':403, 'data':'unauthorized'}
+		self.write(json.dumps(response, default=encode_model))
 
 
 class TwitterConnectHandler(tornado.web.RequestHandler, tornado.auth.TwitterMixin): 
