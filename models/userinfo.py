@@ -4,6 +4,7 @@ from mongoengine_extras.fields import AutoSlugField
 from mongoengine_extras.fields import SlugField
 
 from datetime import datetime
+import time
 
 ################ SERVICE USER INFO MODELS ################
 class FitbitAccessToken(EmbeddedDocument):
@@ -147,36 +148,36 @@ class OpenPathsUserInfo(EmbeddedDocument):
 
 
 class ZeoUserInfo(EmbeddedDocument):
-	create_at = StringField()
+	created_at = StringField()
 	zeo_username = StringField()
 	zeo_password = StringField()
 
 class UserAdjectives(EmbeddedDocument):
-	first_priority = StringField()
-	first_priority_specific = StringField()
-	second_priority = StringField()
-	second_priority_specific = StringField()
-	third_priority = StringField()
-	third_priority_specific = StringField()
+	first_priority = StringField(default=None)
+	first_priority_specific = StringField(default=None)
+	second_priority = StringField(default=None)
+	second_priority_specific = StringField(default=None)
+	third_priority = StringField(default=None)
+	third_priority_specific = StringField(default=None)
 	
 
 class User(Document):
-	user_since = StringField()
+	user_since = IntField(default=int(time.time()))
 	username = StringField()
 	password = StringField()
-	offset_from_utc_millis = IntField()
-	time_zone = StringField()
-	date_of_birth = DateTimeField()
-	ftbt_user_info = EmbeddedDocumentField(FitbitUserInfo)
-	foursquare_user_info = EmbeddedDocumentField(FoursquareUserInfo)
-	flickr_user_info = EmbeddedDocumentField(FlickrUserInfo)
-	facebook_user_info = EmbeddedDocumentField(FacebookUserInfo)
-	khanacademy_user_info = EmbeddedDocumentField(KhanAcademyUserInfo)
-	twitter_user_info = EmbeddedDocumentField(TwitterUserInfo)
-	google_user_info = EmbeddedDocumentField(GoogleUserInfo)
-	openpaths_user_info = EmbeddedDocumentField(OpenPathsUserInfo)
-	zeo_user_info = EmbeddedDocumentField(ZeoUserInfo)
-	adjectives = EmbeddedDocumentField(UserAdjectives)
+	offset_from_utc_millis = IntField(default=None)
+	time_zone = StringField(default=None)
+	date_of_birth = DateTimeField(default=None)
+	ftbt_user_info = EmbeddedDocumentField(FitbitUserInfo, default=None)
+	foursquare_user_info = EmbeddedDocumentField(FoursquareUserInfo, default=None)
+	flickr_user_info = EmbeddedDocumentField(FlickrUserInfo, default=None)
+	facebook_user_info = EmbeddedDocumentField(FacebookUserInfo, default=None)
+	khanacademy_user_info = EmbeddedDocumentField(KhanAcademyUserInfo, default=None)
+	twitter_user_info = EmbeddedDocumentField(TwitterUserInfo, default=None)
+	google_user_info = EmbeddedDocumentField(GoogleUserInfo, default=None)
+	openpaths_user_info = EmbeddedDocumentField(OpenPathsUserInfo, default=None)
+	zeo_user_info = EmbeddedDocumentField(ZeoUserInfo, default=None)
+	adjectives = EmbeddedDocumentField(UserAdjectives, default=None)
 
 
 
