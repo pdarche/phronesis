@@ -54,15 +54,16 @@ class SignUpHandler(tornado.web.RequestHandler):
 		username = self.get_argument('username')
 		password = self.get_argument('password')
 		hashed_pwd = pwd_context.encrypt(password)
+		user = models.userinfo.User.objects(username=username)
 
-		if len(models.userinfo.User.objects(username=username)) == 0:		
+		if len(user) == 0:		
 			newuser = models.userinfo.User(
 				username = username,
 				password = hashed_pwd,
 				adjectives = models.userinfo.UserAdjectives()
 			)
 			if newuser.save():
-				response = json.dumps({'response':200, 'data':'signed up!'})
+				response = {'response':200, 'data':'signed up!'}
 			else:
 				response = {
 					'response':500, 
@@ -81,12 +82,12 @@ class LoginHandler(tornado.web.RequestHandler):
 		verify = pwd_context.verify(password, user.password)
 
 		if len(user) == 0 or username == None:
-			response = "Der, we don't have a user with that username\n"
+			response = {'response':404, 'response': 'Sorry, no user with that username'
 		elif not verify:
-			response = "Sorry, password mismatch\n"
+			response = {'response':413, 'data': 'unauthorized'
 		else:
 			self.set_secure_cookie("username", username)
-			response = "success"
+			response = {'response':200, 'data':'logged in'}
 
 		self.write(response)
 
@@ -1830,9 +1831,7 @@ class DataHandler(BaseHandler):
 			"traitSpecific/respirator" : None,
 			"traitSpecific/mental" : None
 		}
-
 		if order_by != None:
-			print "orderby is %s" % order_by
 			objs = paths[path].objects(**kw).order_by(order_by)
 		else:
 			objs = paths[path].objects(**kw)
@@ -1840,8 +1839,7 @@ class DataHandler(BaseHandler):
 		if limit != None:
 			objs = objs[:limit]
 
-		data = json.dumps(objs, default=encode_model)
-		self.write( data )
+		self.write(json.dumps(objs, default=encode_model))
 
 	def order(self, params):
 		order_by = None		
