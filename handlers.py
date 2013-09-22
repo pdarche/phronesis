@@ -46,21 +46,6 @@ class MainHandler(BaseHandler):
 		else:
 			self.render( "index.html", username = "" )
 
-# class BSHandler(BaseHandler): 
-# 	def post(self):
-# 		# username = self.get_secure_cookie('username')
-# 		user = models.userinfo.User.objects(username='pdarche')[0]
-# 		adjectives = models.userinfo.UserAdjectives(
-# 				first_priority = "healthy",
-# 				first_priority_specific = "cardiovascular",
-# 				second_priority = "sustainable",
-# 				second_priority_specific = "carbon",
-# 				third_priority = "educated",
-# 				third_priority_specific = "mathematical",
-# 			)
-
-# 		user.update(set__adjectives=adjectives)
-
 
 class SignUpHandler(tornado.web.RequestHandler):
 	def post(self):
