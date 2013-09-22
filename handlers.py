@@ -2109,7 +2109,8 @@ class RemoveHandler(BaseHandler):
 			"traitSpecifics" : healthy.TraitSpecific,
 			"recommendedHabits" : healthy.RecommendedHabit,
 			"currentStatuses" : healthy.CurrentStatus,
-			"actionsToTake" : healthy.ActionToTake
+			"actionsToTake" : healthy.ActionToTake,
+			"triggers" : healthy.Trigger
 		}
 
 		objs = paths[input].objects() #username=username

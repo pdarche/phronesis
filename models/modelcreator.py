@@ -103,10 +103,10 @@ for rh in reco_habits:
 
 
 actions = [
-	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "take the stairs", "rhk" : "vaff" },
+	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "Take the stairs at ITP", "rhk" : "vaff" },
 	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "Walk to the Bedford station", "rhk" : "vaff" },
-	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "jog at McCarren Park", "rhk" : "vaff" },
-	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "play an organized sport", "rhk" : "vaff" },
+	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "Jog at McCarren Park", "rhk" : "vaff" },
+	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "be very active for 45 minutes per day", "action" : "Join the McCarren Park Soccer Players Meetup", "rhk" : "vaff" },
 
 	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "quit smoking", "action" : "use the patch", "rhk" : "qs"},
 	{ "for_trait" : "healthy", "for_trait_specific" : "cardiovascular", "for_rh" : "quit smoking", "action" : "use e-cigarettes", "rhk" : "qs"},
@@ -178,10 +178,10 @@ for t in triggers:
 		for_rec_habit_key = t["for_rec_habit_key"]
 	)
 
-	# if trig.save():
-	# 	print "trigger saved"
-	# else:
-	# 	print "didn't save"
+	if trig.save():
+		print "trigger saved"
+	else:
+		print "didn't save"
 
 
 studies = [
@@ -200,10 +200,10 @@ for aa in studies:
 		study_link = aa["study_link"]
 	)
 
-	if newStudy.save():
-		print "study saved"
-	else: 
-		print "study saved"
+	# if newStudy.save():
+	# 	print "study saved"
+	# else: 
+	# 	print "study saved"
 
 # vaffm = u.HabitInfo(
 # 		url = '/veryActiveFortyFive',
